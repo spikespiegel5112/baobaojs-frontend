@@ -7,10 +7,13 @@
 export {}
 declare global {
   const Button: typeof import('antd')['Button']
+  const Col: typeof import('antd')['Col']
   const DatePicker: typeof import('antd')['DatePicker']
+  const Flex: typeof import('antd')['Flex']
   const Form: typeof import('antd')['Form']
   const Input: typeof import('antd')['Input']
   const Pagination: typeof import('antd')['Pagination']
+  const Row: typeof import('antd')['Row']
   const Space: typeof import('antd')['Space']
   const Table: typeof import('antd')['Table']
 }

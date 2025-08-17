@@ -4,7 +4,10 @@ import utils from "@//utils/utils.ts";
 
 import { useEffect, useState } from "react";
 import "./index.scss";
-export default function Homepage() {
+
+import { message } from "antd";
+
+export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -42,6 +45,12 @@ export default function Homepage() {
     if (location.pathname !== "/") {
       handleEnter();
     }
+    message.config({
+      top: 80,
+      duration: 2,
+      maxCount: 3,
+    });
+    (window as any).$message = message;
   }, []);
 
   const handleEnter = () => {

@@ -6,6 +6,9 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import "@ant-design/v5-patch-for-react-19";
+
+
 
 import type { Route } from "./+types/root";
 import "./style/common.scss";

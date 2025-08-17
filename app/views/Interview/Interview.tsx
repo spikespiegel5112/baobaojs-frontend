@@ -1,31 +1,38 @@
 import { useEffect, useState } from "react";
 import "./index.scss";
-
-import { getInterviewListRequest } from "@/api/inteerview";
+import type { AxiosError } from "axios";
+import type { FormProps } from "antd";
+import { getInterviewListRequest, createQAndARequest } from "@/api/inteerview";
 
 interface RecordType {
   id: number;
-  key: string;
+  key?: number;
+  content: string;
+  title: string;
+}
+
+interface InterviewItem {
+  id?: number;
+  key?: string;
   content: string;
   title: string;
 }
 export default function Interview() {
-  const [tableData, setTableData] = useState([
-    {
-      key: "1",
-      title: "标题",
-      content: "",
-    },
-    {
-      key: "2",
-      title: "操作",
-      content: "",
-    },
-  ]);
+  const [editActive, setEditActive] = useState<boolean>(false);
+  const [tableData, setTableData] = useState<RecordType[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const [form] = Form.useForm();
 
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    if (!editActive) {
+      form.resetFields();
+    }
+  }, [editActive]);
 
   const columns = [
     {
@@ -47,30 +54,126 @@ export default function Interview() {
     },
   ];
 
+  const rulesMap = {
+    title: [{ required: true, message: "请输入邮箱" }],
+    content: [{ required: true, message: "请输入密码" }],
+  };
+
   const getData = () => {
     getInterviewListRequest({
       // title: "",
     })
-      .then((response) => {
-        // debugger
+      .then((response: RecordType[]) => {
+        setLoading(false);
+        setTableData(
+          response.map((item) => {
+            return {
+              ...item,
+              key: item.id,
+            };
+          })
+        );
       })
-      .catch((error) => {
-        // debugger;
+      .catch((error: AxiosError) => {
+        console.log(error);
       });
   };
 
   const handleChangePagination = (page: number) => {};
 
+  const handleSubmitQA: FormProps<InterviewItem>["onFinish"] = (values) => {
+    form
+      .validateFields({ validateOnly: true })
+      .then((formData) => {
+        createQAndARequest(formData)
+          .then((response: RecordType) => {
+            $message.success("保存成功！");
+            setEditActive(false);
+            getData();
+          })
+          .catch((error: AxiosError) => {
+            console.log(error);
+          });
+      })
+      .catch((error: Error) => {
+        console.log(error);
+      });
+  };
+
   return (
-    <div className={"interview_container"}>
-      <Table
-        dataSource={tableData}
-        columns={columns}
-        pagination={{
-          onChange: handleChangePagination,
-          hideOnSinglePage: false, // 👈 关键点
-        }}
-      />
+    <div className={`interview_container`}>
+      <div className={`table ${!editActive ? "active" : ""}`}>
+        <Flex className="header" gap="middle" justify="end">
+          <Button onClick={() => setEditActive(true)}>新建</Button>
+        </Flex>
+        <Table
+          dataSource={tableData}
+          columns={columns}
+          loading={loading}
+          pagination={{
+            onChange: handleChangePagination,
+            hideOnSinglePage: false, // 👈 关键点
+          }}
+        />
+      </div>
+
+      <div className={`edit_dialog ${editActive ? "active" : ""}`}>
+        <Space
+          direction="vertical"
+          size="middle"
+          style={{
+            display: "flex",
+          }}
+        >
+          <Row justify="start">
+            <Col span={2}></Col>
+            <Col span={4}>
+              <Row justify="start">
+                <Button onClick={() => setEditActive(false)}>返回</Button>
+              </Row>
+            </Col>
+          </Row>
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmitQA}
+            autoComplete="off"
+          >
+            <Row justify="center">
+              <Col span={20}>
+                <Form.Item
+                  label="标题"
+                  name="title"
+                  wrapperCol={{ span: 24 }}
+                  rules={rulesMap.title}
+                >
+                  <Input></Input>
+                </Form.Item>
+                <Form.Item
+                  label="内容"
+                  name="content"
+                  wrapperCol={{ span: 24 }}
+                  rules={rulesMap.content}
+                >
+                  <Input.TextArea rows={25}></Input.TextArea>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row justify="end">
+              <Col span={4}>
+                <Row justify="end">
+                  <Form.Item label={null}>
+                    <Button type="primary" htmlType="submit">
+                      提交
+                    </Button>
+                  </Form.Item>
+                </Row>
+              </Col>
+              <Col span={2}></Col>
+            </Row>
+          </Form>
+        </Space>
+      </div>
     </div>
   );
 }
