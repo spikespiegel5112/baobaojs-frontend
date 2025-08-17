@@ -1,0 +1,305 @@
+$red: #f20000;
+.layout_container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  background-image: url("@/assets/image/City Overview 1080p.jpg");
+  background-size: cover;
+  .entrance {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    background-color: #fff;
+    flex-direction: inherit;
+    overscroll-behavior: none;
+    transition: all 0.3s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-image: url("@/assets/image/City Night.png");
+    background-size: cover;
+    background-position: 0% 100%;
+    &.active {
+      opacity: 1;
+    }
+    &.night {
+      .title {
+        color: #fff;
+        text-shadow: #000 2px 2px 2px;
+      }
+      .startbutton {
+        border: 2px solid #fff;
+      }
+    }
+    .title {
+      color: $red;
+      font-size: 1.2rem;
+      font-family: "Eurostile Extended Regular";
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      z-index: 1;
+      transform: translate(-50%, -50%);
+      transition: top 0.3s;
+      transition: opacity 0.3s;
+    }
+    .startbutton {
+      display: none;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid $red;
+      border-radius: 50%;
+      transform: scale(0, 0);
+      transition: all 0.8s ease;
+      animation: startbutton infinite 2.5s ease-out;
+      cursor: pointer;
+      top: 3rem;
+      position: relative;
+      &.active {
+        display: block;
+      }
+    }
+  }
+
+  .menu {
+    display: none;
+    width: 6rem;
+    height: 100%;
+    position: relative;
+    &.active {
+      display: block;
+    }
+    > .main {
+      opacity: 0;
+      width: 6rem;
+      height: 100vh;
+      left: -10rem;
+      position: absolute;
+      transition:
+        left 0.3s ease,
+        opacity 0.3s,
+        background-position 3s;
+      &.active {
+        left: 0;
+        opacity: 1;
+        .menubg {
+          .mask {
+            .bg1,
+            .bg2 {
+              background-position: 0 0;
+            }
+          }
+        }
+      }
+      .menubg {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        span {
+          display: block;
+          background-color: red;
+          position: absolute;
+        }
+        .mask {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          left: 0;
+          top: 0;
+        }
+        .rightglow {
+          position: absolute;
+          inset: 0;
+
+          background:
+            linear-gradient(
+                to bottom,
+                transparent 0%,
+                #fff 50%,
+                transparent 100%
+              )
+              100% / 100% 50% no-repeat,
+            linear-gradient(
+                to bottom,
+                transparent 0%,
+                #fff 50%,
+                transparent 100%
+              )
+              100% / 100% 50% no-repeat;
+
+          background-size:
+            100% 20%,
+            100% 20%;
+          animation:
+            verticalFlow 20s linear infinite,
+            randomSize 40s ease-in-out infinite;
+
+          /* 超窄右侧区域 */
+          -webkit-mask: linear-gradient(to right, transparent 95%, #fff 100%);
+          // clip-path: polygon(0% 0%, 100% 0%, 96% 100%, 0% 100%);
+
+          /* 轻微模糊让亮线变柔和 */
+          filter: blur(1px) brightness(4);
+          box-shadow: 0 0 2px 2px rgba(255, 255, 255, 0.1);
+          @keyframes verticalFlow {
+            0%,
+            100% {
+              background-position:
+                left -100%,
+                right -100%;
+            }
+            50% {
+              background-position:
+                left 100%,
+                right 100%;
+            }
+          }
+
+          @keyframes randomSize {
+            0%,
+            100% {
+              background-size:
+                100% 150%,
+                100% 150%;
+            }
+            20% {
+              background-size:
+                100% 120%,
+                100% 120%;
+            }
+            40% {
+              background-size:
+                100% 180%,
+                100% 180%;
+            }
+            60% {
+              background-size:
+                100% 130%,
+                100% 130%;
+            }
+            80% {
+              background-size:
+                100% 170%,
+                100% 170%;
+            }
+          }
+        }
+
+        .bg1,
+        .mask .bg1 {
+          width: 100%;
+          height: 100vh;
+          // clip-path: polygon(0% 0%, 100% 0%, 90% 100%, 0% 100%);
+          left: 0;
+          top: 0;
+          filter: drop-shadow(0 0 15px rgb(255, 255, 255));
+        }
+        .bg2,
+        .mask .bg2 {
+          width: 2rem;
+          height: 11rem;
+          clip-path: polygon(40% 0%, 90% 0%, 70% 45%, 0% 100%);
+          left: 9.8rem;
+          top: 0;
+        }
+        .mask .bg1,
+        .mask .bg2 {
+          transition: background-position 0.3s ease;
+          background-image: url("@/assets/image/City Overview 1080p.jpg");
+          background-position: 10rem 0;
+          object-fit: cover;
+          mix-blend-mode: multiply; /* 这里可以改为 screen、overlay、darken 等 */
+        }
+
+        .title {
+          font-size: 0.5rem;
+          font-family: "Eurostile Extended Regular";
+          position: absolute;
+          top: 0.5rem;
+          left: 1rem;
+          z-index: 1;
+          color: #fff;
+        }
+        .blend {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+      }
+      .list {
+        margin: 2rem 0 0 0;
+        ul {
+          li {
+            display: block;
+            margin: 0 auto 0.4rem;
+            width: 4rem;
+            height: 1rem;
+            line-height: 1rem;
+            border: 1px solid #fff;
+            position: relative;
+            font-size: 0.4rem;
+            text-align: center;
+            color: #fff;
+            a {
+              display: block;
+              width: 100%;
+              height: 100%;
+              color: #fff;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .main {
+    flex: 1;
+    padding: 0.2rem;
+  }
+
+  .bg {
+    .stripe {
+      ul {
+        li {
+          width: 2px;
+          height: 3rem;
+        }
+      }
+    }
+  }
+}
+
+@keyframes startbutton {
+  0% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+  5% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  80% {
+    transform: scale(1.2, 1.2);
+    opacity: 0;
+  }
+  99% {
+    transform: scale(1.2, 1.2);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1, 1);
+
+    opacity: 0;
+  }
+}
