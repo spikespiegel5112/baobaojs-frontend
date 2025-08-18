@@ -198,7 +198,7 @@ export default function Interview() {
       cancelText: "取消",
       onOk() {
         $message.success("已删除");
-        confirmDeltePromise([record.id]);
+        // confirmDeltePromise([record.id]);
       },
       onCancel() {
         console.log("取消操作");
