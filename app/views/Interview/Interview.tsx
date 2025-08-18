@@ -83,6 +83,12 @@ export default function Interview() {
     }
   }, [editActive]);
 
+  useEffect(() => {
+    if (!reviewActive) {
+      form.resetFields();
+    }
+  }, [reviewActive]);
+
   const columns = [
     {
       title: "标题",
