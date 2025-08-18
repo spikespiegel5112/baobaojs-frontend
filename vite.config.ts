@@ -44,7 +44,7 @@ export default defineConfig({
       "/api": {
         target: process.env.VITE_API_URL,
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""), // 可选，去掉前缀
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

@@ -16,6 +16,23 @@
       height: calc(100vh - 2rem);
       background-color: rgba($color: #fff, $alpha: 0.8);
       font-size: 0.3rem;
+      position: relative;
+      .ant-table-container {
+        height: 100%;
+        .ant-table-content {
+          height: 100%;
+          position: relative;
+        }
+        table {
+          height: 100%;
+
+          .ant-table-tbody {
+            height: calc(100% - 2rem);
+            overflow: auto;
+            position: relative;
+          }
+        }
+      }
     }
   }
   .edit_dialog {

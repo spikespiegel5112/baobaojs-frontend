@@ -10,6 +10,10 @@ interface RecordType {
   content: string;
   title: string;
 }
+interface TableDataType {
+  total: number;
+  data: RecordType[];
+}
 
 interface InterviewItem {
   id?: number;
@@ -17,9 +21,23 @@ interface InterviewItem {
   content: string;
   title: string;
 }
+
+interface PaginationType {
+  current: number;
+  pageSize: number;
+  total: number | null;
+}
 export default function Interview() {
+  const defaultPagination: PaginationType = {
+    current: 1,
+    pageSize: 20,
+    total: null,
+  };
+
   const [editActive, setEditActive] = useState<boolean>(false);
   const [tableData, setTableData] = useState<RecordType[]>([]);
+  const [pagination, setPagination] =
+    useState<PaginationType>(defaultPagination);
   const [loading, setLoading] = useState<boolean>(true);
 
   const [form] = Form.useForm();
@@ -61,12 +79,16 @@ export default function Interview() {
 
   const getData = () => {
     getInterviewListRequest({
-      // title: "",
+      ...pagination,
     })
-      .then((response: RecordType[]) => {
+      .then((response: TableDataType) => {
         setLoading(false);
+        setPagination({
+          ...pagination,
+          total: response.total,
+        });
         setTableData(
-          response.map((item) => {
+          response.data.map((item) => {
             return {
               ...item,
               key: item.id,
@@ -79,7 +101,13 @@ export default function Interview() {
       });
   };
 
-  const handleChangePagination = (page: number) => {};
+  const handleChangePagination = (current: number) => {
+    setPagination({
+      ...pagination,
+      current,
+    });
+    getData();
+  };
 
   const handleSubmitQA: FormProps<InterviewItem>["onFinish"] = (values) => {
     form
@@ -111,6 +139,10 @@ export default function Interview() {
           columns={columns}
           loading={loading}
           pagination={{
+            defaultCurrent: 1,
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: pagination.total,
             onChange: handleChangePagination,
             hideOnSinglePage: false, // 👈 关键点
           }}
