@@ -25,10 +25,10 @@ export default function BaobaoLayout() {
   const menuList: MenuList[] = [
     {
       title: "文心一言",
-      id: "erniebot",
+      id: "Erniebot",
     },
     {
-      title: "面试题",
+      title: "八股阅读器",
       id: "Interview",
     },
   ];
