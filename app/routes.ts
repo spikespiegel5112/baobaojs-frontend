@@ -14,9 +14,9 @@ interface Route {
 
 const _routeDictionary: Route[] = [
   {
-    id: "Layout",
+    id: "BaobaoLayout",
     path: "",
-    filePath: "./views/Layout/Layout.tsx",
+    filePath: "./views/BaobaoLayout/BaobaoLayout.tsx",
     children: [
       {
         id: "Homepage",

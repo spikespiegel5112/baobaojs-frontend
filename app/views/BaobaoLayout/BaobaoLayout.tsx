@@ -5,9 +5,10 @@ import utils from "@//utils/utils.ts";
 import { useEffect, useState } from "react";
 import "./index.scss";
 
-import { message } from "antd";
+import { Layout, message } from "antd";
+const { Header, Content, Sider } = Layout;
 
-export default function Layout() {
+export default function BaobaoLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -65,7 +66,7 @@ export default function Layout() {
   };
 
   return (
-    <div className="layout_container">
+    <Layout className="layout_container">
       <div className={"entrance night " + (entranceActive ? "active" : "")}>
         <div className={"title"}>BAOBAOJS</div>
         <a
@@ -74,7 +75,7 @@ export default function Layout() {
         ></a>
       </div>
 
-      <aside className={"menu " + (enterActive ? "active" : "")}>
+      <Sider className={"menu " + (enterActive ? "active" : "")} width="6rem">
         <div className={"main " + (bgActive ? "active" : "")}>
           <div className="menubg">
             <span className="bg1">
@@ -95,11 +96,11 @@ export default function Layout() {
             </ul>
           </div>
         </div>
-      </aside>
+      </Sider>
 
-      <main className="main">
+      <Content className="main">
         <Outlet />
-      </main>
-    </div>
+      </Content>
+    </Layout>
   );
 }

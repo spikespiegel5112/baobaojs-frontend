@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import "./index.scss";
 import type { AxiosError } from "axios";
 import type { FormProps } from "antd";
@@ -25,14 +26,16 @@ interface InterviewItem {
 interface PaginationType {
   current: number;
   pageSize: number;
-  total: number | null;
+  total: number | undefined;
 }
 export default function Interview() {
   const defaultPagination: PaginationType = {
     current: 1,
     pageSize: 20,
-    total: null,
+    total: undefined,
   };
+
+  let _pagination = defaultPagination;
 
   const [editActive, setEditActive] = useState<boolean>(false);
   const [tableData, setTableData] = useState<RecordType[]>([]);
@@ -62,10 +65,12 @@ export default function Interview() {
       title: "操作",
       dataIndex: "operation",
       key: "operation",
-      width: "2rem",
+      width: "3rem",
       render: (_, record: RecordType) => (
         <Space size="middle">
-          <Button type="text">编辑</Button>
+          <Button type="text" onClick={() => handleEdit(record)}>
+            编辑
+          </Button>
           <Button type="text">删除</Button>
         </Space>
       ),
@@ -79,14 +84,15 @@ export default function Interview() {
 
   const getData = () => {
     getInterviewListRequest({
-      ...pagination,
+      ..._pagination,
     })
       .then((response: TableDataType) => {
         setLoading(false);
-        setPagination({
-          ...pagination,
+        _pagination = {
+          ..._pagination,
           total: response.total,
-        });
+        };
+        setPagination(_pagination);
         setTableData(
           response.data.map((item) => {
             return {
@@ -102,10 +108,11 @@ export default function Interview() {
   };
 
   const handleChangePagination = (current: number) => {
-    setPagination({
-      ...pagination,
+    _pagination = {
+      ..._pagination,
       current,
-    });
+    };
+    setPagination(_pagination);
     getData();
   };
 
@@ -128,6 +135,11 @@ export default function Interview() {
       });
   };
 
+  const handleEdit = (record: RecordType) => {
+    setEditActive(true);
+    form.setFieldsValue(record);
+  };
+
   return (
     <div className={`interview_container`}>
       <div className={`table ${!editActive ? "active" : ""}`}>
@@ -138,6 +150,9 @@ export default function Interview() {
           dataSource={tableData}
           columns={columns}
           loading={loading}
+          scroll={{
+            y: "calc(100vh - 3rem)",
+          }}
           pagination={{
             defaultCurrent: 1,
             current: pagination.current,

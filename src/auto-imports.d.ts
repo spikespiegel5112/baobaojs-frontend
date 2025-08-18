@@ -12,6 +12,7 @@ declare global {
   const Flex: typeof import('antd')['Flex']
   const Form: typeof import('antd')['Form']
   const Input: typeof import('antd')['Input']
+  const Layout: typeof import('antd')['Layout']
   const Pagination: typeof import('antd')['Pagination']
   const Row: typeof import('antd')['Row']
   const Space: typeof import('antd')['Space']
