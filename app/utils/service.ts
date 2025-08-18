@@ -1,7 +1,9 @@
 import axios from "axios";
 
 axios.defaults.baseURL =
-  process.env.NODE_ENV === "development" ? "/api/baobaoapi" : "/";
+  process.env.NODE_ENV === "development"
+    ? "/api/baobaoapi"
+    : process.env.VITE_API_URL;
 
 // Add a response interceptor
 axios.interceptors.response.use(
