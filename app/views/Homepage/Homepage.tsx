@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import "./index.scss";
-import cityOverviewImage from "@/assets/image/City Overview 1080p.jpg"; // ✅ 使用 import
 export default function Homepage() {
   const [startButtonActive, setStartButtonActive] = useState(false);
   const [entranceActive, setEntranceActive] = useState(false);

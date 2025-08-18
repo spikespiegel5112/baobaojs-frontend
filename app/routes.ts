@@ -1,9 +1,4 @@
-import {
-  type RouteConfig,
-  type RouteConfigEntry,
-  index,
-  route,
-} from "@react-router/dev/routes";
+import { type RouteConfigEntry, route } from "@react-router/dev/routes";
 
 interface Route {
   id: string;

@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
-import { flushSync } from "react-dom";
 import "./index.scss";
 import type { AxiosError } from "axios";
 import type { FormProps } from "antd";
-import type { TableColumnsType, TableProps } from "antd";
+import type { TableProps } from "antd";
 
-type TableRowSelection<T extends object = object> =
-  TableProps<T>["rowSelection"];
+type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
 import {
   getInterviewListRequest,
   createOrUpdateQAndARequest,
   deleteMultipleDataByIdRequest,
 } from "@/api/inteerview";
 import ReactMarkdown from "react-markdown";
+import parse from "html-react-parser";
 
 interface RecordType {
   id: number;
@@ -39,13 +38,6 @@ interface PaginationType {
   total: number | undefined;
 }
 
-const msgs = [
-  {
-    id: "1",
-    text: "# Hello\n这里是 **Markdown** 内容\n\n```js\nconsole.log('hi')\n```",
-  },
-];
-
 export default function Interview() {
   const defaultPagination: PaginationType = {
     current: 1,
@@ -57,10 +49,8 @@ export default function Interview() {
 
   const [editActive, setEditActive] = useState<boolean>(false);
   const [reviewActive, setReviewActive] = useState<boolean>(false);
-  const [markdownContent, setMarkdownContent] = useState<string>("");
   const [tableData, setTableData] = useState<RecordType[]>([]);
-  const [pagination, setPagination] =
-    useState<PaginationType>(defaultPagination);
+  const [pagination, setPagination] = useState<PaginationType>(defaultPagination);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
@@ -138,7 +128,7 @@ export default function Interview() {
               ...item,
               key: item.id,
             };
-          })
+          }),
         );
       })
       .catch((error: AxiosError) => {
@@ -160,12 +150,12 @@ export default function Interview() {
     getData();
   };
 
-  const handleSubmitQA: FormProps<InterviewItem>["onFinish"] = (values) => {
+  const handleSubmitQA: FormProps<InterviewItem>["onFinish"] = () => {
     form
       .validateFields({ validateOnly: true })
       .then((formData) => {
         createOrUpdateQAndARequest(formData)
-          .then((response: RecordType) => {
+          .then(() => {
             $message.success("保存成功！");
             setEditActive(false);
             getData();
@@ -187,7 +177,6 @@ export default function Interview() {
   const handleReview = (record: RecordType) => {
     setReviewActive(true);
     form.setFieldsValue(record);
-    setMarkdownContent(record.content);
   };
 
   const handleDelete = (record: RecordType) => {
@@ -247,9 +236,7 @@ export default function Interview() {
         />
       </div>
 
-      <div
-        className={`edit_dialog ${editActive || reviewActive ? "active" : ""}`}
-      >
+      <div className={`edit_dialog ${editActive || reviewActive ? "active" : ""}`}>
         <Space
           direction="vertical"
           size="middle"
@@ -272,12 +259,7 @@ export default function Interview() {
               </Row>
             </Col>
           </Row>
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmitQA}
-            autoComplete="off"
-          >
+          <Form form={form} layout="vertical" onFinish={handleSubmitQA} autoComplete="off">
             <Form.Item name="id" style={{ display: "none" }}>
               <Input type="hidden" />
             </Form.Item>

@@ -4,6 +4,7 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
+import { visualizer } from "rollup-plugin-visualizer";
 
 const pathSrc = path.resolve(__dirname, "app");
 
@@ -33,6 +34,11 @@ export default defineConfig({
         },
       ],
       dts: "src/auto-imports.d.ts", // 生成类型声明文件
+    }),
+    visualizer({
+      filename: "./dist/stats.html", // 输出分析报告
+      open: true, // 打包完成自动打开浏览器
+      gzipSize: true,
     }),
   ],
   resolve: {

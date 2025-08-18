@@ -8,8 +8,6 @@ import {
 } from "react-router";
 import "@ant-design/v5-patch-for-react-19";
 
-
-
 import type { Route } from "./+types/root";
 import "./style/common.scss";
 import "./style/app.css";
@@ -58,9 +56,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? "404" : "Error";
     details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
+      error.status === 404 ? "The requested page could not be found." : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;

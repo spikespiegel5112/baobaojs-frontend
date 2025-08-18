@@ -10,11 +10,10 @@ const _utils = {
 
     return result;
   },
-  $isEmpty: (value: any): boolean =>
-    value === "" || (!value && value !== 0) || value === null,
+  $isEmpty: (value: any): boolean => value === "" || (!value && value !== 0) || value === null,
   $isNotEmpty: (value: any): boolean => !_utils.$isEmpty(value),
   $remResizing: (params: any) => {
-    let options = Object.assign(
+    const options = Object.assign(
       {
         fontSize: 16,
         baseline: 320,
@@ -25,7 +24,7 @@ const _utils = {
         alignCenter: true,
         inward: false,
       },
-      params
+      params,
     );
     const htmlEl = document.getElementsByTagName("html")[0];
     const bodyEl = document.getElementsByTagName("body")[0];
@@ -47,7 +46,7 @@ const _utils = {
       } else {
         frontLine = window.screen.availWidth;
       }
-      var factor = 0;
+      let factor = 0;
       if (options.baseline === 0) {
         factor = 1;
       } else if (frontLine <= options.baseline) {
@@ -105,7 +104,7 @@ const _utils = {
   },
   $isMobile: () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
+      navigator.userAgent,
     );
   },
 
@@ -128,9 +127,7 @@ const _utils = {
     };
     looper(routeDictionary);
 
-    const result: string | undefined = flattenRouteList.find(
-      (item) => item.id === routeId
-    )?.path;
+    const result: string | undefined = flattenRouteList.find((item) => item.id === routeId)?.path;
 
     return result;
   },
