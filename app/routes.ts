@@ -30,6 +30,11 @@ const _routeDictionary: Route[] = [
       },
     ],
   },
+  {
+    id: "NotFound",
+    path: "*",
+    filePath: "./views/NotFound/NotFound.tsx",
+  },
 ];
 
 const looper = (children: Route[]): RouteConfigEntry[] => {

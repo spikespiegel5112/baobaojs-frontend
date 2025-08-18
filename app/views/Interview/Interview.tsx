@@ -3,7 +3,16 @@ import { flushSync } from "react-dom";
 import "./index.scss";
 import type { AxiosError } from "axios";
 import type { FormProps } from "antd";
-import { getInterviewListRequest, createQAndARequest } from "@/api/inteerview";
+import type { TableColumnsType, TableProps } from "antd";
+
+type TableRowSelection<T extends object = object> =
+  TableProps<T>["rowSelection"];
+import {
+  getInterviewListRequest,
+  createOrUpdateQAndARequest,
+  deleteMultipleDataByIdRequest,
+} from "@/api/inteerview";
+import ReactMarkdown from "react-markdown";
 
 interface RecordType {
   id: number;
@@ -12,6 +21,7 @@ interface RecordType {
   title: string;
 }
 interface TableDataType {
+  key: React.Key;
   total: number;
   data: RecordType[];
 }
@@ -28,6 +38,14 @@ interface PaginationType {
   pageSize: number;
   total: number | undefined;
 }
+
+const msgs = [
+  {
+    id: "1",
+    text: "# Hello\n这里是 **Markdown** 内容\n\n```js\nconsole.log('hi')\n```",
+  },
+];
+
 export default function Interview() {
   const defaultPagination: PaginationType = {
     current: 1,
@@ -38,12 +56,22 @@ export default function Interview() {
   let _pagination = defaultPagination;
 
   const [editActive, setEditActive] = useState<boolean>(false);
+  const [reviewActive, setReviewActive] = useState<boolean>(false);
+  const [markdownContent, setMarkdownContent] = useState<string>("");
   const [tableData, setTableData] = useState<RecordType[]>([]);
   const [pagination, setPagination] =
     useState<PaginationType>(defaultPagination);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const [form] = Form.useForm();
+
+  const rowSelection: TableRowSelection<TableDataType> = {
+    selectedRowKeys,
+    onChange: (newSelectedRowKeys) => {
+      onSelectChange(newSelectedRowKeys);
+    },
+  };
 
   useEffect(() => {
     getData();
@@ -65,13 +93,18 @@ export default function Interview() {
       title: "操作",
       dataIndex: "operation",
       key: "operation",
-      width: "3rem",
+      width: "4rem",
       render: (_, record: RecordType) => (
         <Space size="middle">
+          <Button type="text" onClick={() => handleReview(record)}>
+            查看
+          </Button>
           <Button type="text" onClick={() => handleEdit(record)}>
             编辑
           </Button>
-          <Button type="text">删除</Button>
+          <Button type="text" onClick={() => handleDelete(record)}>
+            删除
+          </Button>
         </Space>
       ),
     },
@@ -107,6 +140,11 @@ export default function Interview() {
       });
   };
 
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
   const handleChangePagination = (current: number) => {
     _pagination = {
       ..._pagination,
@@ -120,7 +158,7 @@ export default function Interview() {
     form
       .validateFields({ validateOnly: true })
       .then((formData) => {
-        createQAndARequest(formData)
+        createOrUpdateQAndARequest(formData)
           .then((response: RecordType) => {
             $message.success("保存成功！");
             setEditActive(false);
@@ -140,13 +178,52 @@ export default function Interview() {
     form.setFieldsValue(record);
   };
 
+  const handleReview = (record: RecordType) => {
+    setReviewActive(true);
+    form.setFieldsValue(record);
+    setMarkdownContent(record.content);
+  };
+
+  const handleDelete = (record: RecordType) => {
+    Modal.confirm({
+      title: "提示",
+      content: "你确定要删除吗？",
+      okText: "确认",
+      cancelText: "取消",
+      onOk() {
+        $message.success("已删除");
+        confirmDeltePromise([record.id]);
+      },
+      onCancel() {
+        console.log("取消操作");
+      },
+    });
+  };
+
+  const confirmDeltePromise = (idList: number[]) => {
+    return new Promise((resolve, reject) => {
+      deleteMultipleDataByIdRequest({
+        ids: idList,
+      })
+        .then((response: RecordType) => {
+          getData();
+          resolve(response);
+        })
+        .catch((error: AxiosError) => {
+          console.log(error);
+          reject(error);
+        });
+    });
+  };
+
   return (
     <div className={`interview_container`}>
-      <div className={`table ${!editActive ? "active" : ""}`}>
+      <div className={`table ${!editActive && !reviewActive ? "active" : ""}`}>
         <Flex className="header" gap="middle" justify="end">
           <Button onClick={() => setEditActive(true)}>新建</Button>
         </Flex>
         <Table
+          rowSelection={{ rowSelection }}
           dataSource={tableData}
           columns={columns}
           loading={loading}
@@ -164,7 +241,9 @@ export default function Interview() {
         />
       </div>
 
-      <div className={`edit_dialog ${editActive ? "active" : ""}`}>
+      <div
+        className={`edit_dialog ${editActive || reviewActive ? "active" : ""}`}
+      >
         <Space
           direction="vertical"
           size="middle"
@@ -176,7 +255,14 @@ export default function Interview() {
             <Col span={2}></Col>
             <Col span={4}>
               <Row justify="start">
-                <Button onClick={() => setEditActive(false)}>返回</Button>
+                <Button
+                  onClick={() => {
+                    setEditActive(false);
+                    setReviewActive(false);
+                  }}
+                >
+                  返回
+                </Button>
               </Row>
             </Col>
           </Row>
@@ -186,6 +272,9 @@ export default function Interview() {
             onFinish={handleSubmitQA}
             autoComplete="off"
           >
+            <Form.Item name="id" style={{ display: "none" }}>
+              <Input type="hidden" />
+            </Form.Item>
             <Row justify="center">
               <Col span={20}>
                 <Form.Item
@@ -196,14 +285,28 @@ export default function Interview() {
                 >
                   <Input></Input>
                 </Form.Item>
-                <Form.Item
-                  label="内容"
-                  name="content"
-                  wrapperCol={{ span: 24 }}
-                  rules={rulesMap.content}
-                >
-                  <Input.TextArea rows={25}></Input.TextArea>
-                </Form.Item>
+                {(() => {
+                  if (editActive) {
+                    return (
+                      <Form.Item
+                        label="内容"
+                        name="content"
+                        wrapperCol={{ span: 24 }}
+                        rules={rulesMap.content}
+                      >
+                        <Input.TextArea rows={25}></Input.TextArea>
+                      </Form.Item>
+                    );
+                  } else if (reviewActive) {
+                    console.log(form);
+                    const content = form.getFieldValue("content");
+                    return (
+                      <div className="review">
+                        <ReactMarkdown>{content}</ReactMarkdown>;
+                      </div>
+                    );
+                  }
+                })()}
               </Col>
             </Row>
             <Row justify="end">

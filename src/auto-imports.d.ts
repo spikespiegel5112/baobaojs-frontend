@@ -13,6 +13,7 @@ declare global {
   const Form: typeof import('antd')['Form']
   const Input: typeof import('antd')['Input']
   const Layout: typeof import('antd')['Layout']
+  const Modal: typeof import('antd')['Modal']
   const Pagination: typeof import('antd')['Pagination']
   const Row: typeof import('antd')['Row']
   const Space: typeof import('antd')['Space']
