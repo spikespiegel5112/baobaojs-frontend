@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import React, { lazy, Suspense } from "react";
 import "./index.scss";
 import type { AxiosError } from "axios";
 import type { FormProps } from "antd";
@@ -10,8 +11,8 @@ import {
   createOrUpdateQAndARequest,
   deleteMultipleDataByIdRequest,
 } from "@/api/inteerview";
-import ReactMarkdown from "react-markdown";
-import { calc } from "antd/es/theme/internal";
+
+const ReactMarkdown = lazy(() => import("react-markdown"));
 
 interface RecordType {
   id: number;
@@ -224,7 +225,14 @@ export default function Interview() {
     <div className={`interview_container`}>
       <div className={`table ${!dialogActive ? "active" : ""}`}>
         <Flex className="header" gap="middle" justify="end">
-          <Button onClick={() => setEditActive(true)}>新建</Button>
+          <Button
+            onClick={() => {
+              setDialogActive(true);
+              setEditActive(true);
+            }}
+          >
+            新建
+          </Button>
         </Flex>
         <Table
           rowSelection={{ rowSelection }}
@@ -305,7 +313,9 @@ export default function Interview() {
                     const content = form.getFieldValue("content");
                     return (
                       <div className="review">
-                        <ReactMarkdown>{content}</ReactMarkdown>;
+                        <Suspense fallback={<div>Loading...</div>}>
+                          <ReactMarkdown>{content}</ReactMarkdown>;
+                        </Suspense>
                       </div>
                     );
                   }
