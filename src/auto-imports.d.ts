@@ -9,6 +9,7 @@ declare global {
   const Button: typeof import('antd')['Button']
   const Col: typeof import('antd')['Col']
   const DatePicker: typeof import('antd')['DatePicker']
+  const Divider: typeof import('antd')['Divider']
   const Flex: typeof import('antd')['Flex']
   const Form: typeof import('antd')['Form']
   const Input: typeof import('antd')['Input']

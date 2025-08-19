@@ -4,21 +4,24 @@ import "./index.scss";
 import type { AxiosError } from "axios";
 import type { FormProps } from "antd";
 import type { TableProps } from "antd";
-
-type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
+import { FormOutlined, DeleteOutlined, FileAddOutlined, LeftOutlined } from "@ant-design/icons";
 import {
   getInterviewListRequest,
   createOrUpdateQAndARequest,
   deleteMultipleDataByIdRequest,
 } from "@/api/inteerview";
+import dayjs from "@/utils/dayjs";
 
 const ReactMarkdown = lazy(() => import("react-markdown"));
+
+type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
 
 interface RecordType {
   id: number;
   key?: number;
   content: string;
   title: string;
+  createdAt: string;
 }
 interface TableDataType {
   key: React.Key;
@@ -94,6 +97,12 @@ export default function Interview() {
       ),
     },
     {
+      title: "创建日期",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: "3.6rem",
+    },
+    {
       title: "操作",
       dataIndex: "operation",
       key: "operation",
@@ -101,10 +110,10 @@ export default function Interview() {
       render: (_, record: RecordType) => (
         <Space size="middle">
           <Button type="text" onClick={() => handleEdit(record)}>
-            编辑
+            <FormOutlined />
           </Button>
           <Button type="text" onClick={() => handleDelete(record)}>
-            删除
+            <DeleteOutlined />
           </Button>
         </Space>
       ),
@@ -132,6 +141,7 @@ export default function Interview() {
             return {
               ...item,
               key: item.id,
+              createdAt: dayjs(item.createdAt).format("YYYY-MM-DD HH:mm:ss"),
             };
           }),
         );
@@ -231,7 +241,7 @@ export default function Interview() {
               setEditActive(true);
             }}
           >
-            新建
+            <FileAddOutlined />
           </Button>
         </Flex>
         <Table
@@ -274,7 +284,7 @@ export default function Interview() {
                     }, 500);
                   }}
                 >
-                  返回
+                  <LeftOutlined />
                 </Button>
               </Row>
             </Col>
@@ -285,37 +295,52 @@ export default function Interview() {
             </Form.Item>
             <Row justify="center">
               <Col span={22}>
-                <Form.Item
-                  label={editActive ? "标题" : undefined}
-                  name="title"
-                  wrapperCol={{ span: 24 }}
-                  rules={rulesMap.title}
-                >
-                  <Input></Input>
-                </Form.Item>
                 {(() => {
                   if (editActive) {
                     return (
-                      <Form.Item
-                        label="内容"
-                        name="content"
-                        wrapperCol={{ span: 24 }}
-                        rules={rulesMap.content}
-                      >
-                        <Input.TextArea
-                          style={{
-                            height: "calc(100vh - 4.5rem)",
-                          }}
-                        ></Input.TextArea>
-                      </Form.Item>
+                      <>
+                        <Form.Item
+                          label={editActive ? "标题" : undefined}
+                          name="title"
+                          wrapperCol={{ span: 24 }}
+                          rules={rulesMap.title}
+                        >
+                          <Input></Input>
+                        </Form.Item>
+                        <Form.Item
+                          label="内容"
+                          name="content"
+                          wrapperCol={{ span: 24 }}
+                          rules={rulesMap.content}
+                        >
+                          <Input.TextArea
+                            style={{
+                              height: "calc(100vh - 4.5rem)",
+                            }}
+                          ></Input.TextArea>
+                        </Form.Item>
+                      </>
                     );
                   } else if (reviewActive) {
+                    const title = form.getFieldValue("title");
+                    const createdAt = form.getFieldValue("createdAt");
                     const content = form.getFieldValue("content");
                     return (
                       <div className="review">
-                        <Suspense fallback={<div>Loading...</div>}>
-                          <ReactMarkdown>{content}</ReactMarkdown>;
-                        </Suspense>
+                        <div className="title">
+                          <div className="main">{title}</div>
+                          <span>{createdAt}</span>
+                        </div>
+                        <Divider
+                          style={{
+                            margin: 0,
+                          }}
+                        />
+                        <div className="content">
+                          <Suspense fallback={<div>Loading...</div>}>
+                            <ReactMarkdown>{content}</ReactMarkdown>;
+                          </Suspense>
+                        </div>
                       </div>
                     );
                   }

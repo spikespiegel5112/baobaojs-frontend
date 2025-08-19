@@ -30,6 +30,7 @@ export default defineConfig({
             "Row",
             "Layout",
             "Modal",
+            "Divider",
           ],
         },
       ],
@@ -50,7 +51,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: process.env.VITE_API_URL,
+        target: "https://baobaojs.com/",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

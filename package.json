@@ -12,6 +12,7 @@
     "format": "prettier --write \"app/**/*.{js,jsx,ts,tsx,json,css,md}\""
   },
   "dependencies": {
+    "@ant-design/icons": "5.x",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@react-router/dev": "^7.8.1",
     "@react-router/node": "^7.7.1",
