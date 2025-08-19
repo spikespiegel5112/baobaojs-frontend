@@ -11,7 +11,7 @@ import {
   deleteMultipleDataByIdRequest,
 } from "@/api/inteerview";
 import ReactMarkdown from "react-markdown";
-import parse from "html-react-parser";
+import { calc } from "antd/es/theme/internal";
 
 interface RecordType {
   id: number;
@@ -49,6 +49,8 @@ export default function Interview() {
 
   const [editActive, setEditActive] = useState<boolean>(false);
   const [reviewActive, setReviewActive] = useState<boolean>(false);
+
+  const [dialogActive, setDialogActive] = useState<boolean>(false);
   const [tableData, setTableData] = useState<RecordType[]>([]);
   const [pagination, setPagination] = useState<PaginationType>(defaultPagination);
   const [loading, setLoading] = useState<boolean>(true);
@@ -84,17 +86,19 @@ export default function Interview() {
       title: "标题",
       dataIndex: "title",
       key: "title",
+      render: (_, record: RecordType) => (
+        <a className="title" onClick={() => handleReview(record)}>
+          {record.title}
+        </a>
+      ),
     },
     {
       title: "操作",
       dataIndex: "operation",
       key: "operation",
-      width: "4rem",
+      width: "3rem",
       render: (_, record: RecordType) => (
         <Space size="middle">
-          <Button type="text" onClick={() => handleReview(record)}>
-            查看
-          </Button>
           <Button type="text" onClick={() => handleEdit(record)}>
             编辑
           </Button>
@@ -157,7 +161,10 @@ export default function Interview() {
         createOrUpdateQAndARequest(formData)
           .then(() => {
             $message.success("保存成功！");
-            setEditActive(false);
+            setDialogActive(false);
+            setTimeout(() => {
+              setEditActive(false);
+            }, 500);
             getData();
           })
           .catch((error: AxiosError) => {
@@ -171,11 +178,13 @@ export default function Interview() {
 
   const handleEdit = (record: RecordType) => {
     setEditActive(true);
+    setDialogActive(true);
     form.setFieldsValue(record);
   };
 
   const handleReview = (record: RecordType) => {
     setReviewActive(true);
+    setDialogActive(true);
     form.setFieldsValue(record);
   };
 
@@ -213,7 +222,7 @@ export default function Interview() {
 
   return (
     <div className={`interview_container`}>
-      <div className={`table ${!editActive && !reviewActive ? "active" : ""}`}>
+      <div className={`table ${!dialogActive ? "active" : ""}`}>
         <Flex className="header" gap="middle" justify="end">
           <Button onClick={() => setEditActive(true)}>新建</Button>
         </Flex>
@@ -236,7 +245,7 @@ export default function Interview() {
         />
       </div>
 
-      <div className={`edit_dialog ${editActive || reviewActive ? "active" : ""}`}>
+      <div className={`edit_dialog ${dialogActive ? "active" : ""}`}>
         <Space
           direction="vertical"
           size="middle"
@@ -245,13 +254,16 @@ export default function Interview() {
           }}
         >
           <Row justify="start">
-            <Col span={2}></Col>
+            <Col span={1}></Col>
             <Col span={4}>
               <Row justify="start">
                 <Button
                   onClick={() => {
-                    setEditActive(false);
-                    setReviewActive(false);
+                    setDialogActive(false);
+                    setTimeout(() => {
+                      setEditActive(false);
+                      setReviewActive(false);
+                    }, 500);
                   }}
                 >
                   返回
@@ -264,9 +276,9 @@ export default function Interview() {
               <Input type="hidden" />
             </Form.Item>
             <Row justify="center">
-              <Col span={20}>
+              <Col span={22}>
                 <Form.Item
-                  label="标题"
+                  label={editActive ? "标题" : undefined}
                   name="title"
                   wrapperCol={{ span: 24 }}
                   rules={rulesMap.title}
@@ -282,11 +294,14 @@ export default function Interview() {
                         wrapperCol={{ span: 24 }}
                         rules={rulesMap.content}
                       >
-                        <Input.TextArea rows={25}></Input.TextArea>
+                        <Input.TextArea
+                          style={{
+                            height: "calc(100vh - 4.5rem)",
+                          }}
+                        ></Input.TextArea>
                       </Form.Item>
                     );
                   } else if (reviewActive) {
-                    console.log(form);
                     const content = form.getFieldValue("content");
                     return (
                       <div className="review">
@@ -297,18 +312,20 @@ export default function Interview() {
                 })()}
               </Col>
             </Row>
-            <Row justify="end">
-              <Col span={4}>
-                <Row justify="end">
-                  <Form.Item label={null}>
-                    <Button type="primary" htmlType="submit">
-                      提交
-                    </Button>
-                  </Form.Item>
-                </Row>
-              </Col>
-              <Col span={2}></Col>
-            </Row>
+            {editActive && (
+              <Row justify="end">
+                <Col span={4}>
+                  <Row justify="end">
+                    <Form.Item label={null}>
+                      <Button type="primary" htmlType="submit">
+                        提交
+                      </Button>
+                    </Form.Item>
+                  </Row>
+                </Col>
+                <Col span={1}></Col>
+              </Row>
+            )}
           </Form>
         </Space>
       </div>

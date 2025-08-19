@@ -7,7 +7,8 @@
     margin: 0 0 0.2rem 0;
   }
   .table {
-    transition: all 0.3s;
+    padding: 0 1rem;
+    transition: transform 0.3s;
     transform: translateX(-100%);
     &.active {
       transform: translateX(0);
@@ -30,13 +31,24 @@
             height: calc(100% - 2rem);
             overflow: auto;
             position: relative;
+            .ant-table-row {
+              .ant-table-cell {
+                .title {
+                  color: #333;
+                }
+                &:hover {
+                  .title {
+                    color: #000;
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
   }
   .edit_dialog {
-    padding: 0.6rem 0 0 0;
     width: 100%;
     height: calc(100vh - 2rem);
     transform: translateX(100vw);
@@ -50,10 +62,16 @@
 
     .review {
       padding: 0.3rem;
-      height: calc(100vh - 4rem);
+      height: calc(100vh - 3rem);
       background-color: #fff;
       overflow: auto;
       font-size: 0.4rem;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      transition: all 0.3s;
+      &:hover {
+        border: 1px solid #4096ff;
+      }
     }
   }
 }
