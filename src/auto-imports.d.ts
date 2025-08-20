@@ -8,6 +8,7 @@ export {}
 declare global {
   const Button: typeof import('antd')['Button']
   const Col: typeof import('antd')['Col']
+  const ConfigProvider: typeof import('antd')['ConfigProvider']
   const DatePicker: typeof import('antd')['DatePicker']
   const Divider: typeof import('antd')['Divider']
   const Flex: typeof import('antd')['Flex']

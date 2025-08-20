@@ -1,13 +1,13 @@
 import { type RouteConfigEntry, route } from "@react-router/dev/routes";
 
-interface Route {
+export interface RouteType {
   id: string;
   path: string;
   filePath: string;
-  children?: Route[];
+  children?: RouteType[];
 }
 
-const _routeDictionary: Route[] = [
+const _routeDictionary: RouteType[] = [
   {
     id: "BaobaoLayout",
     path: "",
@@ -32,7 +32,7 @@ const _routeDictionary: Route[] = [
   },
 ];
 
-const looper = (children: Route[]): RouteConfigEntry[] => {
+const looper = (children: RouteType[]): RouteConfigEntry[] => {
   return children.map((item) => {
     if (item.children && item.children.length > 0) {
       return route(item.path, item.filePath, looper(item.children));

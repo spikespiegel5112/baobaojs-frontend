@@ -112,9 +112,9 @@ const _utils = {
     return navigator.platform === "Win32";
   },
 
-  $findRoutePathById: (routeId: string) => {
-    const flattenRouteList: RouteConfigEntry[] = [];
-    const looper = (children: RouteConfigEntry[]) => {
+  $flattenList: (children: any[]) => {
+    const flattenList: any[] = [];
+    const looper = (children: any[]) => {
       children.forEach((item) => {
         const _item = JSON.parse(JSON.stringify(item));
         _item.children = undefined;
@@ -122,10 +122,16 @@ const _utils = {
         if (item.children instanceof Array && item.children.length > 0) {
           looper(item.children);
         }
-        flattenRouteList.push(_item);
+        flattenList.push(_item);
       });
     };
-    looper(routeDictionary);
+    looper(children);
+
+    return flattenList;
+  },
+
+  $findRoutePathById: (routeId: string) => {
+    const flattenRouteList: RouteConfigEntry[] = _utils.$flattenList(routeDictionary);
 
     const result: string | undefined = flattenRouteList.find((item) => item.id === routeId)?.path;
 

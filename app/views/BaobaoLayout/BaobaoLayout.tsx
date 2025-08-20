@@ -1,6 +1,7 @@
-import { Outlet, Route } from "react-router";
+import { Outlet, Link } from "react-router";
 import { useNavigate, useLocation } from "react-router";
 import utils from "@//utils/utils.ts";
+import { routeDictionary, type RouteType } from "@/routes";
 
 import { useEffect, useState } from "react";
 import "./index.scss";
@@ -66,41 +67,71 @@ export default function BaobaoLayout() {
   };
 
   return (
-    <Layout className="layout_container">
-      <div className={"entrance night " + (entranceActive ? "active" : "")}>
-        <div className={"title"}>BAOBAOJS</div>
-        <a
-          className={"startbutton " + (startButtonActive ? "active" : "")}
-          onClick={handleEnter}
-        ></a>
-      </div>
-
-      <Sider className={"menu " + (enterActive ? "active" : "")} width="6rem">
-        <div className={"main " + (bgActive ? "active" : "")}>
-          <div className="menubg">
-            <span className="bg1">
-              <div className="rightglow"></div>
-            </span>
-            <div className="mask">
-              <span className="bg1"></span>
-            </div>
-            <div className="title">BAOBAOJS</div>
-          </div>
-          <div className="list">
-            <ul>
-              {menuList.map((item) => (
-                <li key={item.title} onClick={() => handleNavigate(item)}>
-                  <a>{item.title}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
+    <ConfigProvider
+      theme={{
+        components: {
+          Table: {
+            selectionColumnWidth: "0.8rem",
+            /* 这里是你的组件 token */
+          },
+        },
+      }}
+    >
+      <Layout className="layout_container">
+        <div className={"entrance night " + (entranceActive ? "active" : "")}>
+          <div className={"title"}>BAOBAOJS</div>
+          <a
+            className={"startbutton " + (startButtonActive ? "active" : "")}
+            onClick={handleEnter}
+          ></a>
         </div>
-      </Sider>
 
-      <Content className="main">
-        <Outlet />
-      </Content>
-    </Layout>
+        <Sider className={"menu " + (enterActive ? "active" : "")} width="6rem">
+          <div className={"main " + (bgActive ? "active" : "")}>
+            <div className="menubg">
+              <span className="bg1">
+                <div className="rightglow"></div>
+              </span>
+              <div className="mask">
+                <span className="bg1"></span>
+              </div>
+              <div className="title">BAOBAOJS</div>
+            </div>
+            <div className="list">
+              <ul>
+                {(() => {
+                  console.log(routeDictionary);
+
+                  const flattenRouteDictionary = utils.$flattenList(routeDictionary);
+
+                  return menuList.map((item) => {
+                    return (
+                      <li key={item.id}>
+                        <Link
+                          to={
+                            flattenRouteDictionary.find((item2: RouteType) => item.id === item2.id)
+                              ?.path
+                          }
+                          state={{ myInfo: "hello world", userId: 123 }}
+                          className={location.pathname === item.id ? "active" : ""}
+                          key={item.title}
+                          onClick={() => handleNavigate(item)}
+                        >
+                          {item.title}
+                        </Link>
+                      </li>
+                    );
+                  });
+                })()}
+              </ul>
+            </div>
+          </div>
+        </Sider>
+
+        <Content className="main">
+          <Outlet />
+        </Content>
+      </Layout>
+    </ConfigProvider>
   );
 }

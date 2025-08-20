@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 import "./index.scss";
 import type { AxiosError } from "axios";
-import type { FormProps } from "antd";
-import type { TableProps } from "antd";
+import type { FormProps, TableProps } from "antd";
 import { FormOutlined, DeleteOutlined, FileAddOutlined, LeftOutlined } from "@ant-design/icons";
 import {
   getInterviewListRequest,
@@ -61,6 +60,8 @@ export default function Interview() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const [form] = Form.useForm();
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const rowSelection: TableRowSelection<TableDataType> = {
     selectedRowKeys,
@@ -158,7 +159,7 @@ export default function Interview() {
 
   const handleChangePagination = (current: number) => {
     _pagination = {
-      ..._pagination,
+      ...pagination,
       current,
     };
     setPagination(_pagination);
@@ -197,6 +198,9 @@ export default function Interview() {
     setReviewActive(true);
     setDialogActive(true);
     form.setFieldsValue(record);
+    setSearchParams({
+      id: record.id.toString(),
+    });
   };
 
   const handleDelete = (record: RecordType) => {
@@ -245,7 +249,7 @@ export default function Interview() {
           </Button>
         </Flex>
         <Table
-          rowSelection={{ rowSelection }}
+          rowSelection={{ ...rowSelection }}
           dataSource={tableData}
           columns={columns}
           loading={loading}
@@ -277,6 +281,8 @@ export default function Interview() {
               <Row justify="start">
                 <Button
                   onClick={() => {
+                    setSearchParams({
+                    });
                     setDialogActive(false);
                     setTimeout(() => {
                       setEditActive(false);
