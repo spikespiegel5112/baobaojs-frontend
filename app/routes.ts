@@ -3,7 +3,7 @@ import { type RouteConfigEntry, route } from "@react-router/dev/routes";
 export interface RouteType {
   id: string;
   path: string;
-  filePath: string;
+  filePath?: string;
   children?: RouteType[];
 }
 

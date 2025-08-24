@@ -13,7 +13,6 @@ export default defineConfig({
     tailwindcss(),
     reactRouter(),
     tsconfigPaths(),
-
     AutoImport({
       imports: [
         {
@@ -45,8 +44,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "~/": `${pathSrc}/`,
       "@/": `${pathSrc}/`,
+      "~/": `${pathSrc}/`,
     },
   },
   server: {

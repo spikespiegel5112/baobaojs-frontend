@@ -1,6 +1,6 @@
 import { Outlet, Link } from "react-router";
 import { useNavigate, useLocation } from "react-router";
-import utils from "@//utils/utils.ts";
+import utils from "@/utils/utils.ts";
 import { routeDictionary, type RouteType } from "@/routes";
 
 import { useEffect, useState } from "react";
@@ -8,6 +8,8 @@ import "./index.scss";
 
 import { Layout, message } from "antd";
 const { Header, Content, Sider } = Layout;
+
+import { useTitle } from "@/hooks/useTitle";
 
 export default function BaobaoLayout() {
   const navigate = useNavigate();
@@ -33,6 +35,8 @@ export default function BaobaoLayout() {
       id: "Interview",
     },
   ];
+
+  useTitle("BAOBAOJS", "");
 
   useEffect(() => {
     utils.$remResizing({
@@ -63,7 +67,11 @@ export default function BaobaoLayout() {
   };
 
   const handleNavigate = (item: MenuList) => {
-    navigate(utils.$findRoutePathById(item.id));
+    if (item.id === "Erniebot") {
+      window.open('/chat')
+    } else {
+      navigate(utils.$findRoutePathById(item.id));
+    }
   };
 
   return (
