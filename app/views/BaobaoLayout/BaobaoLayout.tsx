@@ -1,6 +1,11 @@
 import { Outlet, Link } from "react-router";
 import { useNavigate, useLocation } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserInfo, clearUserInfo } from "@/store/index";
+import { setIsLoggedIn } from "@/store/index";
+import type { RootState, AppDispatch } from "@/store";
 import utils from "@/utils/utils.ts";
+import type { AxiosError } from "axios";
 import { routeDictionary, type RouteType } from "@/routes";
 
 import { useEffect, useState } from "react";
@@ -11,9 +16,20 @@ const { Header, Content, Sider } = Layout;
 
 import { useTitle } from "@/hooks/useTitle";
 
+import { getUserInfoRequest, logoutRequest } from "@/api/auth";
+
+interface User {
+  id: number;
+  role: string | null;
+  userName: string;
+}
+
 export default function BaobaoLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const dispatch = useDispatch<AppDispatch>();
+  // const userInfo = useSelector((state: RootState) => state.user.userInfo);
 
   const [menuList, setMenuList] = useState([
     {
@@ -51,6 +67,7 @@ export default function BaobaoLayout() {
   useTitle("BAOBAOJS", "");
 
   useEffect(() => {
+    getUserInfo();
     utils.$remResizing({
       baseline: 320,
       fontSize: 30,
@@ -86,6 +103,43 @@ export default function BaobaoLayout() {
       }));
     });
     navigate(utils.$findRoutePathById(item.id));
+  };
+
+  const getUserInfo = () => {
+    getUserInfoRequest({
+      userName: "admin",
+    })
+      .then((response: User) => {
+        dispatch(setUserInfo(response));
+        dispatch(setIsLoggedIn(true));
+      })
+      .catch((error: AxiosError) => {
+        console.log(error);
+      });
+  };
+
+  const handleLogout = () => {
+    Modal.confirm({
+      title: "提示",
+      content: "你确定要删除吗？",
+      okText: "确认",
+      cancelText: "取消",
+      onOk() {
+        logoutRequest({})
+          .then(() => {
+            $message.success("注销成功");
+            dispatch(setUserInfo(null));
+            dispatch(setIsLoggedIn(false));
+            navigate("Login");
+          })
+          .catch((error: AxiosError) => {
+            console.log(error);
+          });
+      },
+      onCancel() {
+        console.log("取消操作");
+      },
+    });
   };
 
   return (
@@ -149,6 +203,9 @@ export default function BaobaoLayout() {
           <div className="footer">
             <Button type="link">
               <Link to="/Login">登录</Link>
+            </Button>
+            <Button type="link" onClick={handleLogout}>
+              注销
             </Button>
           </div>
         </Sider>

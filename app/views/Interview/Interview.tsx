@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router";
 import "./index.scss";
 import type { AxiosError } from "axios";
 import type { FormProps, TableProps } from "antd";
+import type { RootState } from "@/store";
 import { FormOutlined, DeleteOutlined, FileAddOutlined, LeftOutlined } from "@ant-design/icons";
 import {
   getInterviewListRequest,
@@ -10,6 +11,8 @@ import {
   deleteMultipleDataByIdRequest,
 } from "@/api/inteerview";
 import dayjs from "@/utils/dayjs";
+
+import { useSelector } from "react-redux";
 
 const ReactMarkdown = lazy(() => import("react-markdown"));
 
@@ -42,6 +45,8 @@ interface PaginationType {
 }
 
 export default function Interview() {
+  const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
+
   const defaultPagination: PaginationType = {
     current: 1,
     pageSize: 20,
@@ -62,6 +67,8 @@ export default function Interview() {
   const [form] = Form.useForm();
 
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const userInfo = useSelector((state: RootState) => state.userInfo);
 
   const rowSelection: TableRowSelection<TableDataType> = {
     selectedRowKeys,
@@ -110,10 +117,10 @@ export default function Interview() {
       width: "3rem",
       render: (_, record: RecordType) => (
         <Space size="middle">
-          <Button type="text" onClick={() => handleEdit(record)}>
+          <Button type="text" disabled={!isLoggedIn} onClick={() => handleEdit(record)}>
             <FormOutlined />
           </Button>
-          <Button type="text" onClick={() => handleDelete(record)}>
+          <Button type="text" disabled={!isLoggedIn} onClick={() => handleDelete(record)}>
             <DeleteOutlined />
           </Button>
         </Space>
@@ -127,6 +134,8 @@ export default function Interview() {
   };
 
   const getData = () => {
+    console.log("userInfo");
+    console.log(userInfo);
     getInterviewListRequest({
       ..._pagination,
     })
@@ -212,7 +221,7 @@ export default function Interview() {
       cancelText: "取消",
       onOk() {
         $message.success("已删除");
-        // confirmDeltePromise([record.id]);
+        confirmDeltePromise([record.id]);
       },
       onCancel() {
         console.log("取消操作");

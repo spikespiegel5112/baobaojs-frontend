@@ -1,9 +1,12 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "@/store";
+import { setUserInfo, setIsLoggedIn } from "@/store/index";
 import "./index.scss";
 import type { FormProps, TableProps } from "antd";
 import type { AxiosError } from "axios";
-import { loginRequest } from "@/api/auth";
+import { loginRequest, changePasswordRequest } from "@/api/auth";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import utils from "@/utils/utils.ts";
 
@@ -36,6 +39,8 @@ interface PaginationType {
 }
 
 export default function Login() {
+  const dispatch = useDispatch<AppDispatch>();
+
   const navigate = useNavigate();
 
   const defaultPagination: PaginationType = {
@@ -45,6 +50,7 @@ export default function Login() {
   };
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [mode, setMode] = useState("login");
 
   const [form] = Form.useForm();
 
@@ -55,13 +61,33 @@ export default function Login() {
     content: [{ required: true, message: "请输入密码" }],
   };
 
-  const handleSubmitQA: FormProps<InterviewItem>["onFinish"] = () => {
+  const handleSubmitLogin: FormProps<InterviewItem>["onFinish"] = () => {
     form
       .validateFields({ validateOnly: true })
       .then((formData) => {
         loginRequest(formData)
           .then(() => {
             $message.success("登录成功！");
+            dispatch(setIsLoggedIn(true));
+            navigate(utils.$findRoutePathById("ErnieBot"));
+          })
+          .catch((error: AxiosError) => {
+            console.log(error);
+            $message.error(error.message);
+          });
+      })
+      .catch((error: Error) => {
+        console.log(error);
+      });
+  };
+
+  const handleSubmitChangePassword: FormProps<InterviewItem>["onFinish"] = () => {
+    form
+      .validateFields({ validateOnly: true })
+      .then((formData) => {
+        changePasswordRequest(formData)
+          .then(() => {
+            $message.success("密码修改成功！");
             navigate(utils.$findRoutePathById("ErnieBot"));
           })
           .catch((error: AxiosError) => {
@@ -76,34 +102,78 @@ export default function Login() {
 
   return (
     <div className="login_container">
-      <div className="main">
-        <div className="title">Login</div>
-        <Row justify="center">
-          <Col span={20}>
-            <Form form={form} layout="horizontal" onFinish={handleSubmitQA} autoComplete="off">
-              <Form.Item
-                name="userName"
-                rules={[{ required: true, message: "Please input your Username!" }]}
-              >
-                <Input prefix={<UserOutlined />} placeholder="Username" />
-              </Form.Item>
-              <Form.Item
-                name="password"
-                rules={[{ required: true, message: "Please input your Password!" }]}
-              >
-                <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
-              </Form.Item>
+      {mode === "login" && (
+        <div className="main">
+          <div className="title">Login</div>
+          <Row justify="center">
+            <Col span={20}>
+              <Form form={form} layout="horizontal" onFinish={handleSubmitLogin} autoComplete="off">
+                <Form.Item
+                  name="userName"
+                  rules={[{ required: true, message: "Please input your Username!" }]}
+                >
+                  <Input prefix={<UserOutlined />} placeholder="Username" />
+                </Form.Item>
+                <Form.Item
+                  name="password"
+                  rules={[{ required: true, message: "Please input your Password!" }]}
+                >
+                  <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+                </Form.Item>
 
-              <Form.Item>
-                <Button block type="primary" htmlType="submit">
-                  Log in
-                </Button>
-                or <a href="">Register now!</a>
-              </Form.Item>
-            </Form>
-          </Col>
-        </Row>
-      </div>
+                <Form.Item>
+                  <Button block type="primary" htmlType="submit">
+                    Log in
+                  </Button>
+                  or{" "}
+                  <a href="javascript:;" onClick={() => setMode("changePassword")}>
+                    Change Password
+                  </a>
+                </Form.Item>
+              </Form>
+            </Col>
+          </Row>
+        </div>
+      )}
+
+      {mode === "changePassword" && (
+        <div className="main">
+          <div className="title">Change Password</div>
+          <Row justify="center">
+            <Col span={20}>
+              <Form
+                form={form}
+                layout="horizontal"
+                onFinish={handleSubmitChangePassword}
+                autoComplete="off"
+              >
+                <Form.Item
+                  name="userName"
+                  rules={[{ required: true, message: "Please input your Username!" }]}
+                >
+                  <Input prefix={<UserOutlined />} placeholder="Username" />
+                </Form.Item>
+                <Form.Item
+                  name="password"
+                  rules={[{ required: true, message: "Please input your Password!" }]}
+                >
+                  <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+                </Form.Item>
+
+                <Form.Item>
+                  <Button block type="primary" htmlType="submit">
+                    Confirm
+                  </Button>
+                  or{" "}
+                  <a href="javascript:;" onClick={() => setMode("login")}>
+                    Login
+                  </a>
+                </Form.Item>
+              </Form>
+            </Col>
+          </Row>
+        </div>
+      )}
     </div>
   );
 }
