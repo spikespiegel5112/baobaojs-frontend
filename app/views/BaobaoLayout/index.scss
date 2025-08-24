@@ -265,9 +265,14 @@ $red: #f20000;
         }
       }
     }
+    .footer {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+    }
   }
 
-  .main {
+  > .main {
     flex: 1;
     padding: 0.2rem;
   }

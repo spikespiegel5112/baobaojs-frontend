@@ -7,8 +7,11 @@ import {
   ScrollRestoration,
 } from "react-router";
 import "@ant-design/v5-patch-for-react-19";
+import { Provider } from "react-redux";
+import { store } from "./store";
 
 import type { Route } from "./+types/root";
+
 import "./style/common.scss";
 import "./style/app.css";
 import "normalize.css";
@@ -45,7 +48,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <Provider store={store}>
+      <Outlet />
+    </Provider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

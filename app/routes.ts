@@ -10,7 +10,7 @@ export interface RouteType {
 const _routeDictionary: RouteType[] = [
   {
     id: "BaobaoLayout",
-    path: "",
+    path: "/",
     filePath: "./views/BaobaoLayout/BaobaoLayout.tsx",
     children: [
       {
@@ -27,6 +27,11 @@ const _routeDictionary: RouteType[] = [
         id: "ErnieBot",
         path: "ErnieBot",
         filePath: "./views/ErnieBot/ErnieBot.tsx",
+      },
+      {
+        id: "Login",
+        path: "Login",
+        filePath: "./views/Login/Login.tsx",
       },
     ],
   },

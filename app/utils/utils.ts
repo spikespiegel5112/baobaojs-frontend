@@ -112,6 +112,25 @@ const _utils = {
     return navigator.platform === "Win32";
   },
 
+  $getFullRoutePath: (id: any[]) => {
+    let result: string = "";
+    const looper = (children: any[]) => {
+      children.forEach((item) => {
+        if (id === item.id) {
+          result += item.path;
+        }
+
+        if (item.children instanceof Array && item.children.length > 0) {
+          result += item.path;
+          looper(item.children);
+        }
+      });
+    };
+    looper(routeDictionary);
+
+    return result;
+  },
+
   $flattenList: (children: any[]) => {
     const flattenList: any[] = [];
     const looper = (children: any[]) => {
@@ -133,7 +152,9 @@ const _utils = {
   $findRoutePathById: (routeId: string) => {
     const flattenRouteList: RouteConfigEntry[] = _utils.$flattenList(routeDictionary);
 
-    const result: string | undefined = flattenRouteList.find((item) => item.id === routeId)?.path;
+    const result: string | undefined = _utils.$getFullRoutePath(routeId);
+
+    // const result: string | undefined = flattenRouteList.find((item) => item.id === routeId)?.path;
 
     return result;
   },

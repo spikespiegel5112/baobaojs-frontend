@@ -146,6 +146,11 @@ export default function BaobaoLayout() {
               </ul>
             </div>
           </div>
+          <div className="footer">
+            <Button type="link">
+              <Link to="/Login">登录</Link>
+            </Button>
+          </div>
         </Sider>
 
         <Content className="main">

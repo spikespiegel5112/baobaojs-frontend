@@ -10,3 +10,8 @@ export const createOrUpdateQAndARequest = (data: any) =>
 
 export const deleteMultipleDataByIdRequest = (data: any) =>
   service.post("/interview/deleteMultipleDataById", data);
+
+export const loginRequest = (params: any) =>
+  service.get("/auth/login", {
+    params,
+  });
