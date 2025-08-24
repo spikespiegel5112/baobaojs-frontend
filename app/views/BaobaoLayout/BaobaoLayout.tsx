@@ -1,8 +1,7 @@
 import { Outlet, Link } from "react-router";
 import { useNavigate, useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserInfo, clearUserInfo } from "@/store/index";
-import { setIsLoggedIn } from "@/store/index";
+import { setUserInfo, setIsLoggedIn } from "@/store/index";
 import type { RootState, AppDispatch } from "@/store";
 import utils from "@/utils/utils.ts";
 import type { AxiosError } from "axios";
@@ -27,6 +26,7 @@ interface User {
 export default function BaobaoLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
 
   const dispatch = useDispatch<AppDispatch>();
   // const userInfo = useSelector((state: RootState) => state.user.userInfo);
@@ -201,12 +201,16 @@ export default function BaobaoLayout() {
             </div>
           </div>
           <div className="footer">
-            <Button type="link">
-              <Link to="/Login">登录</Link>
-            </Button>
-            <Button type="link" onClick={handleLogout}>
-              注销
-            </Button>
+            {!isLoggedIn && (
+              <Button type="link">
+                <Link to="/Login">登录</Link>
+              </Button>
+            )}
+            {isLoggedIn && (
+              <Button type="link" onClick={handleLogout}>
+                注销
+              </Button>
+            )}
           </div>
         </Sider>
 
