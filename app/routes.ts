@@ -29,6 +29,11 @@ const _routeDictionary: RouteType[] = [
         filePath: "./views/ErnieBot/ErnieBot.tsx",
       },
       {
+        id: "Houchejishi",
+        path: "Houchejishi",
+        filePath: "./views/Houchejishi/Houchejishi.tsx",
+      },
+      {
         id: "Login",
         path: "Login",
         filePath: "./views/Login/Login.tsx",

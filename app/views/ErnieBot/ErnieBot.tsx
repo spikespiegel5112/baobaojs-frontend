@@ -60,7 +60,7 @@ export default function ErnieBot() {
 
   return (
     <div className="erniebot_container">
-      <iframe src="https://baobaojs.com/chat" frameborder="0"></iframe>
+      <iframe src="https://baobaojs.com/chat" frameBorder="0"></iframe>
     </div>
   );
 }
