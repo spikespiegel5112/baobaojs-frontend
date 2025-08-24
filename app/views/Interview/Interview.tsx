@@ -177,6 +177,7 @@ export default function Interview() {
             setTimeout(() => {
               setEditActive(false);
             }, 500);
+            _pagination.current = pagination.current;
             getData();
           })
           .catch((error: AxiosError) => {
@@ -281,8 +282,7 @@ export default function Interview() {
               <Row justify="start">
                 <Button
                   onClick={() => {
-                    setSearchParams({
-                    });
+                    setSearchParams({});
                     setDialogActive(false);
                     setTimeout(() => {
                       setEditActive(false);
