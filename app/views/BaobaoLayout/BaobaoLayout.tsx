@@ -15,6 +15,28 @@ export default function BaobaoLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [menuList, setMenuList] = useState([
+    {
+      title: "文心一言",
+      id: "ErnieBot",
+      active: false,
+    },
+    {
+      title: "八股阅读器",
+      id: "Interview",
+      active: false,
+    },
+    {
+      title: "文件下载器",
+      id: "FileDownloader",
+      active: false,
+    },
+    {
+      title: "厚车吉市",
+      id: "Houchejishi",
+      active: false,
+    },
+  ]);
   const [startButtonActive, setStartButtonActive] = useState(false);
   const [entranceActive, setEntranceActive] = useState(true);
   const [enterActive, setEnterActive] = useState(false);
@@ -23,18 +45,8 @@ export default function BaobaoLayout() {
   interface MenuList {
     title: string;
     id: string;
+    active: boolean;
   }
-
-  const menuList: MenuList[] = [
-    {
-      title: "文心一言",
-      id: "Erniebot",
-    },
-    {
-      title: "八股阅读器",
-      id: "Interview",
-    },
-  ];
 
   useTitle("BAOBAOJS", "");
 
@@ -67,11 +79,13 @@ export default function BaobaoLayout() {
   };
 
   const handleNavigate = (item: MenuList) => {
-    if (item.id === "Erniebot") {
-      window.open('/chat')
-    } else {
-      navigate(utils.$findRoutePathById(item.id));
-    }
+    setMenuList((prev: MenuList[]) => {
+      return prev.map((item2) => ({
+        ...item2,
+        active: item.id === item2.id,
+      }));
+    });
+    navigate(utils.$findRoutePathById(item.id));
   };
 
   return (
@@ -108,13 +122,11 @@ export default function BaobaoLayout() {
             <div className="list">
               <ul>
                 {(() => {
-                  console.log(routeDictionary);
-
                   const flattenRouteDictionary = utils.$flattenList(routeDictionary);
 
                   return menuList.map((item) => {
                     return (
-                      <li key={item.id}>
+                      <li key={item.id} className={item.active ? "active" : '"'}>
                         <Link
                           to={
                             flattenRouteDictionary.find((item2: RouteType) => item.id === item2.id)

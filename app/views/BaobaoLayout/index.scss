@@ -72,7 +72,7 @@ $red: #f20000;
     &.active {
       display: block;
     }
-     .main {
+    .main {
       opacity: 0;
       width: 6rem;
       height: 100vh;
@@ -117,20 +117,10 @@ $red: #f20000;
           inset: 0;
 
           background:
-            linear-gradient(
-                to bottom,
-                transparent 0%,
-                #fff 50%,
-                transparent 100%
-              )
-              100% / 100% 50% no-repeat,
-            linear-gradient(
-                to bottom,
-                transparent 0%,
-                #fff 50%,
-                transparent 100%
-              )
-              100% / 100% 50% no-repeat;
+            linear-gradient(to bottom, transparent 0%, #fff 50%, transparent 100%) 100% / 100% 50%
+              no-repeat,
+            linear-gradient(to bottom, transparent 0%, #fff 50%, transparent 100%) 100% / 100% 50%
+              no-repeat;
 
           background-size:
             100% 20%,
@@ -247,6 +237,23 @@ $red: #f20000;
             font-size: 0.4rem;
             text-align: center;
             color: #fff;
+            transition: all 0.3s;
+            &:nth-child(even) {
+              border-radius: 0.2rem 0 0.2rem 0;
+            }
+            &:nth-child(odd) {
+              border-radius: 0 0.2rem 0 0.2rem;
+            }
+            &.active {
+              background-color: #fff;
+              left: 0.4rem;
+              width: 4.3rem;
+              height: 1.2rem;
+              line-height: 1.2rem;
+              a {
+                color: red;
+              }
+            }
             a {
               display: block;
               width: 100%;
