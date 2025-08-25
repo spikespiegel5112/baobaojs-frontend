@@ -88,6 +88,7 @@ export default function Login() {
         changePasswordRequest(formData)
           .then(() => {
             $message.success("密码修改成功！");
+            dispatch(setIsLoggedIn(true));
             navigate(utils.$findRoutePathById("ErnieBot"));
           })
           .catch((error: AxiosError) => {
@@ -155,9 +156,15 @@ export default function Login() {
                 </Form.Item>
                 <Form.Item
                   name="password"
-                  rules={[{ required: true, message: "Please input your Password!" }]}
+                  rules={[{ required: true, message: "Please input old Password!" }]}
                 >
-                  <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+                  <Input prefix={<LockOutlined />} type="password" placeholder="Old password" />
+                </Form.Item>
+                <Form.Item
+                  name="newPassword"
+                  rules={[{ required: true, message: "Please input new Password!" }]}
+                >
+                  <Input prefix={<LockOutlined />} type="password" placeholder="New password" />
                 </Form.Item>
 
                 <Form.Item>

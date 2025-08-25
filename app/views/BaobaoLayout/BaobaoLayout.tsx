@@ -121,7 +121,7 @@ export default function BaobaoLayout() {
   const handleLogout = () => {
     Modal.confirm({
       title: "提示",
-      content: "你确定要删除吗？",
+      content: "你确定要注销吗？",
       okText: "确认",
       cancelText: "取消",
       onOk() {
