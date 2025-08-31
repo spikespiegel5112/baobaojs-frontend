@@ -18,9 +18,9 @@ $red: #f20000;
     position: absolute;
     top: 0;
     left: 0;
-    background-image: url("@/assets/image/City Night.png");
     background-size: cover;
     background-position: 0% 100%;
+
     &.active {
       opacity: 1;
     }

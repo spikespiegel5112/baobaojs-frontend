@@ -11,6 +11,7 @@ export default function Homepage() {
     setTimeout(() => {
       setStartButtonActive(true);
     }, 300);
+    getTimePeriod();
   }, []);
 
   const handleEnter = () => {
@@ -24,7 +25,7 @@ export default function Homepage() {
 
   return (
     <div className={"homepage_container"}>
-      <div className={"entrance night " + (entranceActive ? "active" : "")}>
+      <div className={`entrance ${entranceActive ? "active" : ""}`}>
         <div className={"title"}>BAOBAOJS</div>
         <a
           className={"startbutton " + (startButtonActive ? "active" : "")}

@@ -12,6 +12,7 @@ import "./index.scss";
 
 import { Layout, message } from "antd";
 const { Header, Content, Sider } = Layout;
+import dayjs from "dayjs";
 
 import { useTitle } from "@/hooks/useTitle";
 
@@ -57,6 +58,7 @@ export default function BaobaoLayout() {
   const [entranceActive, setEntranceActive] = useState(true);
   const [enterActive, setEnterActive] = useState(false);
   const [bgActive, setBgActive] = useState(false);
+  const [timePeriod, setTimePeriod] = useState("");
 
   interface MenuList {
     title: string;
@@ -87,11 +89,8 @@ export default function BaobaoLayout() {
     });
     (window as any).$message = message;
 
-    console.log(location);
-    console.log(navigate);
-    console.log(utils.$completeEachRoutePath(routeDictionary));
-    console.log(utils.$findRouteInfoByPath(location.pathname));
-    highLightMenu()
+    highLightMenu();
+    getTimePeriod();
   }, []);
 
   const handleEnter = () => {
@@ -99,6 +98,15 @@ export default function BaobaoLayout() {
     setEnterActive(true);
     setStartButtonActive(false);
     setBgActive(true);
+  };
+
+  const getTimePeriod = () => {
+    const hour = dayjs().hour();
+    if (hour >= 6 && hour <= 19) {
+      setTimePeriod("day");
+    } else {
+      setTimePeriod("night");
+    }
   };
 
   const handleNavigate = (item: MenuList) => {
@@ -158,6 +166,18 @@ export default function BaobaoLayout() {
     });
   };
 
+  const handleBackToRoot = () => {
+    navigate("/");
+    setMenuList(
+      menuList.map((item) => {
+        return {
+          ...item,
+          active: false,
+        };
+      }),
+    );
+  };
+
   return (
     <ConfigProvider
       theme={{
@@ -170,8 +190,8 @@ export default function BaobaoLayout() {
       }}
     >
       <Layout className="layout_container">
-        <div className={"entrance night " + (entranceActive ? "active" : "")}>
-          <div className={"title"}>BAOBAOJS</div>
+        <div className={`entrance ${timePeriod} ${entranceActive ? "active" : ""}`}>
+          <div className="title">BAOBAOJS</div>
           <a
             className={"startbutton " + (startButtonActive ? "active" : "")}
             onClick={handleEnter}
@@ -187,7 +207,9 @@ export default function BaobaoLayout() {
               <div className="mask">
                 <span className="bg1"></span>
               </div>
-              <div className="title">BAOBAOJS</div>
+              <div className="title">
+                <a onClick={handleBackToRoot}>BAOBAOJS</a>
+              </div>
             </div>
             <div className="list">
               <ul>
