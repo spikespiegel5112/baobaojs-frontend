@@ -112,9 +112,30 @@ const _utils = {
     return navigator.platform === "Win32";
   },
 
-  $getFullRoutePath: (id: any[]) => {
+  $flattenList: (children: RouteConfigEntry[]) => {
+    const flattenList: RouteConfigEntry[] = [];
+    const looper = (children: RouteConfigEntry[]) => {
+      children.forEach((item) => {
+        const _item = JSON.parse(JSON.stringify(item));
+        _item.children = undefined;
+
+        if (item.children instanceof Array && item.children.length > 0) {
+          looper(item.children);
+        }
+        flattenList.push(_item);
+      });
+    };
+    looper(children);
+
+    return flattenList;
+  },
+  $findRoutePathById: (routeId: string) => {
+    const result: string | undefined = _utils.$getFullRoutePathByRouteId(routeId);
+    return result;
+  },
+  $getFullRoutePathByRouteId: (id: string) => {
     let result: string = "";
-    const looper = (children: any[]) => {
+    const looper = (children: RouteConfigEntry[]) => {
       children.forEach((item) => {
         if (id === item.id) {
           result += item.path;
@@ -130,32 +151,37 @@ const _utils = {
 
     return result;
   },
+  $completeEachRoutePath: (children: RouteConfigEntry[]) => {
+    const result = JSON.parse(JSON.stringify(children));
+    const looper = (children: RouteConfigEntry[], parentPath: string | undefined) => {
+      children.forEach((item: RouteConfigEntry) => {
+        if (parentPath) {
+          const parentSlash = parentPath.endsWith("/") ? "" : "/";
+          item.path = parentPath + parentSlash + item.path;
+        }
+        if (item.children instanceof Array && item.children.length > 0) {
+          looper(item.children, item.path);
+        }
+      });
+    };
+    looper(result, undefined);
+    return result;
+  },
 
-  $flattenList: (children: any[]) => {
-    const flattenList: any[] = [];
-    const looper = (children: any[]) => {
-      children.forEach((item) => {
-        const _item = JSON.parse(JSON.stringify(item));
-        _item.children = undefined;
-
+  $findRouteInfoByPath: (path: string) => {
+    const completeRouteDictionary = _utils.$completeEachRoutePath(routeDictionary);
+    let result: RouteConfigEntry | undefined;
+    const looper = (children: RouteConfigEntry[]) => {
+      children.forEach((item: RouteConfigEntry) => {
+        if (item.path === path) {
+          result = item;
+        }
         if (item.children instanceof Array && item.children.length > 0) {
           looper(item.children);
         }
-        flattenList.push(_item);
       });
     };
-    looper(children);
-
-    return flattenList;
-  },
-
-  $findRoutePathById: (routeId: string) => {
-    const flattenRouteList: RouteConfigEntry[] = _utils.$flattenList(routeDictionary);
-
-    const result: string | undefined = _utils.$getFullRoutePath(routeId);
-
-    // const result: string | undefined = flattenRouteList.find((item) => item.id === routeId)?.path;
-
+    looper(completeRouteDictionary);
     return result;
   },
 } as any;

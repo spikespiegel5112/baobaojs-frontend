@@ -3,7 +3,7 @@ import { type RouteConfigEntry, route } from "@react-router/dev/routes";
 export interface RouteType {
   id: string;
   path: string;
-  filePath?: string;
+  filePath: string;
   children?: RouteType[];
 }
 
@@ -22,6 +22,13 @@ const _routeDictionary: RouteType[] = [
         id: "Interview",
         path: "Interview",
         filePath: "./views/Interview/Interview.tsx",
+        children: [
+          {
+            id: "Interview",
+            path: "Interview",
+            filePath: "./views/Interview/Interview.tsx",
+          },
+        ],
       },
       {
         id: "ErnieBot",

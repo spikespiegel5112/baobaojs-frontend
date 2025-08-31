@@ -238,6 +238,7 @@ $red: #f20000;
             text-align: center;
             color: #fff;
             transition: all 0.3s;
+        
             &:nth-child(even) {
               border-radius: 0.2rem 0 0.2rem 0;
             }
@@ -246,7 +247,7 @@ $red: #f20000;
             }
             &.active {
               background-color: #fff;
-              left: 0.4rem;
+              left: 0.1rem;
               width: 4.3rem;
               height: 1.2rem;
               line-height: 1.2rem;

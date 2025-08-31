@@ -86,6 +86,12 @@ export default function BaobaoLayout() {
       maxCount: 3,
     });
     (window as any).$message = message;
+
+    console.log(location);
+    console.log(navigate);
+    console.log(utils.$completeEachRoutePath(routeDictionary));
+    console.log(utils.$findRouteInfoByPath(location.pathname));
+    highLightMenu()
   }, []);
 
   const handleEnter = () => {
@@ -139,6 +145,16 @@ export default function BaobaoLayout() {
       onCancel() {
         console.log("取消操作");
       },
+    });
+  };
+
+  const highLightMenu = () => {
+    const currentRoute = utils.$findRouteInfoByPath(location.pathname);
+    setMenuList((prev: MenuList[]) => {
+      return prev.map((item2) => ({
+        ...item2,
+        active: currentRoute.id === item2.id,
+      }));
     });
   };
 
