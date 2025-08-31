@@ -22,13 +22,6 @@ const _routeDictionary: RouteType[] = [
         id: "Interview",
         path: "Interview",
         filePath: "./views/Interview/Interview.tsx",
-        children: [
-          {
-            id: "Interview",
-            path: "Interview",
-            filePath: "./views/Interview/Interview.tsx",
-          },
-        ],
       },
       {
         id: "ErnieBot",
