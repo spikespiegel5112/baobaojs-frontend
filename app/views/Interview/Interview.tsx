@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams, useLocation } from "react-router";
 import "./index.scss";
 import type { AxiosError } from "axios";
 import type { FormProps, TableProps } from "antd";
@@ -46,6 +46,8 @@ interface PaginationType {
 
 export default function Interview() {
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
 
   const defaultPagination: PaginationType = {
     current: 1,
@@ -78,7 +80,20 @@ export default function Interview() {
   };
 
   useEffect(() => {
-    getData();
+    getDataPromise()
+      .then((response: TableDataType) => {
+        const id = query.get("id");
+        if (id) {
+          const foundItem = response.data.find((item) => item.id === Number(id));
+          if (foundItem) {
+            handleReview(foundItem);
+          }
+        }
+        debugger;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   useEffect(() => {
@@ -133,32 +148,36 @@ export default function Interview() {
     content: [{ required: true, message: "请输入密码" }],
   };
 
-  const getData = () => {
+  const getDataPromise = () => {
     console.log("userInfo");
     console.log(userInfo);
-    getInterviewListRequest({
-      ..._pagination,
-    })
-      .then((response: TableDataType) => {
-        setLoading(false);
-        _pagination = {
-          ..._pagination,
-          total: response.total,
-        };
-        setPagination(_pagination);
-        setTableData(
-          response.data.map((item) => {
-            return {
-              ...item,
-              key: item.id,
-              createdAt: dayjs(item.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-            };
-          }),
-        );
+    return new Promise<TableDataType>((resolve, reject) => {
+      getInterviewListRequest({
+        ..._pagination,
       })
-      .catch((error: AxiosError) => {
-        console.log(error);
-      });
+        .then((response: TableDataType) => {
+          setLoading(false);
+          _pagination = {
+            ..._pagination,
+            total: response.total,
+          };
+          setPagination(_pagination);
+          setTableData(
+            response.data.map((item) => {
+              return {
+                ...item,
+                key: item.id,
+                createdAt: dayjs(item.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+              };
+            }),
+          );
+          resolve(response);
+        })
+        .catch((error: AxiosError) => {
+          console.log(error);
+          reject(error);
+        });
+    });
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -172,7 +191,7 @@ export default function Interview() {
       current,
     };
     setPagination(_pagination);
-    getData();
+    getDataPromise();
   };
 
   const handleSubmitQA: FormProps<InterviewItem>["onFinish"] = () => {
@@ -187,10 +206,11 @@ export default function Interview() {
               setEditActive(false);
             }, 500);
             _pagination.current = pagination.current;
-            getData();
+            getDataPromise();
           })
           .catch((error: AxiosError) => {
             console.log(error);
+            $message.error(error.message);
           });
       })
       .catch((error: Error) => {
@@ -209,7 +229,7 @@ export default function Interview() {
     setDialogActive(true);
     form.setFieldsValue(record);
     setSearchParams({
-      id: record.id.toString(),
+      id: String(record.id),
     });
   };
 
@@ -235,7 +255,7 @@ export default function Interview() {
         ids: idList,
       })
         .then((response: RecordType) => {
-          getData();
+          getDataPromise();
           resolve(response);
         })
         .catch((error: AxiosError) => {
