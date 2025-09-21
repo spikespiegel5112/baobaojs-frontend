@@ -83,6 +83,9 @@ export default function BaobaoLayout() {
 
     if (location.pathname !== "/") {
       handleEnter();
+      if (checkIsMobile()) {
+        setExpandButtonFlag(false);
+      }
     }
     message.config({
       top: 80,
@@ -93,13 +96,12 @@ export default function BaobaoLayout() {
 
     highLightMenu();
     getTimePeriod();
-    if (utils.$isMobile()) {
-      setExpandButtonFlag(true);
-    }
-    setTimeout(() => {
-      handleEnter();
-    }, 100);
   }, []);
+
+  const checkIsMobile = () => {
+    const innerWidth = window.innerWidth;
+    return innerWidth <= 768;
+  };
 
   const handleEnter = () => {
     setEntranceActive(false);
@@ -119,6 +121,10 @@ export default function BaobaoLayout() {
   };
 
   const handleNavigate = (item: MenuList) => {
+    if (checkIsMobile()) {
+      handleToggleExpand();
+    }
+
     setMenuList((prev: MenuList[]) => {
       return prev.map((item2) => ({
         ...item2,
@@ -225,7 +231,7 @@ export default function BaobaoLayout() {
                   <a onClick={handleBackToRoot}>BAOBAOJS</a>
                 </h1>
 
-                {utils.$isMobile() && (
+                {checkIsMobile() && (
                   <div className="exxpand">
                     {expandButtonFlag && (
                       <Button
