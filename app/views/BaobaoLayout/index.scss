@@ -68,42 +68,44 @@ $red: #f20000;
   }
 
   .menu {
-    display: none;
     width: 6rem;
     height: 100%;
     position: relative;
+    z-index: -1;
+    transform: translateX(-100%);
+    background-color: transparent;
     &.active {
       display: block;
+      z-index: 0;
+      transform: translateX(0);
     }
     .main {
-      opacity: 0;
       width: 6rem;
       height: 100vh;
-      left: -10rem;
       position: absolute;
-      transition:
-        left 0.3s ease,
-        opacity 0.3s,
-        background-position 3s;
-      &.active {
-        left: 0;
-        opacity: 1;
-        .menubg {
-          .mask {
-            .bg1,
-            .bg2 {
-              background-position: 0 0;
-            }
-          }
-        }
-      }
+      // transition:
+      //   left 0.3s ease,
+      //   opacity 0.3s;
+
       .menubg {
         width: 100%;
         height: 100%;
         position: absolute;
         top: 0;
-        left: 0;
-        span {
+        left: -10rem;
+        transition:
+          left 0.5s ease,
+          opacity 0.3s;
+        &.active {
+          left: 0;
+          opacity: 1;
+          .mask {
+            .bg1 {
+              background-position: 0 0;
+            }
+          }
+        }
+        .bg1 {
           display: block;
           background-color: red;
           position: absolute;
@@ -114,6 +116,9 @@ $red: #f20000;
           position: absolute;
           left: 0;
           top: 0;
+          span {
+            // background-color: red;
+          }
         }
         .rightglow {
           position: absolute;
@@ -192,16 +197,7 @@ $red: #f20000;
           top: 0;
           filter: drop-shadow(0 0 15px rgb(255, 255, 255));
         }
-        .bg2,
-        .mask .bg2 {
-          width: 2rem;
-          height: 11rem;
-          clip-path: polygon(40% 0%, 90% 0%, 70% 45%, 0% 100%);
-          left: 9.8rem;
-          top: 0;
-        }
-        .mask .bg1,
-        .mask .bg2 {
+        .mask .bg1 {
           transition: background-position 0.3s ease;
           background-image: url("@/assets/image/City Overview 1080p.jpg");
           background-position: 10rem 0;
@@ -210,14 +206,40 @@ $red: #f20000;
         }
 
         .title {
-          font-size: 0.5rem;
+          display: flex;
+          padding: 0 0 0 1rem;
           font-family: "Eurostile Extended Regular";
           position: absolute;
           top: 0.5rem;
-          left: 1rem;
+          left: 0;
           z-index: 1;
-          a {
-            color: #fff;
+          width: 100%;
+          h1 {
+            display: inline-block;
+            margin: 0;
+            flex: 1;
+            align-content: center;
+            font-size: 0.5rem;
+
+            a {
+              color: #fff;
+            }
+          }
+
+          .exxpand {
+            display: inline-block;
+            width: 1.5rem;
+            .ant-btn {
+              padding: 0;
+              color: #fff;
+              font-size: 0.7rem;
+              &.right {
+                transform: rotateZ(90deg);
+              }
+              &.left {
+                transform: rotateZ(270deg);
+              }
+            }
           }
         }
         .blend {
@@ -230,6 +252,17 @@ $red: #f20000;
       }
       .list {
         margin: 2rem 0 0 0;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: -10rem;
+        transition:
+          left 0.5s ease,
+          opacity 0.3s;
+        &.active {
+          left: 0;
+          opacity: 1;
+        }
         ul {
           li {
             display: block;
@@ -242,7 +275,7 @@ $red: #f20000;
             font-size: 0.4rem;
             text-align: center;
             color: #fff;
-            transition: all 0.3s;
+            // transition: all 0.3s;
 
             &:nth-child(even) {
               border-radius: 0.2rem 0 0.2rem 0;

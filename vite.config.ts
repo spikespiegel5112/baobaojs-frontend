@@ -10,7 +10,6 @@ const pathSrc = path.resolve(__dirname, "app");
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv("", process.cwd(), ""); // 第三个参数设为 '' 才能取到所有变量
-
   return {
     plugins: [
       tailwindcss(),

@@ -24,9 +24,8 @@ body {
   // min-height: 100vh;
   font-size: 0;
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
-    "WenQuanYi Micro Hei", sans-serif;
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
@@ -95,10 +94,22 @@ input:focus {
   background:
     radial-gradient(circle at 100% 0, #efe8eb 0, rgba(239, 232, 235, 0) 33%),
     radial-gradient(circle at 100% 25%, #e8ebea 0, hsla(160, 7%, 92%, 0) 39%),
-    radial-gradient(
-      circle at 100% 36%,
-      hsla(160, 7%, 92%, 0.6) 0,
-      hsla(160, 7%, 92%, 0) 38%
-    ),
+    radial-gradient(circle at 100% 36%, hsla(160, 7%, 92%, 0.6) 0, hsla(160, 7%, 92%, 0) 38%),
     linear-gradient(180deg, #efeaef, #dcdcf5 99%);
+}
+
+/* 媒体查询：当屏幕宽度 <= 768px 时生效 */
+@media screen and (max-width: 768px) {
+  .layout_container {
+    background: lightcoral;
+    .ant-layout-sider {
+      max-width: 100% !important;
+      min-width: 100% !important;
+      width: 100% !important;
+      flex: auto !important;
+      .main {
+        width: 100% !important;
+      }
+    }
+  }
 }

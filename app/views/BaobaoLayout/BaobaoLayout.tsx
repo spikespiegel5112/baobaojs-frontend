@@ -17,6 +17,7 @@ import dayjs from "dayjs";
 import { useTitle } from "@/hooks/useTitle";
 
 import { getUserInfoRequest, logoutRequest } from "@/api/auth";
+import { VerticalAlignTopOutlined } from "@ant-design/icons";
 
 interface User {
   id: number;
@@ -59,6 +60,7 @@ export default function BaobaoLayout() {
   const [enterActive, setEnterActive] = useState(false);
   const [bgActive, setBgActive] = useState(false);
   const [timePeriod, setTimePeriod] = useState("");
+  const [expandButtonFlag, setExpandButtonFlag] = useState(false);
 
   interface MenuList {
     title: string;
@@ -91,6 +93,12 @@ export default function BaobaoLayout() {
 
     highLightMenu();
     getTimePeriod();
+    if (utils.$isMobile()) {
+      setExpandButtonFlag(true);
+    }
+    setTimeout(() => {
+      handleEnter();
+    }, 100);
   }, []);
 
   const handleEnter = () => {
@@ -98,6 +106,7 @@ export default function BaobaoLayout() {
     setEnterActive(true);
     setStartButtonActive(false);
     setBgActive(true);
+    setExpandButtonFlag(true);
   };
 
   const getTimePeriod = () => {
@@ -178,6 +187,10 @@ export default function BaobaoLayout() {
     );
   };
 
+  const handleToggleExpand = () => {
+    setExpandButtonFlag(!expandButtonFlag);
+  };
+
   return (
     <ConfigProvider
       theme={{
@@ -198,9 +211,9 @@ export default function BaobaoLayout() {
           ></a>
         </div>
 
-        <Sider className={"menu " + (enterActive ? "active" : "")} width="6rem">
-          <div className={"main " + (bgActive ? "active" : "")}>
-            <div className="menubg">
+        <Sider className={"menu " + (enterActive && expandButtonFlag ? "active" : "")} width="6rem">
+          <div className={"main "}>
+            <div className={"menubg " + (bgActive ? "active" : "")}>
               <span className="bg1">
                 <div className="rightglow"></div>
               </span>
@@ -208,10 +221,36 @@ export default function BaobaoLayout() {
                 <span className="bg1"></span>
               </div>
               <div className="title">
-                <a onClick={handleBackToRoot}>BAOBAOJS</a>
+                <h1>
+                  <a onClick={handleBackToRoot}>BAOBAOJS</a>
+                </h1>
+
+                {utils.$isMobile() && (
+                  <div className="exxpand">
+                    {expandButtonFlag && (
+                      <Button
+                        className="left"
+                        type="text"
+                        shape="round"
+                        icon={<VerticalAlignTopOutlined />}
+                        onClick={handleToggleExpand}
+                      ></Button>
+                    )}
+                    1
+                    {!expandButtonFlag && (
+                      <Button
+                        className="right"
+                        type="text"
+                        shape="round"
+                        icon={<VerticalAlignTopOutlined />}
+                        onClick={handleToggleExpand}
+                      ></Button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
-            <div className="list">
+            <div className={"list " + (bgActive ? "active" : "")}>
               <ul>
                 {(() => {
                   const flattenRouteDictionary = utils.$flattenList(routeDictionary);

@@ -89,7 +89,6 @@ export default function Interview() {
             handleReview(foundItem);
           }
         }
-        debugger;
       })
       .catch((error) => {
         console.log(error);
