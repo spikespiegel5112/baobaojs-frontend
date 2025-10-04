@@ -113,7 +113,7 @@ export default function BaobaoLayout() {
 
   const getTimePeriod = () => {
     const hour = dayjs().hour();
-    if (hour >= 6 && hour <= 19) {
+    if (hour >= 6 && hour <= 18) {
       setTimePeriod("day");
     } else {
       setTimePeriod("night");
@@ -209,17 +209,17 @@ export default function BaobaoLayout() {
       }}
     >
       <Layout className="layout_container">
-        <div className={`entrance ${timePeriod} ${entranceActive ? "active" : ""}`}>
+        <div className={`entrance ${timePeriod} ${entranceActive ? " active" : ""}`}>
           <div className="title">BAOBAOJS</div>
           <a
-            className={"startbutton " + (startButtonActive ? "active" : "")}
+            className={"startbutton" + (startButtonActive ? " active" : "")}
             onClick={handleEnter}
           ></a>
         </div>
 
-        <Sider className={"menu " + (enterActive && expandButtonFlag ? "active" : "")} width="6rem">
+        <Sider className={"menu" + (enterActive && expandButtonFlag ? " active" : "")} width="6rem">
           <div className={"main "}>
-            <div className={"menubg " + (bgActive ? "active" : "")}>
+            <div className={"menubg" + (bgActive ? " active" : "")}>
               <span className="bg1">
                 <div className="rightglow"></div>
               </span>
@@ -297,7 +297,7 @@ export default function BaobaoLayout() {
           </div>
         </Sider>
 
-        <Content className="main">
+        <Content className={"main" + (expandButtonFlag ? "expand" : " shrink")}>
           <Outlet />
         </Content>
       </Layout>

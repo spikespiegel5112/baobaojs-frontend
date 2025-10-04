@@ -11,7 +11,6 @@ export default function Homepage() {
     setTimeout(() => {
       setStartButtonActive(true);
     }, 300);
-    getTimePeriod();
   }, []);
 
   const handleEnter = () => {

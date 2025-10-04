@@ -304,83 +304,76 @@ export default function Interview() {
             display: "flex",
           }}
         >
-          <Row justify="start">
-            <Col span={1}></Col>
-            <Col span={4}>
-              <Row justify="start">
-                <Button
-                  onClick={() => {
-                    setSearchParams({});
-                    setDialogActive(false);
-                    setTimeout(() => {
-                      setEditActive(false);
-                      setReviewActive(false);
-                    }, 500);
-                  }}
-                >
-                  <LeftOutlined />
-                </Button>
-              </Row>
-            </Col>
-          </Row>
+          <div className="navigator">
+            <Button
+              onClick={() => {
+                setSearchParams({});
+                setDialogActive(false);
+                setTimeout(() => {
+                  setEditActive(false);
+                  setReviewActive(false);
+                }, 500);
+              }}
+            >
+              <LeftOutlined />
+            </Button>
+          </div>
           <Form form={form} layout="vertical" onFinish={handleSubmitQA} autoComplete="off">
             <Form.Item name="id" style={{ display: "none" }}>
               <Input type="hidden" />
             </Form.Item>
-            <Row justify="center">
-              <Col span={22}>
-                {(() => {
-                  if (editActive) {
-                    return (
-                      <>
-                        <Form.Item
-                          label={editActive ? "标题" : undefined}
-                          name="title"
-                          wrapperCol={{ span: 24 }}
-                          rules={rulesMap.title}
-                        >
-                          <Input></Input>
-                        </Form.Item>
-                        <Form.Item
-                          label="内容"
-                          name="content"
-                          wrapperCol={{ span: 24 }}
-                          rules={rulesMap.content}
-                        >
-                          <Input.TextArea
-                            style={{
-                              height: "calc(100vh - 4.5rem)",
-                            }}
-                          ></Input.TextArea>
-                        </Form.Item>
-                      </>
-                    );
-                  } else if (reviewActive) {
-                    const title = form.getFieldValue("title");
-                    const createdAt = form.getFieldValue("createdAt");
-                    const content = form.getFieldValue("content");
-                    return (
-                      <div className="review">
-                        <div className="title">
-                          <div className="main">{title}</div>
-                          <span>{createdAt}</span>
-                        </div>
-                        <Divider
+            <div className="content">
+              {(() => {
+                if (editActive) {
+                  return (
+                    <div className="edit">
+                      <Form.Item
+                        label={editActive ? "标题" : undefined}
+                        name="title"
+                        wrapperCol={{ span: 24 }}
+                        rules={rulesMap.title}
+                      >
+                        <Input></Input>
+                      </Form.Item>
+                      <Form.Item
+                        label="内容"
+                        name="content"
+                        wrapperCol={{ span: 24 }}
+                        rules={rulesMap.content}
+                      >
+                        <Input.TextArea
                           style={{
-                            margin: 0,
+                            height: "calc(100vh - 4.5rem)",
                           }}
-                        />
-                        <div className="content">
-                          <Suspense fallback={<div>Loading...</div>}>
-                            <ReactMarkdown>{content}</ReactMarkdown>;
-                          </Suspense>
-                        </div>
+                        ></Input.TextArea>
+                      </Form.Item>
+                    </div>
+                  );
+                } else if (reviewActive) {
+                  const title = form.getFieldValue("title");
+                  const createdAt = form.getFieldValue("createdAt");
+                  const content = form.getFieldValue("content");
+                  return (
+                    <div className="review">
+                      <div className="title">
+                        <div className="main">{title}</div>
+                        <span>{createdAt}</span>
                       </div>
-                    );
-                  }
-                })()}
-              </Col>
-            </Row>
+                      <Divider
+                        style={{
+                          margin: 0,
+                        }}
+                      />
+                      <div className="content">
+                        <Suspense fallback={<div>Loading...</div>}>
+                          <ReactMarkdown>{content}</ReactMarkdown>;
+                        </Suspense>
+                      </div>
+                    </div>
+                  );
+                }
+              })()}
+            </div>
             {editActive && (
               <Row justify="end">
                 <Col span={4}>

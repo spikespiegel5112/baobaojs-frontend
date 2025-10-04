@@ -101,14 +101,24 @@ input:focus {
 /* 媒体查询：当屏幕宽度 <= 768px 时生效 */
 @media screen and (max-width: 768px) {
   .layout_container {
+    display: block !important;
     background: lightcoral;
     .ant-layout-sider {
+      position: absolute !important;
       max-width: 100% !important;
       min-width: 100% !important;
-      width: 100% !important;
-      flex: auto !important;
       .main {
         width: 100% !important;
+      }
+    }
+    .ant-layout-content {
+      width: 100% !important;
+    }
+  }
+  .interview_container {
+    .table {
+      &.active {
+        padding: 0;
       }
     }
   }
