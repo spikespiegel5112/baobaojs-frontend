@@ -1,13 +1,14 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useSearchParams, useLocation } from "react-router";
 import "./index.scss";
+import EditDialog from "./EditDialog";
 import type { AxiosError } from "axios";
 import type { FormProps, TableProps } from "antd";
 import type { RootState } from "@/store";
 import { FormOutlined, DeleteOutlined, FileAddOutlined, LeftOutlined } from "@ant-design/icons";
 import {
   getInterviewListRequest,
-  createOrUpdateQAndARequest,
+  createOrUpdateQARequest,
   deleteMultipleDataByIdRequest,
 } from "@/api/inteerview";
 import dayjs from "@/utils/dayjs";
@@ -142,11 +143,6 @@ export default function Interview() {
     },
   ];
 
-  const rulesMap = {
-    title: [{ required: true, message: "请输入邮箱" }],
-    content: [{ required: true, message: "请输入密码" }],
-  };
-
   const getDataPromise = () => {
     console.log("userInfo");
     console.log(userInfo);
@@ -193,30 +189,6 @@ export default function Interview() {
     getDataPromise();
   };
 
-  const handleSubmitQA: FormProps<InterviewItem>["onFinish"] = () => {
-    form
-      .validateFields({ validateOnly: true })
-      .then((formData) => {
-        createOrUpdateQAndARequest(formData)
-          .then(() => {
-            $message.success("保存成功！");
-            setDialogActive(false);
-            setTimeout(() => {
-              setEditActive(false);
-            }, 500);
-            _pagination.current = pagination.current;
-            getDataPromise();
-          })
-          .catch((error: AxiosError) => {
-            console.log(error);
-            $message.error(error.message);
-          });
-      })
-      .catch((error: Error) => {
-        console.log(error);
-      });
-  };
-
   const handleEdit = (record: RecordType) => {
     setEditActive(true);
     setDialogActive(true);
@@ -240,7 +212,7 @@ export default function Interview() {
       cancelText: "取消",
       onOk() {
         $message.success("已删除");
-        confirmDeltePromise([record.id]);
+        confirmDeletePromise([record.id]);
       },
       onCancel() {
         console.log("取消操作");
@@ -248,7 +220,7 @@ export default function Interview() {
     });
   };
 
-  const confirmDeltePromise = (idList: number[]) => {
+  const confirmDeletePromise = (idList: number[]) => {
     return new Promise((resolve, reject) => {
       deleteMultipleDataByIdRequest({
         ids: idList,
@@ -265,7 +237,7 @@ export default function Interview() {
   };
 
   return (
-    <div className={`interview_container`}>
+    <div className="interview_container">
       <div className={`table ${!dialogActive ? "active" : ""}`}>
         <Flex className="header" gap="middle" justify="end">
           <Button
@@ -295,102 +267,19 @@ export default function Interview() {
           }}
         />
       </div>
-
-      <div className={`edit_dialog ${dialogActive ? "active" : ""}`}>
-        <Space
-          direction="vertical"
-          size="middle"
-          style={{
-            display: "flex",
-          }}
-        >
-          <div className="navigator">
-            <Button
-              onClick={() => {
-                setSearchParams({});
-                setDialogActive(false);
-                setTimeout(() => {
-                  setEditActive(false);
-                  setReviewActive(false);
-                }, 500);
-              }}
-            >
-              <LeftOutlined />
-            </Button>
-          </div>
-          <Form form={form} layout="vertical" onFinish={handleSubmitQA} autoComplete="off">
-            <Form.Item name="id" style={{ display: "none" }}>
-              <Input type="hidden" />
-            </Form.Item>
-            <div className="content">
-              {(() => {
-                if (editActive) {
-                  return (
-                    <div className="edit">
-                      <Form.Item
-                        label={editActive ? "标题" : undefined}
-                        name="title"
-                        wrapperCol={{ span: 24 }}
-                        rules={rulesMap.title}
-                      >
-                        <Input></Input>
-                      </Form.Item>
-                      <Form.Item
-                        label="内容"
-                        name="content"
-                        wrapperCol={{ span: 24 }}
-                        rules={rulesMap.content}
-                      >
-                        <Input.TextArea
-                          style={{
-                            height: "calc(100vh - 4.5rem)",
-                          }}
-                        ></Input.TextArea>
-                      </Form.Item>
-                    </div>
-                  );
-                } else if (reviewActive) {
-                  const title = form.getFieldValue("title");
-                  const createdAt = form.getFieldValue("createdAt");
-                  const content = form.getFieldValue("content");
-                  return (
-                    <div className="review">
-                      <div className="title">
-                        <div className="main">{title}</div>
-                        <span>{createdAt}</span>
-                      </div>
-                      <Divider
-                        style={{
-                          margin: 0,
-                        }}
-                      />
-                      <div className="content">
-                        <Suspense fallback={<div>Loading...</div>}>
-                          <ReactMarkdown>{content}</ReactMarkdown>;
-                        </Suspense>
-                      </div>
-                    </div>
-                  );
-                }
-              })()}
-            </div>
-            {editActive && (
-              <Row justify="end">
-                <Col span={4}>
-                  <Row justify="end">
-                    <Form.Item label={null}>
-                      <Button type="primary" htmlType="submit">
-                        提交
-                      </Button>
-                    </Form.Item>
-                  </Row>
-                </Col>
-                <Col span={1}></Col>
-              </Row>
-            )}
-          </Form>
-        </Space>
-      </div>
+      <EditDialog
+        dialogActive={dialogActive}
+        editActive={editActive}
+        reviewActive={reviewActive}
+        record={form.getFieldValue()}
+        onGoBack={() => {
+          setDialogActive(false);
+          setTimeout(() => {
+            setEditActive(false);
+            setReviewActive(false);
+          }, 500);
+        }}
+      />
     </div>
   );
 }

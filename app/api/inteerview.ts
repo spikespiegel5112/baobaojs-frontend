@@ -5,8 +5,8 @@ export const getInterviewListRequest = (params: any) =>
     params,
   });
 
-export const createOrUpdateQAndARequest = (data: any) =>
-  service.post("/interview/createOrUpdateQAndA", data);
+export const createOrUpdateQARequest = (data: any) =>
+  service.post("/interview/createOrUpdateQA", data);
 
 export const deleteMultipleDataByIdRequest = (data: any) =>
   service.post("/interview/deleteMultipleDataById", data);
