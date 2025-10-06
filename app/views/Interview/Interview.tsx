@@ -273,6 +273,7 @@ export default function Interview() {
         reviewActive={reviewActive}
         record={form.getFieldValue()}
         onGoBack={() => {
+          getDataPromise();
           setDialogActive(false);
           setTimeout(() => {
             setEditActive(false);

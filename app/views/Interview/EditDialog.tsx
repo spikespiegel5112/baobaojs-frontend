@@ -110,8 +110,8 @@ export default function EditDialog(props: Props) {
             $message.success("保存成功！");
             setEditActive(false);
             setReviewActive(true);
-            setTimeout(() => {}, 500);
-            _pagination.current = pagination.current;
+            setSearchParams({});
+            props.onGoBack();
           })
           .catch((error: AxiosError) => {
             console.log(error);
@@ -234,8 +234,8 @@ export default function EditDialog(props: Props) {
                     onClick={() => {
                       setEditActive(false);
                       setReviewActive(true);
-                      form.setFieldsValue(props.record);
-
+                      setSearchParams({});
+                      props.onGoBack();
                     }}
                   >
                     取消

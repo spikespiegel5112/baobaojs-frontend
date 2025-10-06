@@ -61,6 +61,7 @@ export default function BaobaoLayout() {
   const [bgActive, setBgActive] = useState(false);
   const [timePeriod, setTimePeriod] = useState("");
   const [expandButtonFlag, setExpandButtonFlag] = useState(false);
+  const [currentPathName, setCurrentPathName] = useState("");
 
   interface MenuList {
     title: string;
@@ -97,6 +98,20 @@ export default function BaobaoLayout() {
     highLightMenu();
     getTimePeriod();
   }, []);
+
+  useEffect(() => {
+    console.log(location);
+    setCurrentPathName(location.pathname);
+
+    setMenuList((prev: MenuList[]) => {
+      return menuList.map((item2) => {
+        return {
+          ...item2,
+          active: location.pathname.replaceAll("/", "") === item2.id,
+        };
+      });
+    });
+  }, [location]);
 
   const checkIsMobile = () => {
     const innerWidth = window.innerWidth;
@@ -242,7 +257,6 @@ export default function BaobaoLayout() {
                         onClick={handleToggleExpand}
                       ></Button>
                     )}
-                    1
                     {!expandButtonFlag && (
                       <Button
                         className="right"
@@ -270,7 +284,6 @@ export default function BaobaoLayout() {
                               ?.path
                           }
                           state={{ myInfo: "hello world", userId: 123 }}
-                          className={location.pathname === item.id ? "active" : ""}
                           key={item.title}
                           onClick={() => handleNavigate(item)}
                         >
