@@ -241,6 +241,7 @@ export default function Interview() {
       <div className={`table ${!dialogActive ? "active" : ""}`}>
         <Flex className="header" gap="middle" justify="end">
           <Button
+            disabled={!isLoggedIn}
             onClick={() => {
               setDialogActive(true);
               setEditActive(true);

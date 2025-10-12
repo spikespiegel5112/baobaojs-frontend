@@ -5,18 +5,12 @@ import type { AxiosError } from "axios";
 import type { FormProps, TableProps } from "antd";
 import type { RootState } from "@/store";
 import { FormOutlined, DeleteOutlined, FileAddOutlined, LeftOutlined } from "@ant-design/icons";
-import {
-  getInterviewListRequest,
-  createOrUpdateQARequest,
-  deleteMultipleDataByIdRequest,
-} from "@/api/inteerview";
+import { createOrUpdateQARequest } from "@/api/inteerview";
 
 import { useSelector } from "react-redux";
 import dayjs from "@/utils/dayjs";
 
 const ReactMarkdown = lazy(() => import("react-markdown"));
-
-type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
 
 interface RecordType {
   id: number;
@@ -33,12 +27,6 @@ interface InterviewItem {
   title: string;
 }
 
-interface PaginationType {
-  current: number;
-  pageSize: number;
-  total: number | undefined;
-}
-
 interface Props {
   dialogActive: boolean;
   editActive?: boolean;
@@ -50,27 +38,11 @@ interface Props {
 export default function EditDialog(props: Props) {
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
 
-  const defaultPagination: PaginationType = {
-    current: 1,
-    pageSize: 20,
-    total: undefined,
-  };
-
-  let _pagination = defaultPagination;
-
-  const [tableData, setTableData] = useState<RecordType[]>([]);
   const [record, setRecord] = useState<RecordType[]>([]);
   const [editActive, setEditActive] = useState<boolean>(false);
   const [reviewActive, setReviewActive] = useState<boolean>(true);
 
-  const [pagination, setPagination] = useState<PaginationType>(defaultPagination);
-  const [loading, setLoading] = useState<boolean>(true);
-
   const [form] = Form.useForm();
-
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const userInfo = useSelector((state: RootState) => state.userInfo);
 
   useEffect(() => {}, []);
 
@@ -110,7 +82,6 @@ export default function EditDialog(props: Props) {
             $message.success("保存成功！");
             setEditActive(false);
             setReviewActive(true);
-            setSearchParams({});
             props.onGoBack();
           })
           .catch((error: AxiosError) => {
@@ -127,13 +98,6 @@ export default function EditDialog(props: Props) {
     form.setFieldsValue(record);
   };
 
-  const handleReview = (record: RecordType) => {
-    form.setFieldsValue(record);
-    setSearchParams({
-      id: String(record.id),
-    });
-  };
-
   return (
     <div className={`edit_dialog ${props.dialogActive ? "active" : ""}`}>
       <Space
@@ -146,7 +110,6 @@ export default function EditDialog(props: Props) {
         <div className="navigator">
           <Button
             onClick={() => {
-              setSearchParams({});
               props.onGoBack();
             }}
           >
@@ -234,7 +197,6 @@ export default function EditDialog(props: Props) {
                     onClick={() => {
                       setEditActive(false);
                       setReviewActive(true);
-                      setSearchParams({});
                       props.onGoBack();
                     }}
                   >
