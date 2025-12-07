@@ -74,10 +74,72 @@ $red: #f20000;
     z-index: -1;
     transform: translateX(-100%);
     background-color: transparent;
+    transition: all 0.15s;
     &.active {
       display: block;
       z-index: 0;
+    }
+    &.expand {
+      transform: translateX(0%);
+    }
+    &.shrink {
       transform: translateX(0);
+
+      .main {
+        display: flex;
+        justify-content: flex-end;
+        width: 1.3rem;
+        transition: all 0.15s;
+        .menubg {
+          text-align: center;
+          .title {
+            width: 0.5rem;
+            padding: 0;
+            height: 0.5rem;
+            word-break: break-all;
+            left: 0.4rem;
+            overflow: hidden;
+          }
+        }
+
+        .list {
+          transition: all 1s;
+          width: 1.3rem;
+          right: 0;
+          &.active {
+            left: auto;
+          }
+          ul {
+            padding: 0 0.1rem;
+            li {
+              width: 100%;
+              &.active {
+                width: 100%;
+                left: 0;
+                height: 1rem;
+                line-height: 1rem;
+              }
+              a {
+              }
+            }
+          }
+        }
+      }
+      .footer {
+        flex-direction: column;
+        .login {
+          margin: 0 0 0.4rem 0;
+          padding: 0;
+        }
+        .expand {
+          text-align: center;
+        }
+      }
+    }
+    &.mobile {
+      &.shrink {
+        transform: translateX(0);
+      }
     }
     .main {
       width: 6rem;
@@ -218,22 +280,6 @@ $red: #f20000;
               color: #fff;
             }
           }
-
-          .exxpand {
-            display: inline-block;
-            width: 1.5rem;
-            .ant-btn {
-              padding: 0;
-              color: #fff;
-              font-size: 0.7rem;
-              &.right {
-                transform: rotateZ(90deg);
-              }
-              &.left {
-                transform: rotateZ(270deg);
-              }
-            }
-          }
         }
         .blend {
           width: 100%;
@@ -294,20 +340,38 @@ $red: #f20000;
       }
     }
     .footer {
+      display: flex;
+      padding: 0 0 0.2rem 0;
+      width: 100%;
       position: absolute;
-      left: 0;
+      right: 0;
       bottom: 0;
+      align-items: center;
+      .login {
+        display: inline-block;
+        flex: 1;
+        padding: 0 0 0 0.2rem;
+      }
+      .expand {
+        display: inline-block;
+        width: 1rem;
+        .ant-btn {
+          padding: 0;
+          color: #fff;
+          font-size: 0.4rem;
+          &.right {
+            transform: rotateZ(90deg);
+          }
+          &.left {
+            transform: rotateZ(270deg);
+          }
+        }
+      }
     }
   }
 
   > .main {
     flex: 1;
-    padding: 0.2rem;
-    .shrink{
-
-
-      
-    }
   }
 
   .bg {

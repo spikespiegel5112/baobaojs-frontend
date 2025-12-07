@@ -25,6 +25,35 @@ interface User {
   userName: string;
 }
 
+interface MenuItem {
+  title: string;
+  id: string;
+  active: boolean;
+}
+
+const menuListData = [
+  {
+    title: "文心一言",
+    id: "ErnieBot",
+    active: false,
+  },
+  {
+    title: "八股阅读器",
+    id: "Interview",
+    active: false,
+  },
+  {
+    title: "文件下载器",
+    id: "FileDownloader",
+    active: false,
+  },
+  {
+    title: "厚车吉市",
+    id: "Houchejishi",
+    active: false,
+  },
+];
+
 export default function BaobaoLayout() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,34 +62,13 @@ export default function BaobaoLayout() {
   const dispatch = useDispatch<AppDispatch>();
   // const userInfo = useSelector((state: RootState) => state.user.userInfo);
 
-  const [menuList, setMenuList] = useState([
-    {
-      title: "文心一言",
-      id: "ErnieBot",
-      active: false,
-    },
-    {
-      title: "八股阅读器",
-      id: "Interview",
-      active: false,
-    },
-    {
-      title: "文件下载器",
-      id: "FileDownloader",
-      active: false,
-    },
-    {
-      title: "厚车吉市",
-      id: "Houchejishi",
-      active: false,
-    },
-  ]);
+  const [menuList, setMenuList] = useState<MenuItem[]>(menuListData);
   const [startButtonActive, setStartButtonActive] = useState(false);
   const [entranceActive, setEntranceActive] = useState(true);
   const [enterActive, setEnterActive] = useState(false);
   const [bgActive, setBgActive] = useState(false);
   const [timePeriod, setTimePeriod] = useState("");
-  const [expandButtonFlag, setExpandButtonFlag] = useState(false);
+  const [expandButtonFlag, setExpandButtonFlag] = useState(true);
   const [currentPathName, setCurrentPathName] = useState("");
 
   interface MenuList {
@@ -84,8 +92,10 @@ export default function BaobaoLayout() {
 
     if (location.pathname !== "/") {
       handleEnter();
+      setExpandButtonFlag(true);
+
       if (checkIsMobile()) {
-        setExpandButtonFlag(false);
+        setExpandButtonFlag(true);
       }
     }
     message.config({
@@ -112,6 +122,21 @@ export default function BaobaoLayout() {
       });
     });
   }, [location]);
+
+  useEffect(() => {
+    let result = JSON.parse(JSON.stringify(menuListData));
+
+    if (!expandButtonFlag) {
+      result.forEach((item: MenuItem) => {
+        item.title = item.title.slice(0, 2);
+      });
+    } else {
+      result.forEach((item: MenuItem) => {
+        item.title = item.title;
+      });
+    }
+    setMenuList(result);
+  }, [expandButtonFlag]);
 
   const checkIsMobile = () => {
     const innerWidth = window.innerWidth;
@@ -210,6 +235,12 @@ export default function BaobaoLayout() {
 
   const handleToggleExpand = () => {
     setExpandButtonFlag(!expandButtonFlag);
+
+    // if (checkIsMobile()) {
+    //   setExpandButtonFlag(!expandButtonFlag);
+    // } else {
+    //   setExpandButtonFlag(!expandButtonFlag);
+    // }
   };
 
   return (
@@ -232,7 +263,15 @@ export default function BaobaoLayout() {
           ></a>
         </div>
 
-        <Sider className={"menu" + (enterActive && expandButtonFlag ? " active" : "")} width="6rem">
+        <Sider
+          className={
+            "menu" +
+            (checkIsMobile() ? " mobile" : "") +
+            (enterActive ? " active" : "") +
+            (expandButtonFlag ? " expand" : " shrink")
+          }
+          width={expandButtonFlag ? "6rem" : "1.3rem"}
+        >
           <div className={"main "}>
             <div className={"menubg" + (bgActive ? " active" : "")}>
               <span className="bg1">
@@ -245,29 +284,6 @@ export default function BaobaoLayout() {
                 <h1>
                   <a onClick={handleBackToRoot}>BAOBAOJS</a>
                 </h1>
-
-                {checkIsMobile() && (
-                  <div className="exxpand">
-                    {expandButtonFlag && (
-                      <Button
-                        className="left"
-                        type="text"
-                        shape="round"
-                        icon={<VerticalAlignTopOutlined />}
-                        onClick={handleToggleExpand}
-                      ></Button>
-                    )}
-                    {!expandButtonFlag && (
-                      <Button
-                        className="right"
-                        type="text"
-                        shape="round"
-                        icon={<VerticalAlignTopOutlined />}
-                        onClick={handleToggleExpand}
-                      ></Button>
-                    )}
-                  </div>
-                )}
               </div>
             </div>
             <div className={"list " + (bgActive ? "active" : "")}>
@@ -297,16 +313,34 @@ export default function BaobaoLayout() {
             </div>
           </div>
           <div className="footer">
-            {!isLoggedIn && (
-              <Button type="link">
-                <Link to="/Login">登录</Link>
-              </Button>
-            )}
-            {isLoggedIn && (
-              <Button type="link" onClick={handleLogout}>
-                注销
-              </Button>
-            )}
+            <div className="login">
+              {!isLoggedIn && (
+                <Button>
+                  <Link to="/Login">登录</Link>
+                </Button>
+              )}
+              {isLoggedIn && <Button onClick={handleLogout}>注销</Button>}
+            </div>
+            <div className="expand">
+              {expandButtonFlag && (
+                <Button
+                  className="left"
+                  type="text"
+                  shape="round"
+                  icon={<VerticalAlignTopOutlined />}
+                  onClick={handleToggleExpand}
+                ></Button>
+              )}
+              {!expandButtonFlag && (
+                <Button
+                  className="right"
+                  type="text"
+                  shape="round"
+                  icon={<VerticalAlignTopOutlined />}
+                  onClick={handleToggleExpand}
+                ></Button>
+              )}
+            </div>
           </div>
         </Sider>
 
