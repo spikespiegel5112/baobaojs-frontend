@@ -113,18 +113,11 @@ export default function BaobaoLayout() {
     console.log(location);
     setCurrentPathName(location.pathname);
 
-    setMenuList((prev: MenuList[]) => {
-      return menuList.map((item2) => {
-        return {
-          ...item2,
-          active: location.pathname.replaceAll("/", "") === item2.id,
-        };
-      });
-    });
+    highLightMenu();
   }, [location]);
 
   useEffect(() => {
-    let result = JSON.parse(JSON.stringify(menuListData));
+    let result = JSON.parse(JSON.stringify(menuList));
 
     if (!expandButtonFlag) {
       result.forEach((item: MenuItem) => {
@@ -132,10 +125,12 @@ export default function BaobaoLayout() {
       });
     } else {
       result.forEach((item: MenuItem) => {
-        item.title = item.title;
+        const itemData = menuListData.find((item2) => item2.id === item.id);
+        item.title = itemData ? itemData.title : item.title;
       });
     }
     setMenuList(result);
+    highLightMenu();
   }, [expandButtonFlag]);
 
   const checkIsMobile = () => {
@@ -214,6 +209,8 @@ export default function BaobaoLayout() {
   const highLightMenu = () => {
     const currentRoute = utils.$findRouteInfoByPath(location.pathname);
     setMenuList((prev: MenuList[]) => {
+      if (currentRoute.id === "ErnieBot") {
+      }
       return prev.map((item2) => ({
         ...item2,
         active: currentRoute.id === item2.id,
@@ -290,7 +287,6 @@ export default function BaobaoLayout() {
               <ul>
                 {(() => {
                   const flattenRouteDictionary = utils.$flattenList(routeDictionary);
-
                   return menuList.map((item) => {
                     return (
                       <li key={item.id} className={item.active ? "active" : '"'}>
