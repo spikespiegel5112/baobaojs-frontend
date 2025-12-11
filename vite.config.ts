@@ -52,10 +52,10 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       proxy: {
-        "/api": {
+        "/baobaoapi": {
           target: env.VITE_API_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ""),
+          rewrite: (path) => path.replace(/^\//, "/"),
         },
       },
     },
