@@ -3,7 +3,7 @@ import axios from "axios";
 console.log(import.meta.env);
 
 axios.defaults.baseURL =
-  (import.meta.env.MODE === "development" ? "/" : import.meta.env.VITE_API_URL) + "baobaoapi";
+  (import.meta.env.MODE === "development" ? "/" : import.meta.env.VITE_API_URL) + "/baobaoapi";
 
 // Add a response interceptor
 axios.interceptors.response.use(
