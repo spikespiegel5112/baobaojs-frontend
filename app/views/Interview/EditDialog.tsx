@@ -64,7 +64,6 @@ export default function EditDialog(props: Props) {
   }, [props.reviewActive]);
 
   useEffect(() => {
-    console.log(props.record);
     setRecord(props.record);
   }, [props.record]);
 

@@ -1,3 +1,4 @@
+import { useEffect, useState, useMemo } from "react";
 import { Outlet, Link } from "react-router";
 import { useNavigate, useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +8,6 @@ import utils from "@/utils/utils.ts";
 import type { AxiosError } from "axios";
 import { routeDictionary, type RouteType } from "@/routes";
 
-import { useEffect, useState } from "react";
 import "./index.scss";
 
 import { Layout, message } from "antd";
@@ -107,10 +107,10 @@ export default function BaobaoLayout() {
 
     highLightMenu();
     getTimePeriod();
+    initMenu();
   }, []);
 
   useEffect(() => {
-    console.log(location);
     setCurrentPathName(location.pathname);
 
     highLightMenu();
@@ -133,17 +133,36 @@ export default function BaobaoLayout() {
     highLightMenu();
   }, [expandButtonFlag]);
 
+  const initMenu = () => {
+    const menuStatus = localStorage.getItem("menuStatus");
+    if (menuStatus === "expand") {
+      setExpandButtonFlag(true);
+    } else if (menuStatus === "shrink") {
+      setExpandButtonFlag(false);
+    }
+  };
+
   const checkIsMobile = () => {
     const innerWidth = window.innerWidth;
     return innerWidth <= 768;
   };
+
+  const siderWidth = useMemo(() => {
+    let result = "";
+    if (checkIsMobile()) {
+      result = expandButtonFlag ? "100%" : "0";
+    } else {
+      result = expandButtonFlag ? "6rem" : "1.3rem";
+    }
+    return result;
+  }, [expandButtonFlag]);
 
   const handleEnter = () => {
     setEntranceActive(false);
     setEnterActive(true);
     setStartButtonActive(false);
     setBgActive(true);
-    setExpandButtonFlag(true);
+    initMenu();
   };
 
   const getTimePeriod = () => {
@@ -232,6 +251,8 @@ export default function BaobaoLayout() {
 
   const handleToggleExpand = () => {
     setExpandButtonFlag(!expandButtonFlag);
+    const menuStatus = !expandButtonFlag ? "expand" : "shrink";
+    localStorage.setItem("menuStatus", menuStatus);
 
     // if (checkIsMobile()) {
     //   setExpandButtonFlag(!expandButtonFlag);
@@ -267,7 +288,7 @@ export default function BaobaoLayout() {
             (enterActive ? " active" : "") +
             (expandButtonFlag ? " expand" : " shrink")
           }
-          width={expandButtonFlag ? "6rem" : "1.3rem"}
+          width={siderWidth}
         >
           <div className={"main "}>
             <div className={"menubg" + (bgActive ? " active" : "")}>

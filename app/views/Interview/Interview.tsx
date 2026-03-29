@@ -274,6 +274,9 @@ export default function Interview() {
         reviewActive={reviewActive}
         record={form.getFieldValue()}
         onGoBack={() => {
+          const params = new URLSearchParams(searchParams);
+          params.delete("id");
+          setSearchParams(params);
           getDataPromise();
           setDialogActive(false);
           setTimeout(() => {

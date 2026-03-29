@@ -5,6 +5,7 @@ $red: #f20000;
   height: 100vh;
   background-image: url("@/assets/image/City Overview 1080p.jpg");
   background-size: cover;
+
   .entrance {
     display: flex;
     width: 100%;
@@ -77,10 +78,10 @@ $red: #f20000;
     transition: all 0.15s;
     &.active {
       display: block;
-      z-index: 0;
+      z-index: 1;
     }
     &.expand {
-      transform: translateX(0%);
+      transform: translateX(0);
     }
     &.shrink {
       transform: translateX(0);
@@ -89,7 +90,6 @@ $red: #f20000;
         display: flex;
         justify-content: flex-end;
         width: 1.3rem;
-        transition: all 0.15s;
         .menubg {
           text-align: center;
           .title {
@@ -111,6 +111,7 @@ $red: #f20000;
           }
           ul {
             padding: 0 0.1rem;
+
             li {
               width: 100%;
               &.active {
@@ -145,6 +146,7 @@ $red: #f20000;
       width: 6rem;
       height: 100vh;
       position: absolute;
+      transition: all 0.15s;
 
       .menubg {
         width: 100%;
@@ -292,6 +294,7 @@ $red: #f20000;
       .list {
         margin: 2rem 0 0 0;
         width: 100%;
+        height: calc(100vh - 2rem);
         position: absolute;
         top: 0;
         left: -10rem;
@@ -300,6 +303,8 @@ $red: #f20000;
           opacity: 1;
         }
         ul {
+          height: 100%;
+          overflow: auto;
           li {
             display: block;
             margin: 0 auto 0.4rem;
