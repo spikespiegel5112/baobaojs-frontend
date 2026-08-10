@@ -94,7 +94,7 @@ export default function BaobaoLayout() {
       handleEnter();
       setExpandButtonFlag(true);
 
-      if (checkIsMobile()) {
+      if (utils.$checkIsMobile()) {
         setExpandButtonFlag(true);
       }
     }
@@ -134,22 +134,25 @@ export default function BaobaoLayout() {
   }, [expandButtonFlag]);
 
   const initMenu = () => {
-    const menuStatus = localStorage.getItem("menuStatus");
-    if (menuStatus === "expand") {
-      setExpandButtonFlag(true);
-    } else if (menuStatus === "shrink") {
-      setExpandButtonFlag(false);
+    let menuStatus = localStorage.getItem("menuStatus");
+    let result = true;
+    if (utils.$checkIsMobile()) {
+      result = true;
+    } else {
+      if (menuStatus === "expand") {
+        result = true;
+      } else if (menuStatus === "shrink") {
+        result = false;
+      }
     }
-  };
-
-  const checkIsMobile = () => {
-    const innerWidth = window.innerWidth;
-    return innerWidth <= 768;
+    setExpandButtonFlag(result);
+    menuStatus = result ? "expand" : "shrink";
+    localStorage.setItem("menuStatus", menuStatus);
   };
 
   const siderWidth = useMemo(() => {
     let result = "";
-    if (checkIsMobile()) {
+    if (utils.$checkIsMobile()) {
       result = expandButtonFlag ? "100%" : "0";
     } else {
       result = expandButtonFlag ? "6rem" : "1.3rem";
@@ -175,7 +178,7 @@ export default function BaobaoLayout() {
   };
 
   const handleNavigate = (item: MenuList) => {
-    if (checkIsMobile()) {
+    if (utils.$checkIsMobile()) {
       handleToggleExpand();
     }
 
@@ -253,12 +256,6 @@ export default function BaobaoLayout() {
     setExpandButtonFlag(!expandButtonFlag);
     const menuStatus = !expandButtonFlag ? "expand" : "shrink";
     localStorage.setItem("menuStatus", menuStatus);
-
-    // if (checkIsMobile()) {
-    //   setExpandButtonFlag(!expandButtonFlag);
-    // } else {
-    //   setExpandButtonFlag(!expandButtonFlag);
-    // }
   };
 
   return (
@@ -284,7 +281,7 @@ export default function BaobaoLayout() {
         <Sider
           className={
             "menu" +
-            (checkIsMobile() ? " mobile" : "") +
+            (utils.$checkIsMobile() ? " mobile" : "") +
             (enterActive ? " active" : "") +
             (expandButtonFlag ? " expand" : " shrink")
           }

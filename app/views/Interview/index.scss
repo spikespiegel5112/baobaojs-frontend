@@ -10,37 +10,46 @@
     padding: 0.2rem 0.5rem;
     transition: transform 0.3s;
     transform: translateX(-100%);
+
     &.active {
       transform: translateX(0);
     }
-    .ant-table {
-      height: calc(100vh - 2rem);
-      background-color: rgba($color: #fff, $alpha: 0.8);
-      font-size: 0.3rem;
-      position: relative;
-      .ant-table-container {
-        height: 100%;
-        .ant-table-content {
-          height: 100%;
-          position: relative;
+    .ant-table-wrapper {
+      &.mobile {
+        .ant-table {
+          width: calc(100% - 1rem);
+          margin: auto 0;
         }
-        table {
-          height: 100%;
+      }
+      .ant-table {
+        height: calc(100vh - 2rem);
+        background-color: rgba($color: #fff, $alpha: 0.8);
+        font-size: 0.3rem;
+        position: relative;
 
-          .ant-table-tbody {
-            height: calc(100% - 2rem);
-            overflow: auto;
+        .ant-table-container {
+          height: 100%;
+          .ant-table-content {
+            height: 100%;
             position: relative;
-            .ant-table-row {
-              .ant-table-cell {
-                .title {
-                  color: #333;
-                }
-                &:hover {
+          }
+          table {
+            height: 100%;
+            .ant-table-tbody {
+              height: calc(100% - 2rem);
+              overflow: auto;
+              position: relative;
+              .ant-table-row {
+                .ant-table-cell {
                   .title {
-                    color: #000;
-                    &:hover {
-                      text-decoration: underline;
+                    color: #333;
+                  }
+                  &:hover {
+                    .title {
+                      color: #000;
+                      &:hover {
+                        text-decoration: underline;
+                      }
                     }
                   }
                 }

@@ -12,6 +12,7 @@ import {
   deleteMultipleDataByIdRequest,
 } from "@/api/inteerview";
 import dayjs from "@/utils/dayjs";
+import utils from "@/utils/utils.ts";
 
 import { useSelector } from "react-redux";
 
@@ -251,6 +252,7 @@ export default function Interview() {
           </Button>
         </Flex>
         <Table
+          className={utils.$checkIsMobile() ? "mobile" : ""}
           rowSelection={{ ...rowSelection }}
           dataSource={tableData}
           columns={columns}

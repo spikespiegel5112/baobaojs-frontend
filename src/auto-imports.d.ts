@@ -6,18 +6,18 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-  const Button: typeof import('antd')['Button']
-  const Col: typeof import('antd')['Col']
-  const ConfigProvider: typeof import('antd')['ConfigProvider']
-  const DatePicker: typeof import('antd')['DatePicker']
-  const Divider: typeof import('antd')['Divider']
-  const Flex: typeof import('antd')['Flex']
-  const Form: typeof import('antd')['Form']
-  const Input: typeof import('antd')['Input']
-  const Layout: typeof import('antd')['Layout']
-  const Modal: typeof import('antd')['Modal']
-  const Pagination: typeof import('antd')['Pagination']
-  const Row: typeof import('antd')['Row']
-  const Space: typeof import('antd')['Space']
-  const Table: typeof import('antd')['Table']
+  const Button: typeof import('antd').Button
+  const Col: typeof import('antd').Col
+  const ConfigProvider: typeof import('antd').ConfigProvider
+  const DatePicker: typeof import('antd').DatePicker
+  const Divider: typeof import('antd').Divider
+  const Flex: typeof import('antd').Flex
+  const Form: typeof import('antd').Form
+  const Input: typeof import('antd').Input
+  const Layout: typeof import('antd').Layout
+  const Modal: typeof import('antd').Modal
+  const Pagination: typeof import('antd').Pagination
+  const Row: typeof import('antd').Row
+  const Space: typeof import('antd').Space
+  const Table: typeof import('antd').Table
 }

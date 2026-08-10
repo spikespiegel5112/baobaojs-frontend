@@ -140,6 +140,9 @@ $red: #f20000;
     &.mobile {
       &.shrink {
         transform: translateX(0);
+        .ant-layout-sider-children {
+          position: relative;
+        }
       }
     }
     .main {
@@ -352,6 +355,7 @@ $red: #f20000;
       right: 0;
       bottom: 0;
       align-items: center;
+      z-index: 1;
       .login {
         display: inline-block;
         flex: 1;

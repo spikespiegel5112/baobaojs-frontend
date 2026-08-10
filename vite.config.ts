@@ -9,8 +9,17 @@ import { visualizer } from "rollup-plugin-visualizer";
 const pathSrc = path.resolve(__dirname, "app");
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv("", process.cwd(), ""); // 第三个参数设为 '' 才能取到所有变量
+  const env = loadEnv(mode, process.cwd(), "");
+  const apiProxy = {
+    "/baobaoapi": {
+      target: env.VITE_API_URL,
+      changeOrigin: true,
+      rewrite: (path: string) => path.replace(/^\//, "/"),
+    },
+  };
+
   return {
+    appType: "spa",
     plugins: [
       tailwindcss(),
       reactRouter(),
@@ -51,13 +60,10 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      proxy: {
-        "/baobaoapi": {
-          target: env.VITE_API_URL,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\//, "/"),
-        },
-      },
+      proxy: apiProxy,
+    },
+    preview: {
+      proxy: apiProxy,
     },
   };
 });

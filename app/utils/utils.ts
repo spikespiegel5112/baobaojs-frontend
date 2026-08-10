@@ -107,7 +107,10 @@ const _utils = {
       navigator.userAgent,
     );
   },
-
+  $checkIsMobile: () => {
+    const innerWidth = window.innerWidth;
+    return innerWidth <= 768;
+  },
   $isWindows: () => {
     return navigator.platform === "Win32";
   },
