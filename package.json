@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "react-router build",
-    "dev": "react-router dev",
-    "start": "react-router build --mode development && vite preview --mode development --host 0.0.0.0 --outDir build/client",
-    "typecheck": "react-router typegen && tsc",
+    "build": "vite build",
+    "dev": "vite",
+    "start": "vite preview --host 0.0.0.0",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint app --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint app --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write \"app/**/*.{js,jsx,ts,tsx,json,css,md}\""
@@ -14,9 +14,6 @@
   "dependencies": {
     "@ant-design/icons": "5.x",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
-    "@react-router/dev": "^7.8.1",
-    "@react-router/node": "^7.7.1",
-    "@react-router/serve": "^7.7.1",
     "@reduxjs/toolkit": "^2.8.2",
     "antd": "^5.27.0",
     "axios": "^1.11.0",

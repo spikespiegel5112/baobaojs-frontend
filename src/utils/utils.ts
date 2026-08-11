@@ -1,5 +1,5 @@
 import { routeDictionary } from "@/routes.ts";
-import { type RouteConfigEntry } from "@react-router/dev/routes";
+import type { RouteType } from "@/routes";
 
 const _utils = {
   $objectToUrlString: (query: any) => {
@@ -115,9 +115,9 @@ const _utils = {
     return navigator.platform === "Win32";
   },
 
-  $flattenList: (children: RouteConfigEntry[]) => {
-    const flattenList: RouteConfigEntry[] = [];
-    const looper = (children: RouteConfigEntry[]) => {
+  $flattenList: (children: RouteType[]) => {
+    const flattenList: RouteType[] = [];
+    const looper = (children: RouteType[]) => {
       children.forEach((item) => {
         const _item = JSON.parse(JSON.stringify(item));
         _item.children = undefined;
@@ -138,7 +138,7 @@ const _utils = {
   },
   $getFullRoutePathByRouteId: (id: string) => {
     let result: string = "";
-    const looper = (children: RouteConfigEntry[]) => {
+    const looper = (children: RouteType[]) => {
       children.forEach((item) => {
         if (id === item.id) {
           result += item.path;
@@ -154,10 +154,10 @@ const _utils = {
 
     return result;
   },
-  $completeEachRoutePath: (children: RouteConfigEntry[]) => {
+  $completeEachRoutePath: (children: RouteType[]) => {
     const result = JSON.parse(JSON.stringify(children));
-    const looper = (children: RouteConfigEntry[], parentPath: string | undefined) => {
-      children.forEach((item: RouteConfigEntry) => {
+    const looper = (children: RouteType[], parentPath: string | undefined) => {
+      children.forEach((item: RouteType) => {
         if (parentPath) {
           const parentSlash = parentPath.endsWith("/") ? "" : "/";
           item.path = parentPath + parentSlash + item.path;
@@ -173,9 +173,9 @@ const _utils = {
 
   $findRouteInfoByPath: (path: string) => {
     const completeRouteDictionary = _utils.$completeEachRoutePath(routeDictionary);
-    let result: RouteConfigEntry | undefined;
-    const looper = (children: RouteConfigEntry[]) => {
-      children.forEach((item: RouteConfigEntry) => {
+    let result: RouteType | undefined;
+    const looper = (children: RouteType[]) => {
+      children.forEach((item: RouteType) => {
         if (item.path === path) {
           result = item;
         }

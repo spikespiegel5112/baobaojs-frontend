@@ -1,4 +1,3 @@
-import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -6,7 +5,7 @@ import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 
-const pathSrc = path.resolve(__dirname, "app");
+const pathSrc = path.resolve(__dirname, "src");
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
@@ -22,7 +21,6 @@ export default defineConfig(({ mode }) => {
     appType: "spa",
     plugins: [
       tailwindcss(),
-      reactRouter(),
       tsconfigPaths(),
       AutoImport({
         imports: [
@@ -49,7 +47,7 @@ export default defineConfig(({ mode }) => {
       }),
       visualizer({
         filename: "./dist/stats.html", // 输出分析报告
-        open: true, // 打包完成自动打开浏览器
+        open: false,
         gzipSize: true,
       }),
     ],
@@ -64,6 +62,19 @@ export default defineConfig(({ mode }) => {
     },
     preview: {
       proxy: apiProxy,
+    },
+    build: {
+      rollupOptions: {
+        onwarn(warning, warn) {
+          if (
+            warning.code === "MODULE_LEVEL_DIRECTIVE" &&
+            warning.message.includes('"use client"')
+          ) {
+            return;
+          }
+          warn(warning);
+        },
+      },
     },
   };
 });

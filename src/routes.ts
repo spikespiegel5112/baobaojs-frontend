@@ -1,5 +1,3 @@
-import { type RouteConfigEntry, route } from "@react-router/dev/routes";
-
 export interface RouteType {
   id: string;
   path: string;
@@ -51,19 +49,5 @@ const _routeDictionary: RouteType[] = [
     filePath: "./views/NotFound/NotFound.tsx",
   },
 ];
-
-const looper = (children: RouteType[]): RouteConfigEntry[] => {
-  return children.map((item) => {
-    if (item.children && item.children.length > 0) {
-      return route(item.path, item.filePath, looper(item.children));
-    } else {
-      return route(item.path, item.filePath);
-    }
-  });
-};
-
-const result: RouteConfigEntry[] = looper(_routeDictionary);
-
-export default result;
 
 export const routeDictionary = _routeDictionary;
