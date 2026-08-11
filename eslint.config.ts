@@ -4,7 +4,6 @@ import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import jsxA11y from "eslint-plugin-jsx-a11y";
-import prettier from "eslint-plugin-prettier";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
@@ -47,14 +46,10 @@ export default defineConfig([
     plugins: {
       "react-hooks": reactHooks,
       "jsx-a11y": jsxA11y,
-      prettier,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
-
-      // 启用 Prettier 格式化检查
-      "prettier/prettier": "warn",
 
       // 你可以在这里加一些项目特定规则，比如：
       "no-unused-vars": "warn",
