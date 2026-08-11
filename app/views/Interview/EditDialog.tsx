@@ -5,7 +5,7 @@ import type { AxiosError } from "axios";
 import type { FormProps, TableProps } from "antd";
 import type { RootState } from "@/store";
 import { FormOutlined, DeleteOutlined, FileAddOutlined, LeftOutlined } from "@ant-design/icons";
-import { createOrUpdateQARequest } from "@/api/inteerview";
+import { createOrUpdateQARequest,getInterviewDetailRequest } from "@/api/inteerview";
 
 import { useSelector } from "react-redux";
 import dayjs from "@/utils/dayjs";
@@ -81,7 +81,7 @@ export default function EditDialog(props: Props) {
             $message.success("保存成功！");
             setEditActive(false);
             setReviewActive(true);
-            props.onGoBack();
+            // props.onGoBack();
           })
           .catch((error: AxiosError) => {
             console.log(error);
