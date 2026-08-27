@@ -56,6 +56,7 @@ $red: #f20000;
       height: 1rem;
       border: 2px solid $red;
       border-radius: 50%;
+      background-color: transparent;
       transform: scale(0, 0);
       transition: all 0.8s ease;
       animation: startbutton infinite 2.5s ease-out;
@@ -281,8 +282,12 @@ $red: #f20000;
             align-content: center;
             font-size: 0.5rem;
 
-            a {
+            button {
+              padding: 0;
               color: #fff;
+              background-color: transparent;
+              border: none;
+              cursor: pointer;
             }
           }
         }

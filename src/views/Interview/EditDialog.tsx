@@ -1,11 +1,10 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
-import { useSearchParams, useLocation } from "react-router";
-import "./index.scss";
+import "./Interview.scss";
 import type { AxiosError } from "axios";
-import type { FormProps, TableProps } from "antd";
+import type { FormProps } from "antd";
 import type { RootState } from "@/store";
-import { FormOutlined, DeleteOutlined, FileAddOutlined, LeftOutlined } from "@ant-design/icons";
-import { createOrUpdateQARequest,getInterviewDetailRequest } from "@/api/inteerview";
+import { FormOutlined, LeftOutlined } from "@ant-design/icons";
+import { createOrUpdateQARequest } from "@/api/inteerview";
 
 import { useSelector } from "react-redux";
 import dayjs from "@/utils/dayjs";
@@ -31,7 +30,7 @@ interface Props {
   dialogActive: boolean;
   editActive?: boolean;
   reviewActive?: boolean;
-  record?: any;
+  record?: RecordType[];
   onGoBack: () => void;
 }
 
@@ -91,10 +90,6 @@ export default function EditDialog(props: Props) {
       .catch((error: Error) => {
         console.log(error);
       });
-  };
-
-  const handleEdit = (record: RecordType) => {
-    form.setFieldsValue(record);
   };
 
   return (
@@ -164,9 +159,7 @@ export default function EditDialog(props: Props) {
                   </div>
                 );
               } else {
-                const title = form.getFieldValue("title");
                 const createdAt = form.getFieldValue("createdAt");
-                const content = form.getFieldValue("content");
                 return (
                   <div className="review">
                     <div className="title">

@@ -1,22 +1,18 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams, useLocation } from "react-router";
-import "./index.scss";
+import "./Interview.scss";
 import EditDialog from "./EditDialog";
 import type { AxiosError } from "axios";
-import type { FormProps, TableProps } from "antd";
+import type { TableProps } from "antd";
 import type { RootState } from "@/store";
-import { FormOutlined, DeleteOutlined, FileAddOutlined, LeftOutlined } from "@ant-design/icons";
-import {
-  getInterviewListRequest,
-  createOrUpdateQARequest,
-  deleteMultipleDataByIdRequest,
-} from "@/api/inteerview";
+import { FormOutlined, DeleteOutlined, FileAddOutlined } from "@ant-design/icons";
+import { getInterviewListRequest, deleteMultipleDataByIdRequest } from "@/api/inteerview";
 import dayjs from "@/utils/dayjs";
 import utils from "@/utils/utils.ts";
 
 import { useSelector } from "react-redux";
 
-const ReactMarkdown = lazy(() => import("react-markdown"));
+import type { PaginationType } from "@/views/BaobaoLayout/BaobaoLayout.tsx";
 
 type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
 
@@ -33,31 +29,19 @@ interface TableDataType {
   data: RecordType[];
 }
 
-interface InterviewItem {
-  id?: number;
-  key?: string;
-  content: string;
-  title: string;
-}
-
-interface PaginationType {
-  current: number;
-  pageSize: number;
-  total: number | undefined;
-}
-
 export default function Interview() {
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
   const location = useLocation();
   const query = new URLSearchParams(location.search);
 
   const defaultPagination: PaginationType = {
-    current: 1,
+    page: 1,
     pageSize: 20,
     total: undefined,
   };
 
-  let _pagination = defaultPagination;
+  const paginationRef = useRef(defaultPagination);
+  const searchKeyword = useRef<string>("");
 
   const [editActive, setEditActive] = useState<boolean>(false);
   const [reviewActive, setReviewActive] = useState<boolean>(false);
@@ -71,8 +55,6 @@ export default function Interview() {
   const [form] = Form.useForm();
 
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const userInfo = useSelector((state: RootState) => state.userInfo);
 
   const rowSelection: TableRowSelection<TableDataType> = {
     selectedRowKeys,
@@ -115,9 +97,14 @@ export default function Interview() {
       dataIndex: "title",
       key: "title",
       render: (_, record: RecordType) => (
-        <a className="title" onClick={() => handleReview(record)}>
+        <Button
+          className="title"
+          type="link"
+          size="large"
+          onClick={() => handleReview(record)}
+        >
           {record.title}
-        </a>
+        </Button>
       ),
     },
     {
@@ -133,10 +120,18 @@ export default function Interview() {
       width: "3rem",
       render: (_, record: RecordType) => (
         <Space size="middle">
-          <Button type="text" disabled={!isLoggedIn} onClick={() => handleEdit(record)}>
+          <Button
+            type="text"
+            disabled={!isLoggedIn}
+            onClick={() => handleEdit(record)}
+          >
             <FormOutlined />
           </Button>
-          <Button type="text" disabled={!isLoggedIn} onClick={() => handleDelete(record)}>
+          <Button
+            type="text"
+            disabled={!isLoggedIn}
+            onClick={() => handleDelete(record)}
+          >
             <DeleteOutlined />
           </Button>
         </Space>
@@ -144,20 +139,29 @@ export default function Interview() {
     },
   ];
 
+  const handleSearchArticle: (
+    value: string,
+    event: React.ChangeEvent<HTMLButtonElement>,
+  ) => void = (values, event) => {
+    console.log(event);
+    setLoading(true);
+    searchKeyword.current = values;
+    getDataPromise();
+  };
+
   const getDataPromise = () => {
-    console.log("userInfo");
-    console.log(userInfo);
     return new Promise<TableDataType>((resolve, reject) => {
       getInterviewListRequest({
-        ..._pagination,
+        title: searchKeyword.current,
+        ...paginationRef.current,
       })
         .then((response: TableDataType) => {
           setLoading(false);
-          _pagination = {
-            ..._pagination,
+          paginationRef.current = {
+            ...paginationRef.current,
             total: response.total,
           };
-          setPagination(_pagination);
+          setPagination(paginationRef.current);
           setTableData(
             response.data.map((item) => {
               return {
@@ -182,11 +186,11 @@ export default function Interview() {
   };
 
   const handleChangePagination = (current: number) => {
-    _pagination = {
-      ...pagination,
+    paginationRef.current = {
+      ...paginationRef.current,
       current,
     };
-    setPagination(_pagination);
+    setPagination(paginationRef.current);
     getDataPromise();
   };
 
@@ -240,17 +244,37 @@ export default function Interview() {
   return (
     <div className="interview_container">
       <div className={`table ${!dialogActive ? "active" : ""}`}>
-        <Flex className="header" gap="middle" justify="end">
-          <Button
-            disabled={!isLoggedIn}
-            onClick={() => {
-              setDialogActive(true);
-              setEditActive(true);
-            }}
+        <Form
+          form={form}
+          component={false}
+          autoComplete="off"
+        >
+          <Row
+            className="header"
+            justify="end"
           >
-            <FileAddOutlined />
-          </Button>
-        </Flex>
+            <Col span={8}>
+              <Flex
+                gap="middle"
+                justify="end"
+              >
+                <Form.Item id="search">
+                  <Input.Search
+                    placeholder="input search text"
+                    allowClear
+                    disabled={loading}
+                    onSearch={(value: string, event: React.ChangeEvent<HTMLButtonElement>) =>
+                      handleSearchArticle(value, event)
+                    }
+                  />
+                </Form.Item>
+                <Button disabled={!isLoggedIn}>
+                  <FileAddOutlined />
+                </Button>
+              </Flex>
+            </Col>
+          </Row>
+        </Form>
         <Table
           className={utils.$checkIsMobile() ? "mobile" : ""}
           rowSelection={{ ...rowSelection }}

@@ -16,7 +16,7 @@
     "@ant-design/icons": "5.x",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@reduxjs/toolkit": "^2.8.2",
-    "antd": "^5.27.0",
+    "antd": "^6.6.0",
     "axios": "^1.11.0",
     "dayjs": "^1.11.13",
     "isbot": "^5",
@@ -55,6 +55,6 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": "eslint"
+    "*.{js,jsx,ts,tsx}": "eslint --fix"
   }
 }

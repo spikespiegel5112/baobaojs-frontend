@@ -5,6 +5,9 @@
   overflow: hidden;
   .header {
     margin: 0 0 0.2rem 0;
+    .ant-form-item {
+      margin: 0;
+    }
   }
   .table {
     padding: 0.2rem 0.5rem;
@@ -43,10 +46,15 @@
                 .ant-table-cell {
                   .title {
                     color: #333;
+                    padding: 0;
+                    white-space: normal;
+                    height: auto;
+                    text-align: left;
                   }
                   &:hover {
                     .title {
                       color: #000;
+
                       &:hover {
                         text-decoration: underline;
                       }

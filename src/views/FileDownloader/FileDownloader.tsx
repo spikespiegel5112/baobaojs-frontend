@@ -1,16 +1,13 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams, useLocation } from "react-router";
-import "./index.scss";
+import "./FileDownloader.scss";
 import type { AxiosError } from "axios";
-import type { FormProps, TableProps } from "antd";
+import type { TableProps } from "antd";
 import type { RootState } from "@/store";
-import { FormOutlined, DeleteOutlined, FileAddOutlined, LeftOutlined } from "@ant-design/icons";
-import {} from "@/api/fileDownloader";
-import dayjs from "@/utils/dayjs";
+import { FormOutlined, DeleteOutlined, FileAddOutlined } from "@ant-design/icons";
+import { getFileDownloaderList } from "@/api/fileDownloader";
 
 import { useSelector } from "react-redux";
-
-const ReactMarkdown = lazy(() => import("react-markdown"));
 
 type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
 
@@ -27,15 +24,8 @@ interface TableDataType {
   data: RecordType[];
 }
 
-interface InterviewItem {
-  id?: number;
-  key?: string;
-  content: string;
-  title: string;
-}
-
 interface PaginationType {
-  current: number;
+  page: number;
   pageSize: number;
   total: number | undefined;
 }
@@ -46,7 +36,7 @@ export default function Interview() {
   const query = new URLSearchParams(location.search);
 
   const defaultPagination: PaginationType = {
-    current: 1,
+    page: 1,
     pageSize: 20,
     total: undefined,
   };
@@ -146,10 +136,18 @@ export default function Interview() {
       width: "3rem",
       render: (_, record: RecordType) => (
         <Space size="middle">
-          <Button type="text" disabled={!isLoggedIn} onClick={() => handleEdit(record)}>
+          <Button
+            type="text"
+            disabled={!isLoggedIn}
+            onClick={() => handleEdit(record)}
+          >
             <FormOutlined />
           </Button>
-          <Button type="text" disabled={!isLoggedIn} onClick={() => handleDelete(record)}>
+          <Button
+            type="text"
+            disabled={!isLoggedIn}
+            onClick={() => handleDelete(record)}
+          >
             <DeleteOutlined />
           </Button>
         </Space>
@@ -160,7 +158,27 @@ export default function Interview() {
   const getDataPromise = () => {
     console.log("userInfo");
     console.log(userInfo);
-    return new Promise<TableDataType>((resolve, reject) => {});
+    return new Promise<TableDataType>((resolve, reject) => {
+      getFileDownloaderList({
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+        ...searchParams,
+      })
+        .then((response) => {
+          const tableData: TableDataType = response.data;
+          setTableData(tableData.data);
+          setPagination({
+            ...pagination,
+            total: tableData.total,
+          });
+          setLoading(false);
+          resolve(tableData);
+        })
+        .catch((error: AxiosError) => {
+          console.log(error);
+          reject(error);
+        });
+    });
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -168,10 +186,10 @@ export default function Interview() {
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
-  const handleChangePagination = (current: number) => {
+  const handleChangePagination = (page: number) => {
     _pagination = {
       ...pagination,
-      current,
+      page,
     };
     setPagination(_pagination);
     getDataPromise();
@@ -227,7 +245,11 @@ export default function Interview() {
   return (
     <div className="interview_container">
       <div className={`table ${!dialogActive ? "active" : ""}`}>
-        <Flex className="header" gap="middle" justify="end">
+        <Flex
+          className="header"
+          gap="middle"
+          justify="end"
+        >
           <Button
             onClick={() => {
               setDialogActive(true);
@@ -247,7 +269,7 @@ export default function Interview() {
           }}
           pagination={{
             defaultCurrent: 1,
-            current: pagination.current,
+            current: pagination.page,
             pageSize: pagination.pageSize,
             total: pagination.total,
             onChange: handleChangePagination,

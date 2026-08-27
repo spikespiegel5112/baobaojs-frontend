@@ -8,16 +8,22 @@ import utils from "@/utils/utils.ts";
 import type { AxiosError } from "axios";
 import { routeDictionary, type RouteType } from "@/routes";
 
-import "./index.scss";
+import "./BaobaoLayout.scss";
 
 import { Layout, message } from "antd";
-const { Header, Content, Sider } = Layout;
+const { Content, Sider } = Layout;
 import dayjs from "dayjs";
 
 import { useTitle } from "@/hooks/useTitle";
 
 import { getUserInfoRequest, logoutRequest } from "@/api/auth";
 import { VerticalAlignTopOutlined } from "@ant-design/icons";
+
+export interface PaginationType {
+  page: number;
+  pageSize: number;
+  total: number | undefined;
+}
 
 interface User {
   id: number;
@@ -60,7 +66,6 @@ export default function BaobaoLayout() {
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
 
   const dispatch = useDispatch<AppDispatch>();
-  // const userInfo = useSelector((state: RootState) => state.user.userInfo);
 
   const [menuList, setMenuList] = useState<MenuItem[]>(menuListData);
   const [startButtonActive, setStartButtonActive] = useState(false);
@@ -69,7 +74,6 @@ export default function BaobaoLayout() {
   const [bgActive, setBgActive] = useState(false);
   const [timePeriod, setTimePeriod] = useState("");
   const [expandButtonFlag, setExpandButtonFlag] = useState(true);
-  const [currentPathName, setCurrentPathName] = useState("");
 
   interface MenuList {
     title: string;
@@ -103,7 +107,7 @@ export default function BaobaoLayout() {
       duration: 2,
       maxCount: 3,
     });
-    (window as any).$message = message;
+    window.$message = message;
 
     highLightMenu();
     getTimePeriod();
@@ -111,13 +115,11 @@ export default function BaobaoLayout() {
   }, []);
 
   useEffect(() => {
-    setCurrentPathName(location.pathname);
-
     highLightMenu();
   }, [location]);
 
   useEffect(() => {
-    let result = JSON.parse(JSON.stringify(menuList));
+    const result = JSON.parse(JSON.stringify(menuList));
 
     if (!expandButtonFlag) {
       result.forEach((item: MenuItem) => {
@@ -231,8 +233,6 @@ export default function BaobaoLayout() {
   const highLightMenu = () => {
     const currentRoute = utils.$findRouteInfoByPath(location.pathname);
     setMenuList((prev: MenuList[]) => {
-      if (currentRoute.id === "ErnieBot") {
-      }
       return prev.map((item2) => ({
         ...item2,
         active: currentRoute.id === item2.id,
@@ -272,10 +272,10 @@ export default function BaobaoLayout() {
       <Layout className="layout_container">
         <div className={`entrance ${timePeriod} ${entranceActive ? " active" : ""}`}>
           <div className="title">BAOBAOJS</div>
-          <a
+          <button
             className={"startbutton" + (startButtonActive ? " active" : "")}
             onClick={handleEnter}
-          ></a>
+          ></button>
         </div>
 
         <Sider
@@ -297,7 +297,7 @@ export default function BaobaoLayout() {
               </div>
               <div className="title">
                 <h1>
-                  <a onClick={handleBackToRoot}>BAOBAOJS</a>
+                  <button onClick={handleBackToRoot}>BAOBAOJS</button>
                 </h1>
               </div>
             </div>
@@ -307,7 +307,10 @@ export default function BaobaoLayout() {
                   const flattenRouteDictionary = utils.$flattenList(routeDictionary);
                   return menuList.map((item) => {
                     return (
-                      <li key={item.id} className={item.active ? "active" : '"'}>
+                      <li
+                        key={item.id}
+                        className={item.active ? "active" : '"'}
+                      >
                         <Link
                           to={
                             flattenRouteDictionary.find((item2: RouteType) => item.id === item2.id)

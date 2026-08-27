@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./index.scss";
+import "./Homepage.scss";
 export default function Homepage() {
   const [startButtonActive, setStartButtonActive] = useState(false);
   const [entranceActive, setEntranceActive] = useState(false);
@@ -26,10 +26,10 @@ export default function Homepage() {
     <div className={"homepage_container"}>
       <div className={`entrance ${entranceActive ? "active" : ""}`}>
         <div className={"title"}>BAOBAOJS</div>
-        <a
+        <button
           className={"startbutton " + (startButtonActive ? "active" : "")}
           onClick={handleEnter}
-        ></a>
+        ></button>
       </div>
 
       <div className={"main " + (enterActive ? "active" : "")}>

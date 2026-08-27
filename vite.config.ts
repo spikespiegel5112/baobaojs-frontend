@@ -1,5 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, loadEnv } from "vite";
+import type { ProxyOptions } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
@@ -14,6 +15,24 @@ export default defineConfig(({ mode }) => {
       target: env.VITE_API_URL,
       changeOrigin: true,
       rewrite: (path: string) => path.replace(/^\//, "/"),
+      configure(proxy: Parameters<NonNullable<ProxyOptions["configure"]>>[0]) {
+        proxy.on("error", (err, req, res) => {
+          console.error("Proxy error:", err.message);
+
+          if (!res.headersSent) {
+            res.writeHead(503, {
+              "Content-Type": "application/json",
+            });
+          }
+
+          res.end(
+            JSON.stringify({
+              message: "Backend service unavailable",
+              code: "BACKEND_UNAVAILABLE",
+            }),
+          );
+        });
+      },
     },
   };
 

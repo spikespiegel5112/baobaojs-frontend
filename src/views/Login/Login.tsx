@@ -1,29 +1,14 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "@/store";
-import { setUserInfo, setIsLoggedIn } from "@/store/index";
-import "./index.scss";
-import type { FormProps, TableProps } from "antd";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/store";
+import { setIsLoggedIn } from "@/store/index";
+import "./Login.scss";
+import type { FormProps } from "antd";
 import type { AxiosError } from "axios";
 import { loginRequest, changePasswordRequest } from "@/api/auth";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import utils from "@/utils/utils.ts";
-
-type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
-
-interface RecordType {
-  id: number;
-  key?: number;
-  content: string;
-  title: string;
-  createdAt: string;
-}
-interface TableDataType {
-  key: React.Key;
-  total: number;
-  data: RecordType[];
-}
 
 interface InterviewItem {
   id?: number;
@@ -32,36 +17,18 @@ interface InterviewItem {
   title: string;
 }
 
-interface PaginationType {
-  current: number;
-  pageSize: number;
-  total: number | undefined;
-}
-
 export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
 
-  const defaultPagination: PaginationType = {
-    current: 1,
-    pageSize: 20,
-    total: undefined,
-  };
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [mode, setMode] = useState("login");
+  const [loading, setLoading] = useState(false);
 
   const [form] = Form.useForm();
 
-  useEffect(() => {}, []);
-
-  const rulesMap = {
-    title: [{ required: true, message: "请输入邮箱" }],
-    content: [{ required: true, message: "请输入密码" }],
-  };
-
   const handleSubmitLogin: FormProps<InterviewItem>["onFinish"] = () => {
+    setLoading(true);
     form
       .validateFields({ validateOnly: true })
       .then((formData) => {
@@ -74,10 +41,14 @@ export default function Login() {
           .catch((error: AxiosError) => {
             console.log(error);
             $message.error(error.message);
+          })
+          .finally(() => {
+            setLoading(false);
           });
       })
       .catch((error: Error) => {
         console.log(error);
+        setLoading(false);
       });
   };
 
@@ -108,28 +79,52 @@ export default function Login() {
           <div className="title">Login</div>
           <Row justify="center">
             <Col span={20}>
-              <Form form={form} layout="horizontal" onFinish={handleSubmitLogin} autoComplete="off">
+              <Form
+                form={form}
+                layout="horizontal"
+                onFinish={handleSubmitLogin}
+                autoComplete="off"
+              >
                 <Form.Item
                   name="userName"
                   rules={[{ required: true, message: "Please input your Username!" }]}
                 >
-                  <Input prefix={<UserOutlined />} placeholder="Username" />
+                  <Input
+                    prefix={<UserOutlined />}
+                    placeholder="Username"
+                    disabled={loading}
+                  />
                 </Form.Item>
                 <Form.Item
                   name="password"
                   rules={[{ required: true, message: "Please input your Password!" }]}
                 >
-                  <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+                  <Input
+                    prefix={<LockOutlined />}
+                    type="password"
+                    placeholder="Password"
+                    disabled={loading}
+                  />
                 </Form.Item>
 
                 <Form.Item>
-                  <Button block type="primary" htmlType="submit">
+                  <Button
+                    block
+                    type="primary"
+                    htmlType="submit"
+                    disabled={loading}
+                    loading={loading}
+                  >
                     Log in
                   </Button>
                   or{" "}
-                  <a href="javascript:;" onClick={() => setMode("changePassword")}>
+                  <Button
+                    type="link"
+                    href="javascript:;"
+                    onClick={() => setMode("changePassword")}
+                  >
                     Change Password
-                  </a>
+                  </Button>
                 </Form.Item>
               </Form>
             </Col>
@@ -152,29 +147,47 @@ export default function Login() {
                   name="userName"
                   rules={[{ required: true, message: "Please input your Username!" }]}
                 >
-                  <Input prefix={<UserOutlined />} placeholder="Username" />
+                  <Input
+                    prefix={<UserOutlined />}
+                    placeholder="Username"
+                  />
                 </Form.Item>
                 <Form.Item
                   name="password"
                   rules={[{ required: true, message: "Please input old Password!" }]}
                 >
-                  <Input prefix={<LockOutlined />} type="password" placeholder="Old password" />
+                  <Input
+                    prefix={<LockOutlined />}
+                    type="password"
+                    placeholder="Old password"
+                  />
                 </Form.Item>
                 <Form.Item
                   name="newPassword"
                   rules={[{ required: true, message: "Please input new Password!" }]}
                 >
-                  <Input prefix={<LockOutlined />} type="password" placeholder="New password" />
+                  <Input
+                    prefix={<LockOutlined />}
+                    type="password"
+                    placeholder="New password"
+                  />
                 </Form.Item>
 
                 <Form.Item>
-                  <Button block type="primary" htmlType="submit">
+                  <Button
+                    block
+                    type="primary"
+                    htmlType="submit"
+                  >
                     Confirm
                   </Button>
                   or{" "}
-                  <a href="javascript:;" onClick={() => setMode("login")}>
+                  <Button
+                    type="link"
+                    onClick={() => setMode("login")}
+                  >
                     Login
-                  </a>
+                  </Button>
                 </Form.Item>
               </Form>
             </Col>

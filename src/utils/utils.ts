@@ -2,7 +2,7 @@ import { routeDictionary } from "@/routes.ts";
 import type { RouteType } from "@/routes";
 
 const _utils = {
-  $objectToUrlString: (query: any) => {
+  $objectToUrlString: (query: Record<string, unknown>) => {
     let result = "";
     Object.keys(query).forEach((item: string, index: number) => {
       result += (index === 0 ? "?" : "&") + item + "=" + query[item];
@@ -10,9 +10,19 @@ const _utils = {
 
     return result;
   },
-  $isEmpty: (value: any): boolean => value === "" || (!value && value !== 0) || value === null,
-  $isNotEmpty: (value: any): boolean => !_utils.$isEmpty(value),
-  $remResizing: (params: any) => {
+  $isEmpty: (value: string | undefined | null | number | boolean): boolean =>
+    value === "" || (!value && value !== 0) || value === null,
+  $isNotEmpty: (value: boolean): boolean => !_utils.$isEmpty(value),
+  $remResizing: (params: {
+    fontSize: number;
+    baseline: number;
+    threshold: number;
+    basedonnarrow: boolean;
+    basedonwide: boolean;
+    dropoff: boolean;
+    alignCenter: boolean;
+    inward: boolean;
+  }) => {
     const options = Object.assign(
       {
         fontSize: 16,
@@ -29,23 +39,11 @@ const _utils = {
     const htmlEl = document.getElementsByTagName("html")[0];
     const bodyEl = document.getElementsByTagName("body")[0];
 
-    const windowHeight = window.screen.availHeight;
     const windowWidth = window.screen.availWidth;
     let frontLine = windowWidth;
 
     const sizeConstraint = function () {
-      if (options.basedonnarrow) {
-        _utils.$orientationSensor({
-          portrait: function () {
-            frontLine = window.screen.availWidth;
-          },
-          landscape: function () {
-            frontLine = window.screen.availHeight;
-          },
-        });
-      } else {
-        frontLine = window.screen.availWidth;
-      }
+      frontLine = window.screen.availWidth;
       let factor = 0;
       if (options.baseline === 0) {
         factor = 1;
@@ -74,11 +72,11 @@ const _utils = {
         if (options.alignCenter) {
           factor = options.threshold / options.baseline;
           bodyEl.style.margin = "0 auto";
-          bodyEl.style.width = options.threshold;
+          bodyEl.style.width = options.threshold.toString();
         } else {
           factor = frontLine / options.baseline;
           bodyEl.style.margin = "0";
-          bodyEl.style.width = options.threshold;
+          bodyEl.style.width = options.threshold.toString();
         }
 
         if (options.dropoff) {
@@ -187,7 +185,7 @@ const _utils = {
     looper(completeRouteDictionary);
     return result;
   },
-} as any;
+};
 
 const utils = _utils;
 

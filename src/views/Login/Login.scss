@@ -16,5 +16,10 @@
       font-size: x-large;
       padding: 1rem;
     }
+    .ant-input {
+      &:-internal-autofill-selected {
+        // background-color: white !important;
+      }
+    }
   }
 }
