@@ -4,30 +4,36 @@ import "./FileDownloader.scss";
 import type { AxiosError } from "axios";
 import type { TableProps } from "antd";
 import type { RootState } from "@/store";
-import { FormOutlined, DeleteOutlined, FileAddOutlined } from "@ant-design/icons";
-import { getFileDownloaderList } from "@/api/fileDownloader";
+import { FormOutlined, DeleteOutlined } from "@ant-design/icons";
+import { getFileDownloaderListRequest } from "@/api/fileDownloader";
+import FileDownloaderDialog from "@/views/FileDownloader/FileDownloaderDialog";
 
 import { useSelector } from "react-redux";
 
 type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
 
-interface RecordType {
-  id: number;
-  key?: number;
-  content: string;
-  title: string;
-  createdAt: string;
-}
 interface TableDataType {
-  key: React.Key;
+  data: FieldData[];
   total: number;
-  data: RecordType[];
 }
 
 interface PaginationType {
   page: number;
   pageSize: number;
   total: number | undefined;
+}
+
+export interface FieldData {
+  id: number;
+  name: string;
+  type: string;
+  fileUrl: string;
+  fileSuffix: string;
+  destPath: string;
+  fileUrlLeftSide: string;
+  fileUrlRightSide: string;
+  seriesNumberStart: number | null;
+  seriesNumberEnd: number | null;
 }
 
 export default function Interview() {
@@ -47,7 +53,8 @@ export default function Interview() {
   const [reviewActive, setReviewActive] = useState<boolean>(false);
 
   const [dialogActive, setDialogActive] = useState<boolean>(false);
-  const [tableData, setTableData] = useState<RecordType[]>([]);
+  const [formData, setFormData] = useState<FieldData | null>(null);
+  const [tableData, setTableData] = useState<FieldData[]>([]);
   const [pagination, setPagination] = useState<PaginationType>(defaultPagination);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -61,9 +68,82 @@ export default function Interview() {
   const rowSelection: TableRowSelection<TableDataType> = {
     selectedRowKeys,
     onChange: (newSelectedRowKeys) => {
-      onSelectChange(newSelectedRowKeys);
+      handleSelectChange(newSelectedRowKeys);
     },
   };
+
+  const columns = [
+    {
+      title: "下载操作名称",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "文件名左侧",
+      dataIndex: "fileUrlLeftSide",
+      key: "fileUrlLeftSide",
+    },
+    {
+      title: "文件名右侧",
+      dataIndex: "fileUrlRightSide",
+      key: "fileUrlRightSide",
+    },
+    {
+      title: "序列号起始值",
+      dataIndex: "seriesNumberStart",
+      key: "seriesNumberStart",
+    },
+    {
+      title: "序列号结束值",
+      dataIndex: "seriesNumberEnd",
+      key: "seriesNumberEnd",
+    },
+    {
+      title: "类型",
+      dataIndex: "type",
+      key: "type",
+      render: (_, record: FieldData) => {
+        <Space size="middle">
+          <Button
+            type="text"
+            disabled={!isLoggedIn}
+            onClick={() => handleEdit(record)}
+          >
+            <FormOutlined />
+          </Button>
+        </Space>;
+      },
+    },
+    {
+      title: "目标位置",
+      dataIndex: "destPath",
+      key: "destPath",
+    },
+    {
+      title: "操作",
+      dataIndex: "operation",
+      key: "operation",
+      width: "3rem",
+      render: (_, record: FieldData) => (
+        <Space size="middle">
+          <Button
+            type="text"
+            disabled={!isLoggedIn}
+            onClick={() => handleEdit(record)}
+          >
+            <FormOutlined />
+          </Button>
+          <Button
+            type="text"
+            disabled={!isLoggedIn}
+            onClick={() => handleDelete(record)}
+          >
+            <DeleteOutlined />
+          </Button>
+        </Space>
+      ),
+    },
+  ];
 
   useEffect(() => {
     getDataPromise()
@@ -93,80 +173,19 @@ export default function Interview() {
     }
   }, [reviewActive]);
 
-  const columns = [
-    {
-      title: "文件名左侧",
-      dataIndex: "fileUrlLeftSide",
-      key: "fileUrlLeftSide",
-    },
-    {
-      title: "文件名右侧",
-      dataIndex: "fileUrlRightSide",
-      key: "fileUrlRightSide",
-      width: "3.6rem",
-    },
-    {
-      title: "序列号起始值",
-      dataIndex: "seriesNumberStart",
-      key: "seriesNumberStart",
-      width: "3.6rem",
-    },
-    {
-      title: "序列号结束值",
-      dataIndex: "seriesNumberEnd",
-      key: "seriesNumberEnd",
-      width: "3.6rem",
-    },
-    {
-      title: "类型",
-      dataIndex: "type",
-      key: "type",
-      width: "3.6rem",
-    },
-    {
-      title: "目标位置",
-      dataIndex: "destPath",
-      key: "destPath",
-      width: "3.6rem",
-    },
-    {
-      title: "操作",
-      dataIndex: "operation",
-      key: "operation",
-      width: "3rem",
-      render: (_, record: RecordType) => (
-        <Space size="middle">
-          <Button
-            type="text"
-            disabled={!isLoggedIn}
-            onClick={() => handleEdit(record)}
-          >
-            <FormOutlined />
-          </Button>
-          <Button
-            type="text"
-            disabled={!isLoggedIn}
-            onClick={() => handleDelete(record)}
-          >
-            <DeleteOutlined />
-          </Button>
-        </Space>
-      ),
-    },
-  ];
-
   const getDataPromise = () => {
     console.log("userInfo");
     console.log(userInfo);
+    console.log(searchParams);
+    setLoading(true);
     return new Promise<TableDataType>((resolve, reject) => {
-      getFileDownloaderList({
+      getFileDownloaderListRequest({
         page: pagination.page,
         pageSize: pagination.pageSize,
-        ...searchParams,
       })
         .then((response) => {
           const tableData: TableDataType = response.data;
-          setTableData(tableData.data);
+          setTableData(tableData);
           setPagination({
             ...pagination,
             total: tableData.total,
@@ -181,7 +200,7 @@ export default function Interview() {
     });
   };
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+  const handleSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
@@ -195,13 +214,13 @@ export default function Interview() {
     getDataPromise();
   };
 
-  const handleEdit = (record: RecordType) => {
+  const handleEdit = (record: FieldData) => {
     setEditActive(true);
     setDialogActive(true);
-    form.setFieldsValue(record);
+    setFormData(record);
   };
 
-  const handleReview = (record: RecordType) => {
+  const handleReview = (record: FieldData) => {
     setReviewActive(true);
     setDialogActive(true);
     form.setFieldsValue(record);
@@ -210,7 +229,7 @@ export default function Interview() {
     });
   };
 
-  const handleDelete = (record: RecordType) => {
+  const handleDelete = (record: FieldData) => {
     Modal.confirm({
       title: "提示",
       content: "你确定要删除吗？",
@@ -231,7 +250,7 @@ export default function Interview() {
       deleteMultipleDataByIdRequest({
         ids: idList,
       })
-        .then((response: RecordType) => {
+        .then((response: FieldData) => {
           getDataPromise();
           resolve(response);
         })
@@ -243,20 +262,28 @@ export default function Interview() {
   };
 
   return (
-    <div className="interview_container">
-      <div className={`table ${!dialogActive ? "active" : ""}`}>
+    <div className="filedownloader_container">
+      <div className="table active">
         <Flex
           className="header"
           gap="middle"
           justify="end"
         >
           <Button
+            type="primary"
+            onClick={() => {
+              setDialogActive(true);
+            }}
+          >
+            文件下载
+          </Button>
+          <Button
             onClick={() => {
               setDialogActive(true);
               setEditActive(true);
             }}
           >
-            <FileAddOutlined />
+            批量删除
           </Button>
         </Flex>
         <Table
@@ -275,6 +302,12 @@ export default function Interview() {
             onChange: handleChangePagination,
             hideOnSinglePage: false, // 👈 关键点
           }}
+        />
+        <FileDownloaderDialog
+          dialogVisible={dialogActive}
+          formData={formData}
+          onClose={() => setDialogActive(false)}
+          onSave={() => getDataPromise()}
         />
       </div>
     </div>

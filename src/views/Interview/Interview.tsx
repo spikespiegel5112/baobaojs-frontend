@@ -59,7 +59,7 @@ export default function Interview() {
   const rowSelection: TableRowSelection<TableDataType> = {
     selectedRowKeys,
     onChange: (newSelectedRowKeys) => {
-      onSelectChange(newSelectedRowKeys);
+      handleSelectChange(newSelectedRowKeys);
     },
   };
 
@@ -180,7 +180,7 @@ export default function Interview() {
     });
   };
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+  const handleSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };

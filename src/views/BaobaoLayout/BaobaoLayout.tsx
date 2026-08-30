@@ -11,7 +11,6 @@ import { routeDictionary, type RouteType } from "@/routes";
 import "./BaobaoLayout.scss";
 
 import { Layout, message } from "antd";
-const { Content, Sider } = Layout;
 import dayjs from "dayjs";
 
 import { useTitle } from "@/hooks/useTitle";
@@ -102,12 +101,14 @@ export default function BaobaoLayout() {
         setExpandButtonFlag(true);
       }
     }
+
+    window.$message = message;
+
     message.config({
       top: 80,
       duration: 2,
       maxCount: 3,
     });
-    window.$message = message;
 
     highLightMenu();
     getTimePeriod();
@@ -261,6 +262,65 @@ export default function BaobaoLayout() {
   return (
     <ConfigProvider
       theme={{
+        token: {
+          colorPrimary: "#e6212a",
+          colorSuccess: "#00a850",
+          colorWarning: "#ffb400",
+          colorError: "#e6212a",
+          colorInfo: "#1a1a1a",
+          colorTextBase: "#333333",
+          colorBgBase: "#f5f5f5",
+          colorPrimaryBg: "#ffe9ea",
+          colorPrimaryBgHover: "#ffd0d2",
+          colorPrimaryBorder: "#ff989c",
+          colorPrimaryBorderHover: "#ff6b70",
+          colorPrimaryHover: "#f04048",
+          colorPrimaryActive: "#c0181f",
+          colorPrimaryText: "#e6212a",
+          colorPrimaryTextHover: "#f04048",
+          colorPrimaryTextActive: "#c0181f",
+          colorErrorBg: "#ffe9ea",
+          colorErrorBgHover: "#ffd0d2",
+          colorErrorBorder: "#ff989c",
+          colorErrorBorderHover: "#ff6b70",
+          colorErrorHover: "#f04048",
+          colorErrorActive: "#c0181f",
+          colorErrorText: "#e6212a",
+          colorErrorTextHover: "#f04048",
+          colorErrorTextActive: "#c0181f",
+          colorText: "rgba(51, 51, 51, 0.88)",
+          colorTextSecondary: "rgba(51, 51, 51, 0.65)",
+          colorTextTertiary: "rgba(51, 51, 51, 0.45)",
+          colorTextQuaternary: "rgba(51, 51, 51, 0.25)",
+          colorTextDisabled: "rgba(51, 51, 51, 0.25)",
+          colorBgContainer: "#ffffff",
+          colorBgElevated: "#ffffff",
+          colorBgLayout: "#f0f0f0",
+          colorBgSpotlight: "rgba(26, 26, 26, 0.85)",
+          colorBgMask: "rgba(26, 26, 26, 0.45)",
+          colorBorder: "#e8e8e8",
+          colorBorderSecondary: "#f0f0f0",
+          borderRadius: 4,
+          borderRadiusXS: 2,
+          borderRadiusSM: 3,
+          borderRadiusLG: 6,
+          padding: 16,
+          paddingSM: 12,
+          paddingLG: 24,
+          margin: 16,
+          marginSM: 12,
+          marginLG: 24,
+          boxShadow: "0 2px 6px 0 rgba(0, 0, 0, 0.06)",
+          boxShadowSecondary: "0 4px 10px 0 rgba(0, 0, 0, 0.1)",
+        },
+        button: {
+          root: "border-0 transition-all duration-200",
+          content: "font-medium",
+        },
+        card: {
+          root: "border-0 shadow-sm",
+          header: "border-b border-gray-100",
+        },
         components: {
           Table: {
             selectionColumnWidth: "0.8rem",
@@ -278,7 +338,7 @@ export default function BaobaoLayout() {
           ></button>
         </div>
 
-        <Sider
+        <Layout.Sider
           className={
             "menu" +
             (utils.$checkIsMobile() ? " mobile" : "") +
@@ -359,11 +419,11 @@ export default function BaobaoLayout() {
               )}
             </div>
           </div>
-        </Sider>
+        </Layout.Sider>
 
-        <Content className={"main" + (expandButtonFlag ? "expand" : " shrink")}>
+        <Layout.Content className={"main" + (expandButtonFlag ? "expand" : " shrink")}>
           <Outlet />
-        </Content>
+        </Layout.Content>
       </Layout>
     </ConfigProvider>
   );
