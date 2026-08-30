@@ -7,7 +7,7 @@ import type { FieldData } from "@/views/FileDownloader/FileDownloader";
 
 interface Props {
   dialogVisible: boolean;
-  formData: FieldData;
+  formData: FieldData | null;
   onClose: () => void;
   onSave: () => void;
 }
@@ -30,9 +30,10 @@ export default function FileDownloaderDialog(props: Props) {
   const gridDictionaryRef = useRef<{ seriesNumber: number; status: string }[]>([]);
 
   const [downloadingFlag, setDownloadingFlag] = useState<boolean>(false);
+  const [savingFlag, setSavingFlag] = useState<boolean>(false);
 
   const handleSaveDownloadInfo = () => {
-    setDownloadingFlag(true);
+    setSavingFlag(true);
     form.validateFields().then(() => {
       const params = form.getFieldsValue();
       createOrUpdateRequest(params)
@@ -45,7 +46,7 @@ export default function FileDownloaderDialog(props: Props) {
           console.log(error);
         })
         .finally(() => {
-          setDownloadingFlag(false);
+          setSavingFlag(false);
           props.onClose();
         });
     });
@@ -58,14 +59,15 @@ export default function FileDownloaderDialog(props: Props) {
         item.status = "";
       });
       makeProgressGrid();
-      if (form.getFieldsValue(["type"]) === "multiple") {
-        const seriesNumberStart = Number(form.getFieldsValue(["seriesNumberStart"]));
+
+      if (form.getFieldValue("type") === "multiple") {
+        const seriesNumberStart = Number(form.getFieldValue("seriesNumberStart"));
         const times =
-          Number(form.getFieldsValue(["seriesNumberEnd"])) -
-          Number(form.getFieldsValue(["seriesNumberStart"])) +
+          Number(form.getFieldValue("seriesNumberEnd")) -
+          Number(form.getFieldValue("seriesNumberStart")) +
           1;
         let count = 0;
-        const prefixLength = (form.getFieldsValue(["seriesNumberEnd"]) + "")
+        const prefixLength = (form.getFieldValue("seriesNumberEnd") + "")
           .split("")
           .map(() => "0")
           .join("");
@@ -89,12 +91,12 @@ export default function FileDownloaderDialog(props: Props) {
             const filledUpCount = (prefixLength + (count + seriesNumberStart)).slice(-3);
 
             getSingleFileRequest({
-              type: form.getFieldsValue(["type"]),
+              type: form.getFieldValue("type"),
               fileUrl:
-                form.getFieldsValue(["fileUrlLeftSide"]) +
+                form.getFieldValue("fileUrlLeftSide") +
                 filledUpCount +
-                form.getFieldsValue(["fileUrlRightSide"]),
-              destPath: form.getFieldsValue(["destPath"]),
+                form.getFieldValue("fileUrlRightSide"),
+              destPath: form.getFieldValue("destPath"),
             })
               .then(async (response) => {
                 console.log(response);
@@ -126,13 +128,15 @@ export default function FileDownloaderDialog(props: Props) {
         };
 
         loop();
-      } else if (form.getFieldsValue(["type"]) === "single") {
-        getSingleFileRequest({
-          type: form.getFieldsValue(["type"]),
-          fileUrl: form.getFieldsValue(["fileUrl"]),
-          destPath: form.getFieldsValue(["destPath"]),
-          fileSuffix: form.getFieldsValue(["fileSuffix"]),
-        })
+      } else if (form.getFieldValue("type") === "single") {
+        const params = {
+          type: form.getFieldValue("type"),
+          fileUrl: form.getFieldValue("fileUrl"),
+          destPath: form.getFieldValue("destPath"),
+          fileSuffix: form.getFieldValue("fileSuffix"),
+        };
+        console.log(params);
+        getSingleFileRequest(params)
           .then(async (response) => {
             console.log(response);
             $message.success("提交成功");
@@ -153,8 +157,8 @@ export default function FileDownloaderDialog(props: Props) {
   };
 
   const makeProgressGrid = () => {
-    const seriesNumberStart = Number(form.getFieldsValue(["seriesNumberStart"]));
-    const seriesNumberEnd = Number(form.getFieldsValue(["seriesNumberEnd"]));
+    const seriesNumberStart = Number(form.getFieldValue("seriesNumberStart"));
+    const seriesNumberEnd = Number(form.getFieldValue("seriesNumberEnd"));
     const length = seriesNumberEnd - seriesNumberStart;
     setGridDictionary([]);
     gridDictionaryRef.current = [];
@@ -164,10 +168,11 @@ export default function FileDownloaderDialog(props: Props) {
         status: "", // success failed pending
       });
     }
+    setGridDictionary(gridDictionaryRef.current);
 
     console.log(length);
-    console.log(form.getFieldsValue(["seriesNumberStart"]));
-    console.log(form.getFieldsValue(["seriesNumberEnd"]));
+    console.log(form.getFieldValue("seriesNumberStart"));
+    console.log(form.getFieldValue("seriesNumberEnd"));
   };
 
   const handleOk = () => {};
@@ -199,7 +204,8 @@ export default function FileDownloaderDialog(props: Props) {
         <Button
           key="save"
           onClick={handleSaveDownloadInfo}
-          loading={downloadingFlag}
+          loading={savingFlag}
+          disabled={savingFlag}
         >
           保存信息
         </Button>,
@@ -207,6 +213,7 @@ export default function FileDownloaderDialog(props: Props) {
           key="download"
           type="primary"
           disabled={downloadingFlag}
+          loading={downloadingFlag}
           onClick={beginDownload}
         >
           开始下载

@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams, useLocation } from "react-router";
 import "./FileDownloader.scss";
 import type { AxiosError } from "axios";
 import type { TableProps } from "antd";
 import type { RootState } from "@/store";
+import { Tag } from "antd";
+
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons";
 import { getFileDownloaderListRequest } from "@/api/fileDownloader";
 import FileDownloaderDialog from "@/views/FileDownloader/FileDownloaderDialog";
+import utils from "@/utils/utils.ts";
 
 import { useSelector } from "react-redux";
 
 type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
 
 interface TableDataType {
+  key: React.Key;
   data: FieldData[];
   total: number;
 }
@@ -47,7 +51,7 @@ export default function Interview() {
     total: undefined,
   };
 
-  let _pagination = defaultPagination;
+  const paginationRef = useRef(defaultPagination);
 
   const [editActive, setEditActive] = useState<boolean>(false);
   const [reviewActive, setReviewActive] = useState<boolean>(false);
@@ -65,7 +69,7 @@ export default function Interview() {
 
   const userInfo = useSelector((state: RootState) => state.userInfo);
 
-  const rowSelection: TableRowSelection<TableDataType> = {
+  const rowSelection: TableRowSelection<FieldData> = {
     selectedRowKeys,
     onChange: (newSelectedRowKeys) => {
       handleSelectChange(newSelectedRowKeys);
@@ -103,15 +107,27 @@ export default function Interview() {
       dataIndex: "type",
       key: "type",
       render: (_, record: FieldData) => {
-        <Space size="middle">
-          <Button
-            type="text"
-            disabled={!isLoggedIn}
-            onClick={() => handleEdit(record)}
-          >
-            <FormOutlined />
-          </Button>
-        </Space>;
+        if (record.type === "multiple") {
+          return (
+            <Tag
+              key="magenta"
+              color="magenta"
+              variant="solid"
+            >
+              多文件
+            </Tag>
+          );
+        } else if (record.type === "single") {
+          return (
+            <Tag
+              key="green"
+              color="green"
+              variant="solid"
+            >
+              单文件
+            </Tag>
+          );
+        }
       },
     },
     {
@@ -180,18 +196,24 @@ export default function Interview() {
     setLoading(true);
     return new Promise<TableDataType>((resolve, reject) => {
       getFileDownloaderListRequest({
-        page: pagination.page,
-        pageSize: pagination.pageSize,
+        ...paginationRef.current,
       })
-        .then((response) => {
-          const tableData: TableDataType = response.data;
-          setTableData(tableData);
-          setPagination({
-            ...pagination,
-            total: tableData.total,
-          });
+        .then((response: TableDataType) => {
+          setTableData(
+            response.data.map((item) => {
+              return {
+                ...item,
+                key: item.id,
+              };
+            }),
+          );
+          paginationRef.current = {
+            ...paginationRef.current,
+            total: response.total,
+          };
+          setPagination(paginationRef.current);
           setLoading(false);
-          resolve(tableData);
+          resolve(response);
         })
         .catch((error: AxiosError) => {
           console.log(error);
@@ -201,16 +223,15 @@ export default function Interview() {
   };
 
   const handleSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
   const handleChangePagination = (page: number) => {
-    _pagination = {
-      ...pagination,
+    paginationRef.current = {
+      ...paginationRef.current,
       page,
     };
-    setPagination(_pagination);
+    setPagination(paginationRef.current);
     getDataPromise();
   };
 
@@ -271,6 +292,7 @@ export default function Interview() {
         >
           <Button
             type="primary"
+            disabled={!isLoggedIn}
             onClick={() => {
               setDialogActive(true);
             }}
@@ -278,6 +300,7 @@ export default function Interview() {
             文件下载
           </Button>
           <Button
+            disabled={!isLoggedIn}
             onClick={() => {
               setDialogActive(true);
               setEditActive(true);
@@ -287,7 +310,8 @@ export default function Interview() {
           </Button>
         </Flex>
         <Table
-          rowSelection={{ ...rowSelection }}
+          className={utils.$checkIsMobile() ? "mobile" : ""}
+          rowSelection={rowSelection}
           dataSource={tableData}
           columns={columns}
           loading={loading}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import type { ChangeEvent } from "react";
 import { useSearchParams, useLocation } from "react-router";
 import "./Interview.scss";
 import EditDialog from "./EditDialog";
@@ -56,7 +57,7 @@ export default function Interview() {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const rowSelection: TableRowSelection<TableDataType> = {
+  const rowSelection: TableRowSelection<RecordType> = {
     selectedRowKeys,
     onChange: (newSelectedRowKeys) => {
       handleSelectChange(newSelectedRowKeys);
@@ -96,7 +97,7 @@ export default function Interview() {
       title: "标题",
       dataIndex: "title",
       key: "title",
-      render: (_, record: RecordType) => (
+      render: (_: unknown, record: RecordType) => (
         <Button
           className="title"
           type="link"
@@ -118,7 +119,7 @@ export default function Interview() {
       dataIndex: "operation",
       key: "operation",
       width: "3rem",
-      render: (_, record: RecordType) => (
+      render: (_: unknown, record: RecordType) => (
         <Space size="middle">
           <Button
             type="text"
@@ -141,7 +142,7 @@ export default function Interview() {
 
   const handleSearchArticle: (
     value: string,
-    event: React.ChangeEvent<HTMLButtonElement>,
+    event: React.ChangeEvent<HTMLInputElement, Element>,
   ) => void = (values, event) => {
     console.log(event);
     setLoading(true);
@@ -181,14 +182,13 @@ export default function Interview() {
   };
 
   const handleSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
-  const handleChangePagination = (current: number) => {
+  const handleChangePagination = (page: number) => {
     paginationRef.current = {
       ...paginationRef.current,
-      current,
+      page,
     };
     setPagination(paginationRef.current);
     getDataPromise();
@@ -230,7 +230,7 @@ export default function Interview() {
       deleteMultipleDataByIdRequest({
         ids: idList,
       })
-        .then((response: RecordType) => {
+        .then((response: TableDataType) => {
           getDataPromise();
           resolve(response);
         })
@@ -263,9 +263,10 @@ export default function Interview() {
                     placeholder="input search text"
                     allowClear
                     disabled={loading}
-                    onSearch={(value: string, event: React.ChangeEvent<HTMLButtonElement>) =>
-                      handleSearchArticle(value, event)
-                    }
+                    onSearch={(
+                      value: string,
+                      event: React.ChangeEvent<HTMLInputElement, Element>,
+                    ) => handleSearchArticle(value, event)}
                   />
                 </Form.Item>
                 <Button disabled={!isLoggedIn}>
@@ -277,7 +278,7 @@ export default function Interview() {
         </Form>
         <Table
           className={utils.$checkIsMobile() ? "mobile" : ""}
-          rowSelection={{ ...rowSelection }}
+          rowSelection={rowSelection}
           dataSource={tableData}
           columns={columns}
           loading={loading}
@@ -286,7 +287,7 @@ export default function Interview() {
           }}
           pagination={{
             defaultCurrent: 1,
-            current: pagination.current,
+            current: pagination.page,
             pageSize: pagination.pageSize,
             total: pagination.total,
             onChange: handleChangePagination,
@@ -298,7 +299,7 @@ export default function Interview() {
         dialogActive={dialogActive}
         editActive={editActive}
         reviewActive={reviewActive}
-        record={form.getFieldValue()}
+        record={form.getFieldsValue()}
         onGoBack={() => {
           const params = new URLSearchParams(searchParams);
           params.delete("id");
