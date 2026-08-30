@@ -139,11 +139,15 @@ export default function FileDownloaderDialog(props: Props) {
         getSingleFileRequest(params)
           .then(async (response) => {
             console.log(response);
-            $message.success("提交成功");
+            $message.success("下载成功");
             props.onSave();
           })
           .catch((error) => {
             console.log(error);
+            $message.error(error.message);
+          })
+          .finally(() => {
+            setDownloadingFlag(false);
           });
       }
     });
