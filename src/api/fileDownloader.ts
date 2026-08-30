@@ -12,3 +12,8 @@ export const getSingleFileRequest = (params: Record<string, unknown>) =>
 
 export const createOrUpdateRequest = (params: Record<string, unknown>) =>
   service.post("/fileDownloader/createOrUpdate", params);
+
+export const deleteFileDownloaderRequest = (params: Record<string, unknown>) =>
+  service.delete("/fileDownloader/deleteFileDownloader", {
+    data: params,
+  });

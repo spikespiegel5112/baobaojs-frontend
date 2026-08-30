@@ -18,7 +18,6 @@ export default function FileDownloaderDialog(props: Props) {
   useEffect(() => {
     form.setFieldsValue(props.formData);
     setType(form.getFieldValue("type"));
-    console.log(props.formData);
   }, [props]);
 
   const [type, setType] = useState<string>("");
@@ -47,7 +46,6 @@ export default function FileDownloaderDialog(props: Props) {
         })
         .finally(() => {
           setSavingFlag(false);
-          props.onClose();
         });
     });
   };
@@ -140,11 +138,10 @@ export default function FileDownloaderDialog(props: Props) {
           .then(async (response) => {
             console.log(response);
             $message.success("下载成功");
-            props.onSave();
           })
           .catch((error) => {
             console.log(error);
-            $message.error(error.message);
+            $message.error(`${error.message} ${error.error}`);
           })
           .finally(() => {
             setDownloadingFlag(false);

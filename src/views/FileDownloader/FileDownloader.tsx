@@ -7,7 +7,7 @@ import type { RootState } from "@/store";
 import { Tag } from "antd";
 
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons";
-import { getFileDownloaderListRequest } from "@/api/fileDownloader";
+import { getFileDownloaderListRequest, deleteFileDownloaderRequest } from "@/api/fileDownloader";
 import FileDownloaderDialog from "@/views/FileDownloader/FileDownloaderDialog";
 import utils from "@/utils/utils.ts";
 
@@ -66,8 +66,6 @@ export default function Interview() {
   const [form] = Form.useForm();
 
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const userInfo = useSelector((state: RootState) => state.userInfo);
 
   const rowSelection: TableRowSelection<FieldData> = {
     selectedRowKeys,
@@ -190,8 +188,6 @@ export default function Interview() {
   }, [reviewActive]);
 
   const getDataPromise = () => {
-    console.log("userInfo");
-    console.log(userInfo);
     console.log(searchParams);
     setLoading(true);
     return new Promise<TableDataType>((resolve, reject) => {
@@ -250,6 +246,23 @@ export default function Interview() {
     });
   };
 
+  const handleMultipleDelete = () => {
+    console.log(selectedRowKeys);
+    Modal.confirm({
+      title: "提示",
+      content: "你确定要批量删除吗？",
+      okText: "确认",
+      cancelText: "取消",
+      onOk() {
+        $message.success("已删除");
+        confirmDeletePromise(selectedRowKeys);
+      },
+      onCancel() {
+        console.log("取消操作");
+      },
+    });
+  };
+
   const handleDelete = (record: FieldData) => {
     Modal.confirm({
       title: "提示",
@@ -258,7 +271,7 @@ export default function Interview() {
       cancelText: "取消",
       onOk() {
         $message.success("已删除");
-        confirmDeletePromise([record.id]);
+        confirmDeletePromise(record.id);
       },
       onCancel() {
         console.log("取消操作");
@@ -266,12 +279,12 @@ export default function Interview() {
     });
   };
 
-  const confirmDeletePromise = (idList: number[]) => {
+  const confirmDeletePromise = (idList: React.Key | React.Key[]) => {
     return new Promise((resolve, reject) => {
-      deleteMultipleDataByIdRequest({
-        ids: idList,
+      deleteFileDownloaderRequest({
+        id: idList,
       })
-        .then((response: FieldData) => {
+        .then((response) => {
           getDataPromise();
           resolve(response);
         })
@@ -302,8 +315,7 @@ export default function Interview() {
           <Button
             disabled={!isLoggedIn}
             onClick={() => {
-              setDialogActive(true);
-              setEditActive(true);
+              handleMultipleDelete();
             }}
           >
             批量删除
