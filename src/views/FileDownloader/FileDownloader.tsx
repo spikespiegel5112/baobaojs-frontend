@@ -53,17 +53,12 @@ export default function Interview() {
 
   const paginationRef = useRef(defaultPagination);
 
-  const [editActive, setEditActive] = useState<boolean>(false);
-  const [reviewActive, setReviewActive] = useState<boolean>(false);
-
   const [dialogActive, setDialogActive] = useState<boolean>(false);
   const [formData, setFormData] = useState<FieldData | null>(null);
   const [tableData, setTableData] = useState<FieldData[]>([]);
   const [pagination, setPagination] = useState<PaginationType>(defaultPagination);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-
-  const [form] = Form.useForm();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -175,18 +170,6 @@ export default function Interview() {
       });
   }, []);
 
-  useEffect(() => {
-    if (!editActive) {
-      form.resetFields();
-    }
-  }, [editActive]);
-
-  useEffect(() => {
-    if (!reviewActive) {
-      form.resetFields();
-    }
-  }, [reviewActive]);
-
   const getDataPromise = () => {
     console.log(searchParams);
     setLoading(true);
@@ -232,15 +215,12 @@ export default function Interview() {
   };
 
   const handleEdit = (record: FieldData) => {
-    setEditActive(true);
     setDialogActive(true);
     setFormData(record);
   };
 
   const handleReview = (record: FieldData) => {
-    setReviewActive(true);
     setDialogActive(true);
-    form.setFieldsValue(record);
     setSearchParams({
       id: String(record.id),
     });
@@ -342,8 +322,10 @@ export default function Interview() {
         <FileDownloaderDialog
           dialogVisible={dialogActive}
           formData={formData}
-          onClose={() => setDialogActive(false)}
-          onSave={() => getDataPromise()}
+          onClose={() => {
+            setDialogActive(false);
+            getDataPromise();
+          }}
         />
       </div>
     </div>

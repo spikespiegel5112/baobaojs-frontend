@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@ant-design/icons": "5.x",
-    "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@reduxjs/toolkit": "^2.8.2",
     "antd": "^6.6.0",
     "axios": "^1.11.0",

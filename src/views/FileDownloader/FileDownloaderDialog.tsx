@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./FileDownloader.scss";
-import { Select, Popover, InputNumber } from "antd";
+import { App, Select, Popover } from "antd";
 import { getSingleFileRequest, createOrUpdateRequest } from "@/api/fileDownloader";
 
 import type { FieldData } from "@/views/FileDownloader/FileDownloader";
@@ -9,15 +9,19 @@ interface Props {
   dialogVisible: boolean;
   formData: FieldData | null;
   onClose: () => void;
-  onSave: () => void;
+  onSave?: () => void;
 }
 
 export default function FileDownloaderDialog(props: Props) {
   const [form] = Form.useForm();
+  const { message } = App.useApp();
 
   useEffect(() => {
-    form.setFieldsValue(props.formData);
-    setType(form.getFieldValue("type"));
+    if (props.dialogVisible) {
+      form.setFieldsValue(props.formData);
+      setType(form.getFieldValue("type"));
+      handleChangeSeriesNumberEnd(form.getFieldValue("seriesNumberEnd"));
+    }
   }, [props]);
 
   const [type, setType] = useState<string>("");
@@ -27,6 +31,7 @@ export default function FileDownloaderDialog(props: Props) {
   );
 
   const gridDictionaryRef = useRef<{ seriesNumber: number; status: string }[]>([]);
+  const downloadingFlagRef = useRef<boolean>(false);
 
   const [downloadingFlag, setDownloadingFlag] = useState<boolean>(false);
   const [savingFlag, setSavingFlag] = useState<boolean>(false);
@@ -36,10 +41,8 @@ export default function FileDownloaderDialog(props: Props) {
     form.validateFields().then(() => {
       const params = form.getFieldsValue();
       createOrUpdateRequest(params)
-        .then(async (response) => {
-          console.log(response);
-          $message.success("提交成功");
-          props.onSave();
+        .then(() => {
+          message.success("提交成功");
         })
         .catch((error: Error) => {
           console.log(error);
@@ -53,6 +56,7 @@ export default function FileDownloaderDialog(props: Props) {
   const beginDownload = () => {
     form.validateFields().then(() => {
       setDownloadingFlag(true);
+      downloadingFlagRef.current = true;
       gridDictionary.forEach((item) => {
         item.status = "";
       });
@@ -69,58 +73,66 @@ export default function FileDownloaderDialog(props: Props) {
           .split("")
           .map(() => "0")
           .join("");
+
         const loop = () => {
           if (count >= times) {
             setDownloadingFlag(false);
+            downloadingFlagRef.current = false;
           }
-          if (!downloadingFlag) {
+          if (!downloadingFlagRef.current) {
             return;
           }
+
           let currentGridIndex = 0;
           gridDictionary.forEach((item, index) => {
             if (item.seriesNumber === count + seriesNumberStart) {
               currentGridIndex = index;
             }
           });
-          console.log("currentGridIndex+++", currentGridIndex);
           if (count <= times) {
-            gridDictionary[currentGridIndex].status = "pending";
+            gridDictionaryRef.current[currentGridIndex].status = "pending";
 
             const filledUpCount = (prefixLength + (count + seriesNumberStart)).slice(-3);
-
-            getSingleFileRequest({
+            const params = {
               type: form.getFieldValue("type"),
               fileUrl:
                 form.getFieldValue("fileUrlLeftSide") +
                 filledUpCount +
                 form.getFieldValue("fileUrlRightSide"),
               destPath: form.getFieldValue("destPath"),
-            })
-              .then(async (response) => {
-                console.log(response);
-                gridDictionary[currentGridIndex].status = "success";
-
+            };
+            getSingleFileRequest(params)
+              .then(() => {
+                gridDictionaryRef.current[currentGridIndex].status = "success";
+                setGridDictionary([...gridDictionaryRef.current]);
+                console.log("=====gridDictionaryRef.current=====");
+                console.log(gridDictionaryRef.current.map((item) => item.status));
+                console.log(gridDictionary.map((item) => item.status));
                 if (count < times) {
                   loop();
                 } else {
                   setDownloadingFlag(false);
-                  $message.success("下载流程结束");
+                  downloadingFlagRef.current = false;
+                  message.success("下载流程结束");
                 }
               })
               .catch((error) => {
-                $message.error("下载失败");
-                if (downloadingFlag) {
-                  gridDictionary[currentGridIndex].status = "failed";
+                message.error("下载失败");
+                if (downloadingFlagRef.current) {
+                  gridDictionaryRef.current[currentGridIndex].status = "failed";
+                  setGridDictionary(gridDictionaryRef.current);
                 }
 
                 if (count < times) {
                   loop();
                 } else {
                   setDownloadingFlag(false);
-                  $message.success("下载流程结束");
+                  downloadingFlagRef.current = false;
+                  message.success("下载流程结束");
                 }
                 console.log(error);
-              });
+              })
+              .finally(() => {});
           }
           count++;
         };
@@ -133,18 +145,17 @@ export default function FileDownloaderDialog(props: Props) {
           destPath: form.getFieldValue("destPath"),
           fileSuffix: form.getFieldValue("fileSuffix"),
         };
-        console.log(params);
         getSingleFileRequest(params)
-          .then(async (response) => {
-            console.log(response);
-            $message.success("下载成功");
+          .then(async () => {
+            message.success("下载成功");
           })
           .catch((error) => {
             console.log(error);
-            $message.error(`${error.message} ${error.error}`);
+            message.error(`${error.message} ${error.error}`);
           })
           .finally(() => {
             setDownloadingFlag(false);
+            downloadingFlagRef.current = false;
           });
       }
     });
@@ -170,26 +181,18 @@ export default function FileDownloaderDialog(props: Props) {
       });
     }
     setGridDictionary(gridDictionaryRef.current);
-
-    console.log(length);
-    console.log(form.getFieldValue("seriesNumberStart"));
-    console.log(form.getFieldValue("seriesNumberEnd"));
   };
 
   const handleOk = () => {};
 
   const handleCancel = () => {
+    form.resetFields();
     props.onClose();
   };
 
-  const handleCloseRecordPeriod = () => {
-    form.resetFields();
-    form.setFieldsValue({
-      expireDate: null,
-      periodHistoryData: [],
-      page: 1,
-      dialogFormVisible2: false,
-    });
+  const handleChangeSeriesNumberEnd = (value: string) => {
+    form.setFieldValue("gridAmount", value);
+    makeProgressGrid();
   };
 
   return (
@@ -228,7 +231,7 @@ export default function FileDownloaderDialog(props: Props) {
         </Button>,
         <Button
           key="close"
-          onClick={handleCloseRecordPeriod}
+          onClick={handleCancel}
         >
           关闭
         </Button>,
@@ -252,7 +255,7 @@ export default function FileDownloaderDialog(props: Props) {
               label="下载操作名称"
               name="name"
             >
-              <Input></Input>
+              <Input />
             </Form.Item>
           </Col>
           <Col span="12">
@@ -274,6 +277,7 @@ export default function FileDownloaderDialog(props: Props) {
             </Form.Item>
           </Col>
         </Row>
+
         {type === "single" && (
           <Row gutter={30}>
             <Col span="12">
@@ -281,7 +285,7 @@ export default function FileDownloaderDialog(props: Props) {
                 label="文件路径"
                 name="fileUrl"
               >
-                <Input></Input>
+                <Input />
               </Form.Item>
             </Col>
             <Col span="12">
@@ -289,7 +293,7 @@ export default function FileDownloaderDialog(props: Props) {
                 label="文件后缀"
                 name="fileSuffix"
               >
-                <Input></Input>
+                <Input />
               </Form.Item>
             </Col>
           </Row>
@@ -298,38 +302,45 @@ export default function FileDownloaderDialog(props: Props) {
         {type === "multiple" && (
           <div>
             <Row gutter={30}>
+              <Col span="24">
+                <Form.Item
+                  label="文件名左侧"
+                  name="fileUrlLeftSide"
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={30}>
+              <Col span="24">
+                <Form.Item
+                  label="文件名右侧"
+                  name="fileUrlRightSide"
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={30}>
               <Col span="12">
                 <Form.Item
                   label="序列号起始值"
-                  name="fileUrlLeftSide"
+                  name="seriesNumberStart"
                 >
-                  <Input></Input>
+                  <Input />
                 </Form.Item>
               </Col>
               <Col span="12">
                 <Form.Item
                   label="序列号结束值"
-                  name="fileUrlRightSide"
-                >
-                  <Input></Input>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={30}>
-              <Col span="6">
-                <Form.Item
-                  label="起始数字"
-                  name="seriesNumberStart"
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span="6">
-                <Form.Item
-                  label="结束数字"
                   name="seriesNumberEnd"
                 >
-                  <InputNumber />
+                  <Input
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const value = event.target.value;
+                      handleChangeSeriesNumberEnd(value);
+                    }}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -342,11 +353,22 @@ export default function FileDownloaderDialog(props: Props) {
               label="目标位置"
               name="destPath"
             >
-              <Input></Input>
+              <Input />
             </Form.Item>
           </Col>
         </Row>
-
+        {type === "multiple" && (
+          <Row gutter={30}>
+            <Col span="12">
+              <Form.Item
+                label="总格子数量"
+                name="gridAmount"
+              >
+                {form.getFieldValue("seriesNumberEnd") - form.getFieldValue("seriesNumberStart")}
+              </Form.Item>
+            </Col>
+          </Row>
+        )}
         <div className="progressgrid">
           <ul>
             {gridDictionary.map((item, index) => (

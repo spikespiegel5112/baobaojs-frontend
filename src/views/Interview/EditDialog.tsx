@@ -127,8 +127,16 @@ export default function EditDialog(props: Props) {
             }
           })()}
         </div>
-        <Form form={form} layout="vertical" onFinish={handleSubmitQA} autoComplete="off">
-          <Form.Item name="id" style={{ display: "none" }}>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmitQA}
+          autoComplete="off"
+        >
+          <Form.Item
+            name="id"
+            style={{ display: "none" }}
+          >
             <Input type="hidden" />
           </Form.Item>
           <div className="content">
@@ -184,7 +192,10 @@ export default function EditDialog(props: Props) {
           {editActive && (
             <Row justify="end">
               <Col span={3}>
-                <Space size="middle" align="end">
+                <Space
+                  size="middle"
+                  align="end"
+                >
                   <Button
                     onClick={() => {
                       setEditActive(false);
@@ -194,7 +205,10 @@ export default function EditDialog(props: Props) {
                   >
                     取消
                   </Button>
-                  <Button type="primary" htmlType="submit">
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                  >
                     提交
                   </Button>
                 </Space>
