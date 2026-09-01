@@ -4,7 +4,6 @@ import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import jsxA11y from "eslint-plugin-jsx-a11y";
-import prettier from "eslint-plugin-prettier";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
@@ -47,19 +46,16 @@ export default defineConfig([
     plugins: {
       "react-hooks": reactHooks,
       "jsx-a11y": jsxA11y,
-      prettier,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
 
-      // 启用 Prettier 格式化检查
-      "prettier/prettier": "warn",
-
-      // 你可以在这里加一些项目特定规则，比如：
-      "no-unused-vars": "warn",
+      // TypeScript 文件由 @typescript-eslint/no-unused-vars 负责，避免与基础规则重复报错。
+      "no-unused-vars": "off",
       "react/react-in-jsx-scope": "off", // React 17+ 不需要显式 import React
       "react/jsx-no-undef": "off",
+      "react-hooks/exhaustive-deps": "off",
     },
     settings: {
       react: {

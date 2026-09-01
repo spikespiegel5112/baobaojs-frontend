@@ -1,0 +1,52 @@
+import { useEffect, useState } from "react";
+import "./Homepage.scss";
+export default function Homepage() {
+  const [startButtonActive, setStartButtonActive] = useState(false);
+  const [entranceActive, setEntranceActive] = useState(false);
+  const [enterActive, setEnterActive] = useState(false);
+  const [bgActive, setBgActive] = useState(false);
+
+  useEffect(() => {
+    setEntranceActive(true);
+    setTimeout(() => {
+      setStartButtonActive(true);
+    }, 300);
+  }, []);
+
+  const handleEnter = () => {
+    setEntranceActive(false);
+    setStartButtonActive(false);
+    setEnterActive(true);
+    setTimeout(() => {
+      setBgActive(true);
+    }, 800);
+  };
+
+  return (
+    <div className={"homepage_container"}>
+      <div className={`entrance ${entranceActive ? "active" : ""}`}>
+        <div className={"title"}>BAOBAOJS</div>
+        <button
+          className={"startbutton " + (startButtonActive ? "active" : "")}
+          onClick={handleEnter}
+        ></button>
+      </div>
+
+      <div className={"main " + (enterActive ? "active" : "")}>
+        <div className={"menu " + (bgActive ? "active" : "")}>
+          <div className="menubg">
+            <span className="bg1">
+              <div className="rightglow"></div>
+            </span>
+            <span className="bg2"></span>
+            <div className="mask">
+              <span className="bg1"></span>
+              <span className="bg2"></span>
+            </div>
+            <div className="title">BAOBAOJS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

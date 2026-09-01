@@ -1,0 +1,100 @@
+.filedownloader_container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  .header {
+    margin: 0 0 0.2rem 0;
+  }
+  .table {
+    padding: 0.2rem 0.5rem;
+    transition: transform 0.3s;
+    transform: translateX(-100%);
+    &.active {
+      transform: translateX(0);
+    }
+    .ant-table {
+      height: calc(100vh - 2rem);
+      background-color: rgba($color: #fff, $alpha: 0.8);
+      font-size: 0.3rem;
+      position: relative;
+      .ant-table-container {
+        height: 100%;
+        .ant-table-content {
+          height: 100%;
+          position: relative;
+        }
+        table {
+          height: 100%;
+
+          .ant-table-tbody {
+            height: calc(100% - 2rem);
+            overflow: auto;
+            position: relative;
+            .ant-table-row {
+              .ant-table-cell {
+                .title {
+                  color: #333;
+                }
+                &:hover {
+                  .title {
+                    color: #000;
+                    &:hover {
+                      text-decoration: underline;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.filedownloaderdialog_container {
+  .ant-input-number {
+    width: 100%;
+  }
+}
+
+.duration {
+  li {
+    margin: 0 0 25px 0;
+  }
+}
+.progressgrid {
+  width: 100%;
+  ul {
+    li {
+      display: inline-block;
+      margin: 2px;
+      width: 15px;
+      height: 15px;
+      background-color: #ccc;
+      border-radius: 5px;
+      overflow: hidden;
+      div {
+        width: 100%;
+        height: 100%;
+      }
+      &.success {
+        div {
+          background-color: green;
+        }
+      }
+      &.failed {
+        div {
+          background-color: red;
+        }
+      }
+      &.pending {
+        div {
+          background-color: orange;
+        }
+      }
+    }
+  }
+}

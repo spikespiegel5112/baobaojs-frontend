@@ -3,6 +3,10 @@
 /misc/
 /node_modules/
 
-# React Router
-/.react-router/
+yarn.lock
+
 /build/
+
+.husky/_
+
+

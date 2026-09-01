@@ -20,4 +20,5 @@ declare global {
   const Row: typeof import('antd').Row
   const Space: typeof import('antd').Space
   const Table: typeof import('antd').Table
+  const Tag: typeof import("antd").Tag
 }

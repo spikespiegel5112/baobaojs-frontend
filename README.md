@@ -1,20 +1,14 @@
 https://archive.mirrorsedgearchive.org/
 
-# Welcome to React Router!
+# BAOBAOJS Frontend
 
-A modern, production-ready template for building full-stack React applications using React Router.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+这是一个使用 Vite 构建的 React 单页应用。页面路由仍由 `react-router` 在浏览器端处理，但开发与生产构建均直接使用 Vite。
 
 ## Features
 
-- 🚀 Server-side rendering
 - ⚡️ Hot Module Replacement (HMR)
 - 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
 - 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
 
 ## Getting Started
 
@@ -34,7 +28,7 @@ Start the development server with HMR:
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+应用默认运行在 `http://localhost:5173`。
 
 ## Building for Production
 
@@ -46,7 +40,7 @@ npm run build
 
 ## Deployment
 
-### Docker Deployment
+### Docker 部署
 
 To build and run using Docker:
 
@@ -66,24 +60,16 @@ The containerized application can be deployed to any platform that supports Dock
 - Fly.io
 - Railway
 
-### DIY Deployment
+### 静态部署
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
+部署 `npm run build` 生成的 `dist/` 目录，并将所有未知路径回退到 `index.html`，以支持浏览器端路由。
 
 ```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+dist/
+├── assets/
+└── index.html
 ```
 
 ## Styling
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+项目已配置 Tailwind CSS，可按需使用。
