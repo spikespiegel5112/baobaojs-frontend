@@ -83,6 +83,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   useEffect(() => {
     if (props.reviewActive) {
       setReviewActive(true);
+      setEditActive(false);
       setRecord(props.record);
     }
   }, [props.reviewActive]);
