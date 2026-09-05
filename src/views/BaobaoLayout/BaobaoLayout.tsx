@@ -2,9 +2,12 @@ import { useEffect, useState, useMemo } from "react";
 import { Outlet, Link } from "react-router";
 import { useNavigate, useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
+import { App as AntdApp } from "antd";
+import { setMessageInstance } from "@/utils/message";
+
 import { setUserInfo, setIsLoggedIn } from "@/store/index";
 import type { RootState, AppDispatch } from "@/store";
-import utils from "@/utils/utils.ts";
+import utils from "@/utils/utils";
 import type { AxiosError } from "axios";
 import { routeDictionary, type RouteType } from "@/routes";
 
@@ -60,6 +63,8 @@ const menuListData = [
 ];
 
 export default function BaobaoLayout() {
+  const { message } = AntdApp.useApp();
+  setMessageInstance(message);
   const navigate = useNavigate();
   const location = useLocation();
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
@@ -101,14 +106,6 @@ export default function BaobaoLayout() {
         setExpandButtonFlag(true);
       }
     }
-
-    window.$message = message;
-
-    message.config({
-      top: 80,
-      duration: 2,
-      maxCount: 3,
-    });
 
     highLightMenu();
     getTimePeriod();
@@ -216,7 +213,7 @@ export default function BaobaoLayout() {
       onOk() {
         logoutRequest({})
           .then(() => {
-            $message.success("注销成功");
+            utils.$message.success("注销成功");
             dispatch(setUserInfo(null));
             dispatch(setIsLoggedIn(false));
             navigate("Login");

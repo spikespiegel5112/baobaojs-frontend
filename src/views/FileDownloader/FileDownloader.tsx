@@ -9,7 +9,7 @@ import { Tag } from "antd";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons";
 import { getFileDownloaderListRequest, deleteFileDownloaderRequest } from "@/api/fileDownloader";
 import FileDownloaderDialog from "@/views/FileDownloader/FileDownloaderDialog";
-import utils from "@/utils/utils.ts";
+import utils from "@/utils/utils";
 
 import { useSelector } from "react-redux";
 
@@ -234,7 +234,7 @@ export default function Interview() {
       okText: "确认",
       cancelText: "取消",
       onOk() {
-        $message.success("已删除");
+        utils.$message.success("已删除");
         confirmDeletePromise(selectedRowKeys);
       },
       onCancel() {
@@ -250,7 +250,7 @@ export default function Interview() {
       okText: "确认",
       cancelText: "取消",
       onOk() {
-        $message.success("已删除");
+        utils.$message.success("已删除");
         confirmDeletePromise(record.id);
       },
       onCancel() {

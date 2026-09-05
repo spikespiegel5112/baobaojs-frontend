@@ -84,10 +84,21 @@
       justify-content: space-between;
       margin: 0.2rem 0.5rem 0 0.5rem;
     }
+    // .content::-webkit-scrollbar-track {
+    //   width: 6px;
+    //   background: transparent;
+    // }
+    // .content::-webkit-scrollbar-track {
+    //   background: transparent;
+    // }
+    // .content::-webkit-scrollbar-thumb {
+    //   background: rgba(255, 255, 255, 0.3);
+    //   border-radius: 3px;
+    // }
     .content {
       margin: 0 0.5rem;
-      .edit {
-      }
+      overflow-y: auto;
+      scrollbar-color: rgba(128, 128, 128, 0.5) transparent;
 
       .review {
         display: flex;

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import "./FileDownloader.scss";
 import { App, Select, Popover } from "antd";
 import { getSingleFileRequest, createOrUpdateRequest } from "@/api/fileDownloader";
+import utils from "@/utils/utils";
 
 import type { FieldData } from "@/views/FileDownloader/FileDownloader";
 
@@ -14,7 +15,6 @@ interface Props {
 
 export default function FileDownloaderDialog(props: Props) {
   const [form] = Form.useForm();
-  const { message } = App.useApp();
 
   useEffect(() => {
     if (props.dialogVisible) {
@@ -42,7 +42,7 @@ export default function FileDownloaderDialog(props: Props) {
       const params = form.getFieldsValue();
       createOrUpdateRequest(params)
         .then(() => {
-          message.success("提交成功");
+          utils.$message.success("提交成功");
         })
         .catch((error: Error) => {
           console.log(error);
@@ -113,11 +113,11 @@ export default function FileDownloaderDialog(props: Props) {
                 } else {
                   setDownloadingFlag(false);
                   downloadingFlagRef.current = false;
-                  message.success("下载流程结束");
+                  utils.$message.success("下载流程结束");
                 }
               })
               .catch((error) => {
-                message.error("下载失败");
+                utils.$message.error("下载失败");
                 if (downloadingFlagRef.current) {
                   gridDictionaryRef.current[currentGridIndex].status = "failed";
                   setGridDictionary(gridDictionaryRef.current);
@@ -128,7 +128,7 @@ export default function FileDownloaderDialog(props: Props) {
                 } else {
                   setDownloadingFlag(false);
                   downloadingFlagRef.current = false;
-                  message.success("下载流程结束");
+                  utils.$message.success("下载流程结束");
                 }
                 console.log(error);
               })
@@ -147,11 +147,11 @@ export default function FileDownloaderDialog(props: Props) {
         };
         getSingleFileRequest(params)
           .then(async () => {
-            message.success("下载成功");
+            utils.$message.success("下载成功");
           })
           .catch((error) => {
             console.log(error);
-            message.error(`${error.message} ${error.error}`);
+            utils.$message.error(`${error.message} ${error.error}`);
           })
           .finally(() => {
             setDownloadingFlag(false);

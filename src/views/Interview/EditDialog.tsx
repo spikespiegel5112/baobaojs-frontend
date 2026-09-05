@@ -1,4 +1,12 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import React, {
+  lazy,
+  Suspense,
+  useEffect,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import "./Interview.scss";
 import type { AxiosError } from "axios";
 import type { FormProps } from "antd";
@@ -8,8 +16,13 @@ import { createOrUpdateQARequest } from "@/api/inteerview";
 
 import { useSelector } from "react-redux";
 import dayjs from "@/utils/dayjs";
+import utils from "@/utils/utils";
 
 const ReactMarkdown = lazy(() => import("react-markdown"));
+
+export interface EditDialogRef {
+  resetField: () => void;
+}
 
 interface RecordType {
   id: number;
@@ -29,15 +42,20 @@ interface InterviewItem {
 interface Props {
   dialogActive: boolean;
   editActive?: boolean;
+  addActive?: boolean;
   reviewActive?: boolean;
-  record?: RecordType[];
+  record?: RecordType;
   onGoBack: () => void;
 }
 
-export default function EditDialog(props: Props) {
+const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
+  useImperativeHandle(ref, () => ({
+    resetField,
+  }));
+
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
 
-  const [record, setRecord] = useState<RecordType[]>([]);
+  const [record, setRecord] = useState<RecordType>();
   const [editActive, setEditActive] = useState<boolean>(false);
   const [reviewActive, setReviewActive] = useState<boolean>(true);
 
@@ -46,29 +64,43 @@ export default function EditDialog(props: Props) {
   useEffect(() => {}, []);
 
   useEffect(() => {
-    if (!props.editActive) {
-      form.resetFields();
-    } else {
+    if (props.editActive) {
+      debugger;
       setEditActive(true);
       setReviewActive(false);
-      form.setFieldsValue(props.record);
       setRecord(props.record);
     }
   }, [props.editActive]);
 
   useEffect(() => {
-    if (!props.reviewActive) {
+    if (props.addActive) {
+      setEditActive(true);
+      setReviewActive(false);
       form.resetFields();
+    }
+  }, [props.addActive]);
+
+  useEffect(() => {
+    if (props.reviewActive) {
+      setReviewActive(true);
+      setRecord(props.record);
     }
   }, [props.reviewActive]);
 
   useEffect(() => {
     setRecord(props.record);
+    console.log(props.record);
   }, [props.record]);
 
   const rulesMap = {
     title: [{ required: true, message: "请输入邮箱" }],
     content: [{ required: true, message: "请输入密码" }],
+  };
+
+  const resetField = () => {
+    const formData = form.getFieldsValue();
+    console.log(formData);
+    form.resetFields();
   };
 
   const handleSubmitQA: FormProps<InterviewItem>["onFinish"] = () => {
@@ -77,14 +109,14 @@ export default function EditDialog(props: Props) {
       .then((formData) => {
         createOrUpdateQARequest(formData)
           .then(() => {
-            $message.success("保存成功！");
+            utils.$message.success("保存成功！");
             setEditActive(false);
             setReviewActive(true);
             // props.onGoBack();
           })
           .catch((error: AxiosError) => {
             console.log(error);
-            $message.error(error.message);
+            error.message;
           });
       })
       .catch((error: Error) => {
@@ -171,7 +203,7 @@ export default function EditDialog(props: Props) {
                 return (
                   <div className="review">
                     <div className="title">
-                      <div className="main">{props.record.title}</div>
+                      <div className="main">{props.record?.title}</div>
                       <span>{dayjs(createdAt).format("YYYY-MM-DD hh:mm:ss")}</span>
                     </div>
                     <Divider
@@ -181,7 +213,7 @@ export default function EditDialog(props: Props) {
                     />
                     <div className="content">
                       <Suspense fallback={<div>Loading...</div>}>
-                        <ReactMarkdown>{props.record.content}</ReactMarkdown>
+                        <ReactMarkdown>{props.record?.content}</ReactMarkdown>
                       </Suspense>
                     </div>
                   </div>
@@ -219,4 +251,6 @@ export default function EditDialog(props: Props) {
       </Space>
     </div>
   );
-}
+});
+
+export default EditDialog;

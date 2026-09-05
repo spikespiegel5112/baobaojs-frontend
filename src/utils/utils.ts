@@ -1,5 +1,6 @@
 import { routeDictionary } from "@/routes.ts";
 import type { RouteType } from "@/routes";
+import { message } from "@/utils/message";
 
 const _utils = {
   $objectToUrlString: (query: Record<string, unknown>) => {
@@ -185,6 +186,8 @@ const _utils = {
     looper(completeRouteDictionary);
     return result;
   },
+
+  $message: message,
 };
 
 const utils = _utils;

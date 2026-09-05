@@ -8,7 +8,7 @@ import type { FormProps } from "antd";
 import type { AxiosError } from "axios";
 import { loginRequest, changePasswordRequest } from "@/api/auth";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import utils from "@/utils/utils.ts";
+import utils from "@/utils/utils";
 
 interface InterviewItem {
   id?: number;
@@ -34,13 +34,13 @@ export default function Login() {
       .then((formData) => {
         loginRequest(formData)
           .then(() => {
-            $message.success("登录成功！");
+            utils.$message.success("登录成功！");
             dispatch(setIsLoggedIn(true));
             navigate(utils.$findRoutePathById("ErnieBot"));
           })
           .catch((error: AxiosError) => {
             console.log(error);
-            $message.error(error.message);
+            utils.$message.error(error.message);
           })
           .finally(() => {
             setLoading(false);
@@ -58,13 +58,13 @@ export default function Login() {
       .then((formData) => {
         changePasswordRequest(formData)
           .then(() => {
-            $message.success("密码修改成功！");
+            utils.$message.success("密码修改成功！");
             dispatch(setIsLoggedIn(true));
             navigate(utils.$findRoutePathById("ErnieBot"));
           })
           .catch((error: AxiosError) => {
             console.log(error);
-            $message.error(error.message);
+            utils.$message.error(error.message);
           });
       })
       .catch((error: Error) => {

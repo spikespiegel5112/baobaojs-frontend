@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import type { ChangeEvent } from "react";
 import { useSearchParams, useLocation } from "react-router";
 import "./Interview.scss";
 import EditDialog from "./EditDialog";
+import type { EditDialogRef } from "./EditDialog";
 import type { AxiosError } from "axios";
 import type { TableProps } from "antd";
 import type { RootState } from "@/store";
 import { FormOutlined, DeleteOutlined, FileAddOutlined } from "@ant-design/icons";
 import { getInterviewListRequest, deleteMultipleDataByIdRequest } from "@/api/inteerview";
 import dayjs from "@/utils/dayjs";
-import utils from "@/utils/utils.ts";
+import utils from "@/utils/utils";
 
 import { useSelector } from "react-redux";
 
@@ -43,12 +43,15 @@ export default function Interview() {
 
   const paginationRef = useRef(defaultPagination);
   const searchKeyword = useRef<string>("");
+  const editDialogRef = useRef<EditDialogRef>(null);
 
   const [editActive, setEditActive] = useState<boolean>(false);
+  const [addActive, setAddActive] = useState<boolean>(false);
   const [reviewActive, setReviewActive] = useState<boolean>(false);
 
   const [dialogActive, setDialogActive] = useState<boolean>(false);
   const [tableData, setTableData] = useState<RecordType[]>([]);
+  const [record, setRecord] = useState<RecordType>();
   const [pagination, setPagination] = useState<PaginationType>(defaultPagination);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -85,6 +88,12 @@ export default function Interview() {
       form.resetFields();
     }
   }, [editActive]);
+
+  useEffect(() => {
+    if (addActive) {
+      form.resetFields();
+    }
+  }, [addActive]);
 
   useEffect(() => {
     if (!reviewActive) {
@@ -194,6 +203,12 @@ export default function Interview() {
     getDataPromise();
   };
 
+  const handleAdd = () => {
+    setAddActive(true);
+    setDialogActive(true);
+    editDialogRef.current?.resetField();
+  };
+
   const handleEdit = (record: RecordType) => {
     setEditActive(true);
     setDialogActive(true);
@@ -203,7 +218,9 @@ export default function Interview() {
   const handleReview = (record: RecordType) => {
     setReviewActive(true);
     setDialogActive(true);
-    form.setFieldsValue(record);
+    setRecord(record);
+    console.log(form.getFieldsValue());
+
     setSearchParams({
       id: String(record.id),
     });
@@ -216,7 +233,7 @@ export default function Interview() {
       okText: "确认",
       cancelText: "取消",
       onOk() {
-        $message.success("已删除");
+        utils.$message.success("已删除");
         confirmDeletePromise([record.id]);
       },
       onCancel() {
@@ -269,7 +286,10 @@ export default function Interview() {
                     ) => handleSearchArticle(value, event)}
                   />
                 </Form.Item>
-                <Button disabled={!isLoggedIn}>
+                <Button
+                  disabled={!isLoggedIn}
+                  onClick={handleAdd}
+                >
                   <FileAddOutlined />
                 </Button>
               </Flex>
@@ -296,10 +316,12 @@ export default function Interview() {
         />
       </div>
       <EditDialog
+        ref={editDialogRef}
         dialogActive={dialogActive}
         editActive={editActive}
+        addActive={addActive}
         reviewActive={reviewActive}
-        record={form.getFieldsValue()}
+        record={record}
         onGoBack={() => {
           const params = new URLSearchParams(searchParams);
           params.delete("id");

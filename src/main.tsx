@@ -14,7 +14,13 @@ import NotFound from "@/views/NotFound/NotFound";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <AntdApp>
+    <AntdApp
+      message={{
+        top: 100,
+        duration: 2,
+        maxCount: 3,
+      }}
+    >
       <Root>
         <BrowserRouter>
           <Routes>
