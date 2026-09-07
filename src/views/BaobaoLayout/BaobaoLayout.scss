@@ -104,7 +104,6 @@ $red: #f20000;
         }
 
         .list {
-          transition: all 1s;
           width: 1.3rem;
           right: 0;
           &.active {
@@ -112,7 +111,6 @@ $red: #f20000;
           }
           ul {
             padding: 0 0.1rem;
-
             li {
               width: 100%;
               &.active {
@@ -120,8 +118,6 @@ $red: #f20000;
                 left: 0;
                 height: 1rem;
                 line-height: 1rem;
-              }
-              a {
               }
             }
           }
@@ -324,6 +320,7 @@ $red: #f20000;
             font-size: 0.4rem;
             text-align: center;
             color: #fff;
+            transition: width 0.1s;
 
             &:nth-child(even) {
               border-radius: 0.2rem 0 0.2rem 0;
@@ -337,6 +334,7 @@ $red: #f20000;
               width: 4.3rem;
               height: 1.2rem;
               line-height: 1.2rem;
+
               a {
                 color: red;
               }
