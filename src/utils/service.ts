@@ -1,14 +1,24 @@
 import axios from "axios";
+import type { AxiosRequestConfig, AxiosResponse } from "axios";
+
+type RequestInstance = {
+  get(url: string, config?: AxiosRequestConfig): Promise<T>;
+  post(url: string, data?: AxiosResponse, config?: AxiosRequestConfig): Promise<T>;
+  put(url: string, data?: AxiosResponse, config?: AxiosRequestConfig): Promise<T>;
+  delete(url: string, data?: AxiosResponse, config?: AxiosRequestConfig): Promise<T>;
+} & typeof axios;
+
+const request = axios.create() as RequestInstance;
 
 console.log(import.meta.env);
 
-axios.defaults.baseURL =
+request.defaults.baseURL =
   import.meta.env.MODE === "development"
     ? "/baobaoapi"
     : import.meta.env.VITE_API_URL + "/baobaoapi";
 
 // Add a response interceptor
-axios.interceptors.response.use(
+request.interceptors.response.use(
   function onFulfilled(response) {
     // dispatch(setUserInfo(null));
     // dispatch(setIsLoggedIn(false));
@@ -23,4 +33,4 @@ axios.interceptors.response.use(
   },
 );
 
-export default axios;
+export default request;

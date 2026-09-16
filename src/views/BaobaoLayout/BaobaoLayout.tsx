@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { Outlet, Link } from "react-router";
 import { useNavigate, useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { App as AntdApp } from "antd";
+import { App, Layout } from "antd";
 import { setMessageInstance } from "@/utils/message";
 
 import { setUserInfo, setIsLoggedIn } from "@/store/index";
@@ -13,7 +13,6 @@ import { routeDictionary, type RouteType } from "@/routes";
 
 import "./BaobaoLayout.scss";
 
-import { Layout, message } from "antd";
 import dayjs from "dayjs";
 
 import { useTitle } from "@/hooks/useTitle";
@@ -63,8 +62,9 @@ const menuListData = [
 ];
 
 export default function BaobaoLayout() {
-  const { message } = AntdApp.useApp();
+  const { message, modal } = App.useApp();
   setMessageInstance(message);
+
   const navigate = useNavigate();
   const location = useLocation();
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
@@ -205,7 +205,7 @@ export default function BaobaoLayout() {
   };
 
   const handleLogout = () => {
-    Modal.confirm({
+    modal.confirm({
       title: "提示",
       content: "你确定要注销吗？",
       okText: "确认",

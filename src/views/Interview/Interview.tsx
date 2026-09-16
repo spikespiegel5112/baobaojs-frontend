@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams, useLocation } from "react-router";
+import { App } from "antd";
 import "./Interview.scss";
 import EditDialog from "./EditDialog";
 import type { EditDialogRef } from "./EditDialog";
-import type { AxiosError } from "axios";
 import type { TableProps } from "antd";
 import type { RootState } from "@/store";
-import { FormOutlined, DeleteOutlined, FileAddOutlined } from "@ant-design/icons";
+import type { AxiosError, AxiosResponse } from "axios";
+
+import { FormOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { getInterviewListRequest, deleteMultipleDataByIdRequest } from "@/api/inteerview";
 import dayjs from "@/utils/dayjs";
 import utils from "@/utils/utils";
@@ -25,12 +27,13 @@ interface RecordType {
   createdAt: string;
 }
 interface TableDataType {
-  key: React.Key;
+  key?: React.Key;
   total: number;
   data: RecordType[];
 }
 
 export default function Interview() {
+  const { modal } = App.useApp();
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
   const location = useLocation();
   const query = new URLSearchParams(location.search);
@@ -54,7 +57,7 @@ export default function Interview() {
   const [record, setRecord] = useState<RecordType>();
   const [pagination, setPagination] = useState<PaginationType>(defaultPagination);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
 
   const [form] = Form.useForm();
 
@@ -161,19 +164,20 @@ export default function Interview() {
 
   const getDataPromise = () => {
     return new Promise<TableDataType>((resolve, reject) => {
+      setLoading(true);
       getInterviewListRequest({
         title: searchKeyword.current,
         ...paginationRef.current,
       })
         .then((response: TableDataType) => {
-          setLoading(false);
+          const tableData = response;
           paginationRef.current = {
             ...paginationRef.current,
-            total: response.total,
+            total: tableData.total,
           };
           setPagination(paginationRef.current);
           setTableData(
-            response.data.map((item) => {
+            tableData.data.map((item) => {
               return {
                 ...item,
                 key: item.id,
@@ -181,16 +185,19 @@ export default function Interview() {
               };
             }),
           );
-          resolve(response);
+          resolve(tableData);
         })
         .catch((error: AxiosError) => {
           console.log(error);
           reject(error);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     });
   };
 
-  const handleSelectChange = (newSelectedRowKeys: React.Key[]) => {
+  const handleSelectChange = (newSelectedRowKeys: number[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -212,7 +219,7 @@ export default function Interview() {
   const handleEdit = (record: RecordType) => {
     setEditActive(true);
     setDialogActive(true);
-    form.setFieldsValue(record);
+    setRecord(record);
   };
 
   const handleReview = (record: RecordType) => {
@@ -226,8 +233,25 @@ export default function Interview() {
     });
   };
 
+  const handleMultipleDelete = () => {
+    const idList: number[] = selectedRowKeys;
+    modal.confirm({
+      title: "提示",
+      content: "你确定要删除吗？",
+      okText: "确认",
+      cancelText: "取消",
+      onOk() {
+        utils.$message.success("已删除");
+        confirmDeletePromise(idList);
+      },
+      onCancel() {
+        console.log("取消操作");
+      },
+    });
+  };
+
   const handleDelete = (record: RecordType) => {
-    Modal.confirm({
+    modal.confirm({
       title: "提示",
       content: "你确定要删除吗？",
       okText: "确认",
@@ -247,7 +271,9 @@ export default function Interview() {
       deleteMultipleDataByIdRequest({
         ids: idList,
       })
-        .then((response: TableDataType) => {
+        .then((response: AxiosResponse<TableDataType>) => {
+          paginationRef.current.page = 1;
+          setPagination(paginationRef.current);
           getDataPromise();
           resolve(response);
         })
@@ -270,11 +296,17 @@ export default function Interview() {
             className="header"
             justify="end"
           >
-            <Col span={8}>
+            <Col span={12}>
               <Flex
                 gap="middle"
-                justify="end"
+                justify="start"
               >
+                <Button
+                  disabled={!isLoggedIn}
+                  onClick={handleAdd}
+                >
+                  <PlusOutlined />
+                </Button>
                 <Form.Item id="search">
                   <Input.Search
                     placeholder="input search text"
@@ -286,11 +318,18 @@ export default function Interview() {
                     ) => handleSearchArticle(value, event)}
                   />
                 </Form.Item>
+              </Flex>
+            </Col>
+            <Col span={12}>
+              <Flex
+                gap="middle"
+                justify="end"
+              >
                 <Button
                   disabled={!isLoggedIn}
-                  onClick={handleAdd}
+                  onClick={() => handleMultipleDelete()}
                 >
-                  <FileAddOutlined />
+                  <DeleteOutlined />
                 </Button>
               </Flex>
             </Col>

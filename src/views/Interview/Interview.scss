@@ -7,6 +7,9 @@
     margin: 0 0 0.2rem 0;
     .ant-form-item {
       margin: 0;
+      .ant-form-item-control-input {
+        width: 8rem;
+      }
     }
   }
   .table {
