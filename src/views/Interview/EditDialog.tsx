@@ -241,7 +241,6 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
 
                 return (
                   <div className="review">
-                    {JSON.stringify(createdAt)}
                     <div className="title">
                       <div className="main">{record?.title}</div>
                       <span>{dayjs(createdAt).format("YYYY-MM-DD hh:mm:ss")}</span>
