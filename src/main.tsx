@@ -1,16 +1,18 @@
-import { StrictMode } from "react";
+import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { App as AntdApp } from "antd";
+
 import Root from "@/root";
-import BaobaoLayout from "@/views/BaobaoLayout/BaobaoLayout";
-import ErnieBot from "@/views/ErnieBot/ErnieBot";
-import FileDownloader from "@/views/FileDownloader/FileDownloader";
-import Homepage from "@/views/Homepage/Homepage";
-import Houchejishi from "@/views/Houchejishi/Houchejishi";
-import Interview from "@/views/Interview/Interview";
-import Login from "@/views/Login/Login";
 import NotFound from "@/views/NotFound/NotFound";
+
+const BaobaoLayout = lazy(() => import("@/views/BaobaoLayout/BaobaoLayout"));
+const Homepage = lazy(() => import("@/views/Homepage/Homepage"));
+const Interview = lazy(() => import("@/views/Interview/Interview"));
+const ErnieBot = lazy(() => import("@/views/ErnieBot/ErnieBot"));
+const FileDownloader = lazy(() => import("@/views/FileDownloader/FileDownloader"));
+const Houchejishi = lazy(() => import("@/views/Houchejishi/Houchejishi"));
+const Login = lazy(() => import("@/views/Login/Login"));
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -23,41 +25,44 @@ createRoot(document.getElementById("root")!).render(
     >
       <Root>
         <BrowserRouter>
-          <Routes>
-            <Route
-              path="/"
-              element={<BaobaoLayout />}
-            >
+          <Suspense fallback={null}>
+            <Routes>
               <Route
-                path="Homepage"
-                element={<Homepage />}
-              />
+                path="/"
+                element={<BaobaoLayout />}
+              >
+                <Route
+                  path="Homepage"
+                  element={<Homepage />}
+                />
+                <Route
+                  path="Interview"
+                  element={<Interview />}
+                />
+                <Route
+                  path="ErnieBot"
+                  element={<ErnieBot />}
+                />
+                <Route
+                  path="FileDownloader"
+                  element={<FileDownloader />}
+                />
+                <Route
+                  path="Houchejishi"
+                  element={<Houchejishi />}
+                />
+                <Route
+                  path="Login"
+                  element={<Login />}
+                />
+              </Route>
+
               <Route
-                path="Interview"
-                element={<Interview />}
+                path="*"
+                element={<NotFound />}
               />
-              <Route
-                path="ErnieBot"
-                element={<ErnieBot />}
-              />
-              <Route
-                path="FileDownloader"
-                element={<FileDownloader />}
-              />
-              <Route
-                path="Houchejishi"
-                element={<Houchejishi />}
-              />
-              <Route
-                path="Login"
-                element={<Login />}
-              />
-            </Route>
-            <Route
-              path="*"
-              element={<NotFound />}
-            />
-          </Routes>
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </Root>
     </AntdApp>

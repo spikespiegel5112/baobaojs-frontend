@@ -13,7 +13,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@ant-design/icons": "5.x",
+    "@ant-design/icons": "^6",
     "@reduxjs/toolkit": "^2.8.2",
     "antd": "^6.6.0",
     "axios": "^1.11.0",

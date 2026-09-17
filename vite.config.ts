@@ -84,6 +84,19 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
+        "react-vendor": ["react", "react-router"],
+        "antd-vendor": ["antd", "@ant-design/icons"],
+        output: {
+          manualChunks(id) {
+            if (id.includes("node_modules/react-dom")) {
+              return "react-dom";
+            }
+
+            if (id.includes("node_modules/@ant-design")) {
+              return "antd";
+            }
+          },
+        },
         onwarn(warning, warn) {
           if (
             warning.code === "MODULE_LEVEL_DIRECTIVE" &&
