@@ -17,6 +17,14 @@ body {
   font-family: "Eurostile Extended Regular";
   src: url("@/assets/font/Eurostile Extended Regular.ttf") format("truetype");
 }
+@font-face {
+  font-family: "EuropeExt";
+  src: url("@/assets/font/EuropeExt/europeextnormal.ttf") format("truetype");
+}
+@font-face {
+  font-family: "EuropeExt";
+  src: url("@/assets/font/EuropeExt/europeext.otf") format("opentype");
+}
 
 #app {
   width: 100%;

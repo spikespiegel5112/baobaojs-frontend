@@ -25,6 +25,7 @@ interface RecordType {
   content: string;
   title: string;
   createdAt: string;
+  isPublic?: boolean | null;
 }
 interface TableDataType {
   key?: React.Key;
@@ -118,6 +119,21 @@ export default function Interview() {
         >
           {record.title}
         </Button>
+      ),
+    },
+    {
+      title: "公开状态",
+      dataIndex: "isPublic",
+      key: "isPublic",
+      width: "2rem",
+      render: (_: unknown, record: RecordType) => (
+        <Tag
+          key="isPublic"
+          color={record?.isPublic ? "green" : "red"}
+          variant="solid"
+        >
+          {record?.isPublic ? "公开" : "私有"}
+        </Tag>
       ),
     },
     {

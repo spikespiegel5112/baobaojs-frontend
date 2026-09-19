@@ -207,13 +207,13 @@ export default function BaobaoLayout() {
   const handleLogout = () => {
     modal.confirm({
       title: "提示",
-      content: "你确定要注销吗？",
+      content: "你确定要退出登录吗？",
       okText: "确认",
       cancelText: "取消",
       onOk() {
         logoutRequest({})
           .then(() => {
-            utils.$message.success("注销成功");
+            utils.$message.success("退出登录成功");
             dispatch(setUserInfo(null));
             dispatch(setIsLoggedIn(false));
             navigate("Login");
@@ -310,6 +310,7 @@ export default function BaobaoLayout() {
           boxShadow: "0 2px 6px 0 rgba(0, 0, 0, 0.06)",
           boxShadowSecondary: "0 4px 10px 0 rgba(0, 0, 0, 0.1)",
         },
+
         button: {
           root: "border-0 transition-all duration-200",
           content: "font-medium",
@@ -323,6 +324,7 @@ export default function BaobaoLayout() {
             selectionColumnWidth: "0.8rem",
             /* 这里是你的组件 token */
           },
+          Switch: {},
         },
       }}
     >
@@ -393,7 +395,7 @@ export default function BaobaoLayout() {
                   <Link to="/Login">登录</Link>
                 </Button>
               )}
-              {isLoggedIn && <Button onClick={handleLogout}>注销</Button>}
+              {isLoggedIn && <Button onClick={handleLogout}>退出登录</Button>}
             </div>
             <div className="expand">
               {expandButtonFlag && (
