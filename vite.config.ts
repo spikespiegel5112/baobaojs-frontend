@@ -46,19 +46,21 @@ export default defineConfig(({ mode }) => {
           {
             antd: [
               "Button",
+              "Col",
+              "ConfigProvider",
               "DatePicker",
+              "Divider",
+              "Flex",
               "Form",
               "Input",
-              "Table",
-              "Pagination",
-              "Space",
-              "Flex",
-              "Col",
-              "Row",
               "Layout",
               "Modal",
-              "Divider",
-              "ConfigProvider",
+              "Pagination",
+              "Row",
+              "Space",
+              "Switch",
+              "Table",
+              "Tag",
             ],
           },
         ],
@@ -84,6 +86,19 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
+        "react-vendor": ["react", "react-router"],
+        "antd-vendor": ["antd", "@ant-design/icons"],
+        output: {
+          manualChunks(id) {
+            if (id.includes("node_modules/react-dom")) {
+              return "react-dom";
+            }
+
+            if (id.includes("node_modules/@ant-design")) {
+              return "antd";
+            }
+          },
+        },
         onwarn(warning, warn) {
           if (
             warning.code === "MODULE_LEVEL_DIRECTIVE" &&

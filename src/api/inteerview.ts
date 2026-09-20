@@ -14,6 +14,4 @@ export const createOrUpdateQARequest = (params: Record<string, unknown>) =>
   service.post("/interview/createOrUpdateQA", params);
 
 export const deleteMultipleDataByIdRequest = (params: Record<string, unknown>) =>
-  service.post("/interview/deleteMultipleDataById", {
-    params,
-  });
+  service.post("/interview/deleteMultipleDataById", params);

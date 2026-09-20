@@ -19,6 +19,7 @@ declare global {
   const Pagination: typeof import('antd').Pagination
   const Row: typeof import('antd').Row
   const Space: typeof import('antd').Space
+  const Switch: typeof import('antd').Switch
   const Table: typeof import('antd').Table
-  const Tag: typeof import("antd").Tag
+  const Tag: typeof import('antd').Tag
 }
