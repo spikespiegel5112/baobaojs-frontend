@@ -15,3 +15,13 @@ export const createOrUpdateQARequest = (params: Record<string, unknown>) =>
 
 export const deleteMultipleDataByIdRequest = (params: Record<string, unknown>) =>
   service.post("/interview/deleteMultipleDataById", params);
+
+export const getCategoryListRequest = () => service.get("/interview/getCategoryList");
+
+export const createOrUpdateCategoryRequest = (params: Record<string, unknown>) =>
+  service.post("/interview/createOrUpdateCategory", params);
+
+export const deleteCategoryRequest = (params: Record<string, unknown>) =>
+  service.delete("/interview/deleteCategory", {
+    data: params,
+  });

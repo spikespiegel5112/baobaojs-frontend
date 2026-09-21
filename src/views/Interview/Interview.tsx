@@ -3,19 +3,25 @@ import { useSearchParams, useLocation } from "react-router";
 import { App } from "antd";
 import "./Interview.scss";
 import EditDialog from "./EditDialog";
+import EditCategoryDialog from "./EditCategoryDialog";
 import type { EditDialogRef } from "./EditDialog";
 import type { TableProps } from "antd";
 import type { RootState } from "@/store";
 import type { AxiosError, AxiosResponse } from "axios";
 
 import { FormOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { getInterviewListRequest, deleteMultipleDataByIdRequest } from "@/api/inteerview";
+import {
+  getInterviewListRequest,
+  deleteMultipleDataByIdRequest,
+  getCategoryListRequest,
+} from "@/api/inteerview";
 import dayjs from "@/utils/dayjs";
 import utils from "@/utils/utils";
 
 import { useSelector } from "react-redux";
 
 import type { PaginationType } from "@/views/BaobaoLayout/BaobaoLayout.tsx";
+import type { CategoryItem } from "@/views/Interview/EditCategoryDialog.tsx";
 
 type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
 
@@ -49,6 +55,7 @@ export default function Interview() {
   const searchKeyword = useRef<string>("");
   const editDialogRef = useRef<EditDialogRef>(null);
   const isPublicRef = useRef<boolean>(null);
+  const categoryRef = useRef<string>("");
 
   const [editActive, setEditActive] = useState<boolean>(false);
   const [addActive, setAddActive] = useState<boolean>(false);
@@ -56,10 +63,15 @@ export default function Interview() {
 
   const [dialogActive, setDialogActive] = useState<boolean>(false);
   const [tableData, setTableData] = useState<RecordType[]>([]);
+
   const [record, setRecord] = useState<RecordType>();
   const [pagination, setPagination] = useState<PaginationType>(defaultPagination);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+  const [editCategoryDialogVisible, setEditCategoryDialogVisible] = useState<boolean>(false);
+
+  const [categoryList, setCategoryList] = useState<CategoryItem[]>([]);
+  const [categoryListLoading, setCategoryListLoading] = useState<boolean>(true);
 
   const [form] = Form.useForm();
 
@@ -86,6 +98,7 @@ export default function Interview() {
       .catch((error) => {
         console.log(error);
       });
+    getCategoryList();
   }, []);
 
   useEffect(() => {
@@ -180,7 +193,7 @@ export default function Interview() {
     getDataPromise();
   };
 
-  const handleChooseFilter = (value) => {
+  const handleChooseIsPublic = (value) => {
     if (value === "isPublic") {
       isPublicRef.current = true;
     } else if (value === "isPrivate") {
@@ -189,6 +202,11 @@ export default function Interview() {
       isPublicRef.current = null;
     }
 
+    getDataPromise();
+  };
+
+  const handleChooseCategory = (value: string) => {
+    categoryRef.current = value;
     getDataPromise();
   };
 
@@ -315,6 +333,30 @@ export default function Interview() {
     });
   };
 
+  const getCategoryList = () => {
+    setCategoryListLoading(true);
+    getCategoryListRequest()
+      .then((response) => {
+        console.log(response);
+        handleUpdateCategoryList(
+          response.data.map((item: CategoryItem) => {
+            return {
+              id: item.id,
+              category: item.category,
+            };
+          }),
+        );
+        setCategoryListLoading(false);
+      })
+      .catch((error: AxiosError) => {
+        console.log(error);
+      });
+  };
+
+  const handleUpdateCategoryList = (categoryList: Array<CategoryItem>) => {
+    setCategoryList(categoryList);
+  };
+
   return (
     <div className="interview_container">
       <div className={`table ${!dialogActive ? "active" : ""}`}>
@@ -325,9 +367,9 @@ export default function Interview() {
         >
           <Row
             className="header"
-            justify="end"
+            justify="start"
           >
-            <Col span={12}>
+            <Col span={22}>
               <Flex
                 gap="middle"
                 justify="start"
@@ -350,25 +392,42 @@ export default function Interview() {
                   />
                 </Form.Item>
                 {isLoggedIn && (
-                  <Form.Item
-                    id="search"
-                    label="公开"
-                  >
-                    <Select
-                      style={{ width: 200 }}
-                      defaultValue="all"
-                      onChange={handleChooseFilter}
-                      options={[
-                        { value: "all", label: "全部" },
-                        { value: "isPublic", label: "公开" },
-                        { value: "isPrivate", label: "私有" },
-                      ]}
-                    ></Select>
-                  </Form.Item>
+                  <>
+                    <Form.Item label="公开">
+                      <Select
+                        style={{ width: 200 }}
+                        defaultValue="all"
+                        onChange={handleChooseIsPublic}
+                        options={[
+                          { value: "all", label: "全部" },
+                          { value: "isPublic", label: "公开" },
+                          { value: "isPrivate", label: "私有" },
+                        ]}
+                      ></Select>
+                    </Form.Item>
+                    <Form.Item label="类型">
+                      <Select
+                        style={{ width: 240 }}
+                        onChange={handleChooseCategory}
+                        options={categoryList.map((item) => {
+                          return {
+                            label: item.category,
+                            value: item.id,
+                          };
+                        })}
+                      ></Select>
+                    </Form.Item>
+                    <Button
+                      disabled={!isLoggedIn}
+                      onClick={() => setEditCategoryDialogVisible(true)}
+                    >
+                      类型管理
+                    </Button>
+                  </>
                 )}
               </Flex>
             </Col>
-            <Col span={12}>
+            <Col span={2}>
               <Flex
                 gap="middle"
                 justify="end"
@@ -421,6 +480,13 @@ export default function Interview() {
           }, 500);
         }}
       />
+      <EditCategoryDialog
+        dialogActive={editCategoryDialogVisible}
+        categoryList={categoryList}
+        loading={categoryListLoading}
+        onCancel={() => setEditCategoryDialogVisible(false)}
+        onUpdateCategoryList={handleUpdateCategoryList}
+      ></EditCategoryDialog>
     </div>
   );
 }
