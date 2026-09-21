@@ -150,7 +150,9 @@ export default function Interview() {
             textAlign: "center",
           }}
         >
-          {categoryList.find((item) => item.id === record?.category)?.category || "-"}
+          {record.category
+            ? categoryList.find((item) => item.id === record?.category)?.category
+            : "-"}
         </div>
       ),
     },
