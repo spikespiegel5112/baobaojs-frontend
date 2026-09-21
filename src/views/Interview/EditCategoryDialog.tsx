@@ -180,12 +180,14 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
 
   const castegoryListComponent = (
     <Listy<CategoryItem>
-      items={props.categoryList.map((item) => {
-        return {
-          ...item,
-          content: item.category,
-        };
-      })}
+      items={props.categoryList
+        .filter((item) => item.id !== "all")
+        .map((item) => {
+          return {
+            ...item,
+            content: item.category,
+          };
+        })}
       rowKey="id"
       height={400}
       itemRender={(item) => {

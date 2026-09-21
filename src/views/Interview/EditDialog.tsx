@@ -116,7 +116,10 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
       .validateFields({ validateOnly: true })
       .then((formData) => {
         setSubmitting(true);
-        createOrUpdateQARequest(formData)
+        createOrUpdateQARequest({
+          ...formData,
+          category: !formData.category ? null : formData.category,
+        })
           .then((response: RecordType) => {
             console.log(response);
             utils.$message.success("保存成功！");
@@ -272,12 +275,15 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                           <Select
                             style={{ width: "100%" }}
                             onChange={handleChooseCategory}
-                            options={props.categoryList.map((item) => {
-                              return {
-                                label: item.category,
-                                value: item.id,
-                              };
-                            })}
+                            options={props.categoryList
+                              .filter((item) => item.id !== "all")
+                              .map((item) => {
+                                return {
+                                  label: item.category,
+                                  value: item.id,
+                                };
+                              })}
+                            allowClear
                           ></Select>
                         </Form.Item>
                       </Col>
