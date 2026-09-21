@@ -48,6 +48,7 @@ export default function Interview() {
   const paginationRef = useRef(defaultPagination);
   const searchKeyword = useRef<string>("");
   const editDialogRef = useRef<EditDialogRef>(null);
+  const isPublicRef = useRef<boolean>(null);
 
   const [editActive, setEditActive] = useState<boolean>(false);
   const [addActive, setAddActive] = useState<boolean>(false);
@@ -126,6 +127,7 @@ export default function Interview() {
       dataIndex: "isPublic",
       key: "isPublic",
       width: "2rem",
+      treeFilter: "menu",
       render: (_: unknown, record: RecordType) => (
         <Tag
           key="isPublic"
@@ -178,11 +180,24 @@ export default function Interview() {
     getDataPromise();
   };
 
+  const handleChooseFilter = (value) => {
+    if (value === "isPublic") {
+      isPublicRef.current = true;
+    } else if (value === "isPrivate") {
+      isPublicRef.current = false;
+    } else {
+      isPublicRef.current = null;
+    }
+
+    getDataPromise();
+  };
+
   const getDataPromise = () => {
     return new Promise<TableDataType>((resolve, reject) => {
       setLoading(true);
       getInterviewListRequest({
         title: searchKeyword.current,
+        isPublic: isPublicRef.current,
         ...paginationRef.current,
       })
         .then((response: TableDataType) => {
@@ -334,6 +349,23 @@ export default function Interview() {
                     ) => handleSearchArticle(value, event)}
                   />
                 </Form.Item>
+                {isLoggedIn && (
+                  <Form.Item
+                    id="search"
+                    label="公开"
+                  >
+                    <Select
+                      style={{ width: 200 }}
+                      defaultValue="all"
+                      onChange={handleChooseFilter}
+                      options={[
+                        { value: "all", label: "全部" },
+                        { value: "isPublic", label: "公开" },
+                        { value: "isPrivate", label: "私有" },
+                      ]}
+                    ></Select>
+                  </Form.Item>
+                )}
               </Flex>
             </Col>
             <Col span={12}>

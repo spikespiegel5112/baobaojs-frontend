@@ -391,11 +391,18 @@ export default function BaobaoLayout() {
           <div className="footer">
             <div className="login">
               {!isLoggedIn && (
-                <Button>
+                <Button variant="outlined">
                   <Link to="/Login">登录</Link>
                 </Button>
               )}
-              {isLoggedIn && <Button onClick={handleLogout}>退出登录</Button>}
+              {isLoggedIn && (
+                <Button
+                  variant="text"
+                  onClick={handleLogout}
+                >
+                  退出
+                </Button>
+              )}
             </div>
             <div className="expand">
               {expandButtonFlag && (

@@ -312,12 +312,12 @@ $red: #f20000;
           li {
             display: block;
             margin: 0 auto 0.4rem;
-            width: 4rem;
-            height: 1rem;
-            line-height: 1rem;
+            width: 3.8rem;
+            height: 0.8rem;
+            line-height: 0.8rem;
             border: 1px solid #fff;
             position: relative;
-            font-size: 0.4rem;
+            font-size: 0.35rem;
             text-align: center;
             color: #fff;
             transition: width 0.1s;
@@ -331,9 +331,9 @@ $red: #f20000;
             &.active {
               background-color: #fff;
               left: 0.1rem;
-              width: 4.3rem;
-              height: 1.2rem;
-              line-height: 1.2rem;
+              width: 4rem;
+              height: 0.9rem;
+              line-height: 0.9rem;
 
               a {
                 color: red;
@@ -370,7 +370,7 @@ $red: #f20000;
         .ant-btn {
           padding: 0;
           color: #fff;
-          font-size: 0.4rem;
+          font-size: 0.35rem;
           &.right {
             transform: rotateZ(90deg);
           }

@@ -57,6 +57,7 @@ export default defineConfig(({ mode }) => {
               "Modal",
               "Pagination",
               "Row",
+              "Select",
               "Space",
               "Switch",
               "Table",

@@ -18,6 +18,7 @@ declare global {
   const Modal: typeof import('antd').Modal
   const Pagination: typeof import('antd').Pagination
   const Row: typeof import('antd').Row
+  const Select: typeof import('antd').Select
   const Space: typeof import('antd').Space
   const Switch: typeof import('antd').Switch
   const Table: typeof import('antd').Table
