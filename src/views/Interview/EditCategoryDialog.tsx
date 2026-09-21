@@ -112,10 +112,10 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   };
 
   const handleEditCategory = (item: CategoryItem) => {
-    form.resetFields();
     setEditActiveId(item.id);
     setAddActive(false);
     editActiveIdRef.current = item.id;
+    form.setFieldValue("category", item.category);
   };
 
   const handleDeleteCategory = (item: CategoryItem) => {

@@ -27,4 +27,5 @@ declare global {
   const Switch: typeof import('antd').Switch
   const Table: typeof import('antd').Table
   const Tag: typeof import('antd').Tag
+  const Tooltip: typeof import('antd').Tooltip
 }

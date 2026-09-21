@@ -28,7 +28,8 @@ type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"
 interface RecordType {
   id: number;
   key?: number;
-  content: string;
+  content: string | null;
+  category: string;
   title: string;
   createdAt: string;
   isPublic?: boolean | null;
@@ -136,11 +137,30 @@ export default function Interview() {
       ),
     },
     {
+      title: "类别",
+      dataIndex: "category",
+      key: "category",
+      width: "2rem",
+      treeFilter: "menu",
+      align: "center",
+      render: (_: unknown, record: RecordType) => (
+        <div
+          style={{
+            width: "100%",
+            textAlign: "center",
+          }}
+        >
+          {categoryList.find((item) => item.id === record?.category)?.category || "-"}
+        </div>
+      ),
+    },
+    {
       title: "公开状态",
       dataIndex: "isPublic",
       key: "isPublic",
       width: "2rem",
       treeFilter: "menu",
+      align: "center",
       render: (_: unknown, record: RecordType) => (
         <Tag
           key="isPublic"
@@ -213,9 +233,11 @@ export default function Interview() {
   const getDataPromise = () => {
     return new Promise<TableDataType>((resolve, reject) => {
       setLoading(true);
+      console.log(form.getFieldValue("category"));
       getInterviewListRequest({
         title: searchKeyword.current,
         isPublic: isPublicRef.current,
+        category: form.getFieldValue("category"),
         ...paginationRef.current,
       })
         .then((response: TableDataType) => {
@@ -393,7 +415,10 @@ export default function Interview() {
                 </Form.Item>
                 {isLoggedIn && (
                   <>
-                    <Form.Item label="公开">
+                    <Form.Item
+                      label="公开"
+                      name="isPublic"
+                    >
                       <Select
                         style={{ width: 200 }}
                         defaultValue="all"
@@ -405,9 +430,12 @@ export default function Interview() {
                         ]}
                       ></Select>
                     </Form.Item>
-                    <Form.Item label="类型">
+                    <Form.Item
+                      label="类型"
+                      name="category"
+                    >
                       <Select
-                        style={{ width: 240 }}
+                        style={{ width: 200 }}
                         onChange={handleChooseCategory}
                         options={categoryList.map((item) => {
                           return {
@@ -415,6 +443,7 @@ export default function Interview() {
                             value: item.id,
                           };
                         })}
+                        allowClear
                       ></Select>
                     </Form.Item>
                     <Button
@@ -433,7 +462,7 @@ export default function Interview() {
                 justify="end"
               >
                 <Button
-                  disabled={!isLoggedIn}
+                  disabled={!isLoggedIn || selectedRowKeys.length === 0}
                   onClick={() => handleMultipleDelete()}
                 >
                   <DeleteOutlined />
@@ -468,6 +497,7 @@ export default function Interview() {
         addActive={addActive}
         reviewActive={reviewActive}
         record={record}
+        categoryList={categoryList}
         onGoBack={() => {
           const params = new URLSearchParams(searchParams);
           params.delete("id");
