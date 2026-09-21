@@ -1,9 +1,15 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from "react";
 import "./Interview.scss";
 import type { AxiosError } from "axios";
 import type { FormProps } from "antd";
 
-import { PlusOutlined, CheckOutlined, CloseOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 
 import { createOrUpdateCategoryRequest, deleteCategoryRequest } from "@/api/inteerview";
 
@@ -13,14 +19,8 @@ export interface EditDialogRef {
   resetField: () => void;
 }
 
-type RecordType = {
-  id: number;
-  key?: number;
-  content: string;
-};
-
 export type CategoryItem = {
-  id?: number;
+  id: number;
   category: string;
 };
 
@@ -42,9 +42,11 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   }));
 
   const [addActive, setAddActive] = useState<boolean>(false);
+  const [editActiveId, setEditActiveId] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [deleteingId, setDeleteingId] = useState<number | null>(null);
 
+  const editActiveIdRef = useRef<number | null>(null);
   const [form] = Form.useForm();
 
   useEffect(() => {}, []);
@@ -61,23 +63,37 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
     form.resetFields();
   };
 
-  const handleSubmitCategory: FormProps<CategoryItem>["onFinish"] = () => {
+  const handleSubmitCategory: FormProps<CategoryItem>["onFinish"] = (item: CategoryItem) => {
+    console.log(item);
     form
       .validateFields({ validateOnly: true })
       .then((formData) => {
         setSubmitting(true);
-        createOrUpdateCategoryRequest(formData)
+        createOrUpdateCategoryRequest({
+          ...formData,
+          id: editActiveIdRef.current,
+        })
           .then((response: CategoryItem) => {
             console.log(response);
             utils.$message.success("保存成功！");
+            let result: CategoryItem[] = JSON.parse(JSON.stringify(props.categoryList));
+            const target = result.some((item) => item.id === editActiveIdRef.current);
+            if (target) {
+              const index = result.findIndex((item) => item.id === editActiveIdRef.current);
+              result[index].category = formData.category;
+            }
 
-            props.onUpdateCategoryList([
-              ...props.categoryList,
-              {
-                id: response.id,
-                category: response.category,
-              },
-            ]);
+            if (!target) {
+              result = [
+                ...props.categoryList,
+                {
+                  id: response.id,
+                  category: response.category,
+                },
+              ];
+            }
+
+            props.onUpdateCategoryList(result);
           })
           .catch((error: AxiosError) => {
             console.log(error);
@@ -85,6 +101,8 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
           .finally(() => {
             setSubmitting(false);
             setAddActive(false);
+            setEditActiveId(null);
+            editActiveIdRef.current = null;
             form.resetFields();
           });
       })
@@ -93,7 +111,12 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
       });
   };
 
-  const handleDeleteCategory = (item: RecordType) => {
+  const handleEditCategory = (item: CategoryItem) => {
+    setEditActiveId(item.id);
+    editActiveIdRef.current = item.id;
+  };
+
+  const handleDeleteCategory = (item: CategoryItem) => {
     setDeleteingId(item.id);
     deleteCategoryRequest({
       id: item.id,
@@ -125,7 +148,10 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
     >
       <Row gutter={10}>
         <Col span={20}>
-          <Form.Item name="category">
+          <Form.Item
+            name="category"
+            noStyle
+          >
             <Input></Input>
           </Form.Item>
         </Col>
@@ -157,20 +183,35 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
       rowKey="id"
       height={400}
       itemRender={(item) => {
-        return (
-          <Flex
-            justify="space-between"
-            align="center"
-          >
-            <span>{item.content}</span>
-            <Button
-              type="text"
-              icon={<DeleteOutlined />}
-              loading={item.id === deleteingId}
-              onClick={() => handleDeleteCategory(item)}
-            />
-          </Flex>
-        );
+        if (editActiveId === item.id) {
+          return addForm;
+        } else {
+          return (
+            <Flex
+              justify="space-between"
+              align="center"
+            >
+              <span>{item.category}</span>;
+              <Flex
+                justify="space-between"
+                align="end"
+              >
+                <Button
+                  type="text"
+                  icon={<EditOutlined />}
+                  disabled={item.id === deleteingId}
+                  onClick={() => handleEditCategory(item)}
+                />
+                <Button
+                  type="text"
+                  icon={<DeleteOutlined />}
+                  loading={item.id === deleteingId}
+                  onClick={() => handleDeleteCategory(item)}
+                />
+              </Flex>
+            </Flex>
+          );
+        }
       }}
     />
   );
