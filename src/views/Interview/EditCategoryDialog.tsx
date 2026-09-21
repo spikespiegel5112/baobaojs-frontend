@@ -112,7 +112,9 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   };
 
   const handleEditCategory = (item: CategoryItem) => {
+    form.resetFields();
     setEditActiveId(item.id);
+    setAddActive(false);
     editActiveIdRef.current = item.id;
   };
 
@@ -134,9 +136,9 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   };
 
   const handleAdd = () => {
+    form.resetFields();
     setAddActive(true);
-    // setDialogActive(true);
-    // editDialogRef.current?.resetField();
+    setEditActiveId(null);
   };
 
   const addForm = (
@@ -165,7 +167,11 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
           <Button
             type="text"
             icon={<CloseOutlined />}
-            onClick={() => setAddActive(false)}
+            onClick={() => {
+              setAddActive(false);
+              setEditActiveId(null);
+              form.resetFields();
+            }}
           ></Button>
         </Col>
       </Row>
