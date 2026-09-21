@@ -210,6 +210,11 @@ export default function Interview() {
     console.log(event);
     setLoading(true);
     searchKeyword.current = values;
+    paginationRef.current = {
+      ...paginationRef.current,
+      page: 1,
+    };
+    setPagination(paginationRef.current);
     getDataPromise();
   };
 
@@ -272,9 +277,10 @@ export default function Interview() {
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
-  const handleChangePagination = (page: number) => {
+  const handleChangePagination = (page: number, pageSize: number) => {
     paginationRef.current = {
       ...paginationRef.current,
+      pageSize,
       page,
     };
     setPagination(paginationRef.current);
@@ -360,14 +366,18 @@ export default function Interview() {
     getCategoryListRequest()
       .then((response) => {
         console.log(response);
-        handleUpdateCategoryList(
-          response.data.map((item: CategoryItem) => {
+        handleUpdateCategoryList([
+          {
+            id: null,
+            category: "全部",
+          },
+          ...response.data.map((item: CategoryItem) => {
             return {
               id: item.id,
               category: item.category,
             };
           }),
-        );
+        ]);
         setCategoryListLoading(false);
       })
       .catch((error: AxiosError) => {
@@ -396,12 +406,17 @@ export default function Interview() {
                 gap="middle"
                 justify="start"
               >
-                <Button
-                  disabled={!isLoggedIn}
-                  onClick={handleAdd}
+                <Tooltip
+                  placement="bottom"
+                  title="新建文档"
                 >
-                  <PlusOutlined />
-                </Button>
+                  <Button
+                    disabled={!isLoggedIn}
+                    onClick={handleAdd}
+                  >
+                    <PlusOutlined />
+                  </Button>
+                </Tooltip>
                 <Form.Item id="search">
                   <Input.Search
                     placeholder="input search text"
@@ -436,6 +451,7 @@ export default function Interview() {
                     >
                       <Select
                         style={{ width: 200 }}
+                        defaultValue={null}
                         onChange={handleChooseCategory}
                         options={categoryList.map((item) => {
                           return {
@@ -443,7 +459,6 @@ export default function Interview() {
                             value: item.id,
                           };
                         })}
-                        allowClear
                       ></Select>
                     </Form.Item>
                     <Button

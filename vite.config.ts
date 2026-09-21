@@ -65,7 +65,7 @@ export default defineConfig(({ mode }) => {
               "Switch",
               "Table",
               "Tag",
-              'Tooltip'
+              "Tooltip",
             ],
           },
         ],
