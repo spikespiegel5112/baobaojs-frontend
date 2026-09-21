@@ -241,10 +241,11 @@ export default function Interview() {
     return new Promise<TableDataType>((resolve, reject) => {
       setLoading(true);
       console.log(form.getFieldValue("category"));
+      const category = form.getFieldValue("category");
       getInterviewListRequest({
         title: searchKeyword.current,
         isPublic: isPublicRef.current,
-        category: form.getFieldValue("category"),
+        category: category === "all" ? null : category,
         ...paginationRef.current,
       })
         .then((response: TableDataType) => {
@@ -370,7 +371,7 @@ export default function Interview() {
         console.log(response);
         handleUpdateCategoryList([
           {
-            id: null,
+            id: "all",
             category: "全部",
           },
           ...response.data.map((item: CategoryItem) => {
@@ -453,7 +454,7 @@ export default function Interview() {
                     >
                       <Select
                         style={{ width: 200 }}
-                        defaultValue={null}
+                        defaultValue={"all"}
                         onChange={handleChooseCategory}
                         options={categoryList.map((item) => {
                           return {

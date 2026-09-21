@@ -20,7 +20,7 @@ export interface EditDialogRef {
 }
 
 export type CategoryItem = {
-  id: number;
+  id: number | string;
   category: string;
 };
 
@@ -189,7 +189,7 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
       rowKey="id"
       height={400}
       itemRender={(item) => {
-        if (editActiveId === item.id) {
+        if (editActiveId !== null && editActiveId === item.id) {
           return addForm;
         } else {
           return (
