@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
+import utils from "@/utils/utils";
 
 type RequestInstance = {
   get(url: string, config?: AxiosRequestConfig): Promise<T>;
@@ -27,6 +28,13 @@ request.interceptors.response.use(
     return Promise.resolve(response.data);
   },
   function onRejected(error) {
+    // if (error.response.status === 500) {
+    //   utils.$message.error(`${error.response.data.sqlMessage} (${error.response.status})`);
+    // }
+    const data = error.response.data;
+    const message = data.sqlMessage || data.message;
+    utils.$message.error(`${message} (${error.response.status})`);
+
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     return Promise.reject(error.response.data);

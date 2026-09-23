@@ -11,15 +11,21 @@ declare global {
   const ConfigProvider: typeof import('antd').ConfigProvider
   const DatePicker: typeof import('antd').DatePicker
   const Divider: typeof import('antd').Divider
+  const Empty: typeof import('antd').Empty
   const Flex: typeof import('antd').Flex
   const Form: typeof import('antd').Form
   const Input: typeof import('antd').Input
   const Layout: typeof import('antd').Layout
+  const Listy: typeof import('antd').Listy
   const Modal: typeof import('antd').Modal
   const Pagination: typeof import('antd').Pagination
+  const PlusOutlined: typeof import('antd').PlusOutlined
   const Row: typeof import('antd').Row
+  const Select: typeof import('antd').Select
   const Space: typeof import('antd').Space
+  const Spin: typeof import('antd').Spin
   const Switch: typeof import('antd').Switch
   const Table: typeof import('antd').Table
   const Tag: typeof import('antd').Tag
+  const Tooltip: typeof import('antd').Tooltip
 }

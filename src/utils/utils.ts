@@ -15,14 +15,14 @@ const _utils = {
     value === "" || (!value && value !== 0) || value === null,
   $isNotEmpty: (value: boolean): boolean => !_utils.$isEmpty(value),
   $remResizing: (params: {
-    fontSize: number;
-    baseline: number;
-    threshold: number;
-    basedonnarrow: boolean;
-    basedonwide: boolean;
-    dropoff: boolean;
-    alignCenter: boolean;
-    inward: boolean;
+    fontSize?: number;
+    baseline?: number;
+    threshold?: number;
+    basedonnarrow?: boolean;
+    basedonwide?: boolean;
+    dropoff?: boolean;
+    alignCenter?: boolean;
+    inward?: boolean;
   }) => {
     const options = Object.assign(
       {

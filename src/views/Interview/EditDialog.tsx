@@ -11,6 +11,8 @@ import "./Interview.scss";
 import type { AxiosError } from "axios";
 import type { FormProps, GetProp, SwitchProps } from "antd";
 import type { RootState } from "@/store";
+import type { CategoryItem } from "@/views/Interview/EditCategoryDialog.tsx";
+
 import { FormOutlined, LeftOutlined } from "@ant-design/icons";
 import { createOrUpdateQARequest, getInterviewDetailRequest } from "@/api/inteerview";
 
@@ -29,6 +31,7 @@ type RecordType = {
   key?: number;
   content: string;
   title: string;
+  category: number | null;
   isPublic: boolean | null;
 };
 
@@ -45,6 +48,7 @@ interface Props {
   addActive?: boolean;
   reviewActive?: boolean;
   record?: RecordType;
+  categoryList: CategoryItem[];
   onGoBack: () => void;
 }
 
@@ -91,8 +95,9 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
 
   useEffect(() => {
     console.log("=====record=====");
-    console.log(record);
     setRecord(props.record);
+    // console.log(props.record);
+
     // form.setFieldsValue(record);
   }, [props.record]);
 
@@ -111,7 +116,10 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
       .validateFields({ validateOnly: true })
       .then((formData) => {
         setSubmitting(true);
-        createOrUpdateQARequest(formData)
+        createOrUpdateQARequest({
+          ...formData,
+          category: !formData.category ? null : formData.category,
+        })
           .then((response: RecordType) => {
             console.log(response);
             utils.$message.success("保存成功！");
@@ -129,6 +137,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
               id: response.id,
               content: response.content,
               title: response.title,
+              category: response.category,
               isPublic: response.isPublic,
             });
           })
@@ -162,6 +171,8 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
         console.log(error);
       });
   };
+
+  const handleChooseCategory = () => {};
 
   return (
     <div className={`edit_dialog ${props.dialogActive ? "active" : ""}`}>
@@ -197,16 +208,26 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
               if (reviewActive) {
                 return (
                   <Space size="large">
+                    <span>
+                      {props.categoryList.find((item) => item.id === record?.category)?.category ||
+                        ""}
+                    </span>
                     {IsPublicTag}
-                    <Button
-                      onClick={() => {
-                        setEditActive(true);
-                        setReviewActive(false);
-                        form.setFieldsValue(record);
-                      }}
+
+                    <Tooltip
+                      placement="bottom"
+                      title="编辑"
                     >
-                      <FormOutlined />
-                    </Button>
+                      <Button
+                        onClick={() => {
+                          setEditActive(true);
+                          setReviewActive(false);
+                          form.setFieldsValue(record);
+                        }}
+                      >
+                        <FormOutlined />
+                      </Button>
+                    </Tooltip>
                   </Space>
                 );
               }
@@ -233,17 +254,37 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
               if (editActive) {
                 return (
                   <Col
-                    span={24}
+                    span="24"
                     className="edit"
                   >
                     <Row gutter={30}>
-                      <Col span="21">
+                      <Col span="18">
                         <Form.Item
                           label={editActive ? "标题" : undefined}
                           name="title"
                           rules={rulesMap.title}
                         >
                           <Input></Input>
+                        </Form.Item>
+                      </Col>
+                      <Col span="3">
+                        <Form.Item
+                          label="类型"
+                          name="category"
+                        >
+                          <Select
+                            style={{ width: "100%" }}
+                            onChange={handleChooseCategory}
+                            options={props.categoryList
+                              .filter((item) => item.id !== "all")
+                              .map((item) => {
+                                return {
+                                  label: item.category,
+                                  value: item.id,
+                                };
+                              })}
+                            allowClear
+                          ></Select>
                         </Form.Item>
                       </Col>
                       <Col span="3">
@@ -267,7 +308,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                       </Col>
                     </Row>
                     <Row gutter={30}>
-                      <Col span={24}>
+                      <Col span="24">
                         <Form.Item
                           label="内容"
                           name="content"
@@ -308,7 +349,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
 
             {editActive && (
               <Row justify="end">
-                <Col span={24}>
+                <Col span="24">
                   <Flex
                     gap="middle"
                     justify="end"
