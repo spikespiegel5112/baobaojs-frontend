@@ -31,7 +31,9 @@ request.interceptors.response.use(
     // if (error.response.status === 500) {
     //   utils.$message.error(`${error.response.data.sqlMessage} (${error.response.status})`);
     // }
-    utils.$message.error(`${error.response.data.sqlMessage} (${error.response.status})`);
+    const data = error.response.data;
+    const message = data.sqlMessage || data.message;
+    utils.$message.error(`${message} (${error.response.status})`);
 
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
