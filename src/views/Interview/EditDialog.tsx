@@ -20,7 +20,17 @@ import { useSelector } from "react-redux";
 import dayjs from "@/utils/dayjs";
 import utils from "@/utils/utils";
 
-const ReactMarkdown = lazy(() => import("react-markdown"));
+// import MDEditor from "@uiw/react-md-editor";
+const MDEditor = lazy(() =>
+  import("@uiw/react-md-editor/nohighlight").then((mod) => ({
+    default: mod.default,
+  })),
+);
+const Markdown = lazy(() =>
+  import("@uiw/react-md-editor/nohighlight").then((mod) => ({
+    default: mod.default.Markdown,
+  })),
+);
 
 export interface EditDialogRef {
   resetField: () => void;
@@ -313,11 +323,12 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                           label="内容"
                           name="content"
                         >
-                          <Input.TextArea
-                            style={{
-                              height: "calc(100vh - 4.5rem)",
-                            }}
-                          ></Input.TextArea>
+                          <Suspense fallback={<div>Loading...</div>}>
+                            <MDEditor
+                              height={"calc(100vh - 4.5rem)"}
+                              value={form.getFieldValue("content")}
+                            />
+                          </Suspense>
                         </Form.Item>
                       </Col>
                     </Row>
@@ -339,7 +350,12 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                     />
                     <div className="content">
                       <Suspense fallback={<div>Loading...</div>}>
-                        <ReactMarkdown>{record?.content}</ReactMarkdown>
+                        <Markdown
+                          source={record?.content}
+                          wrapperElement={{
+                            "data-color-mode": "light",
+                          }}
+                        />
                       </Suspense>
                     </div>
                   </div>

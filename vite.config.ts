@@ -98,9 +98,11 @@ export default defineConfig(({ mode }) => {
             if (id.includes("node_modules/react-dom")) {
               return "react-dom";
             }
-
             if (id.includes("node_modules/@ant-design")) {
               return "antd";
+            }
+            if (id.includes("node_modules/@uiw/react-md-edito")) {
+              return "react-md-edito";
             }
           },
         },
