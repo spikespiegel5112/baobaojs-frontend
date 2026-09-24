@@ -213,10 +213,9 @@ export default function Interview() {
     console.log(event);
     setLoading(true);
     searchKeyword.current = values;
-    paginationRef.current = {
-      ...paginationRef.current,
-      page: 1,
-    };
+
+    paginationRef.current.page = 1;
+
     setPagination(paginationRef.current);
     getDataPromise();
   };
@@ -229,6 +228,9 @@ export default function Interview() {
     } else {
       isPublicRef.current = null;
     }
+
+    paginationRef.current.page = 1;
+    setPagination(paginationRef.current);
 
     getDataPromise();
   };
