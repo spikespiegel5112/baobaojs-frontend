@@ -20,12 +20,7 @@ import { useSelector } from "react-redux";
 import dayjs from "@/utils/dayjs";
 import utils from "@/utils/utils";
 
-// import MDEditor from "@uiw/react-md-editor";
-const MDEditor = lazy(() =>
-  import("@uiw/react-md-editor/nohighlight").then((mod) => ({
-    default: mod.default,
-  })),
-);
+const MDEditor = lazy(() => import("@uiw/react-md-editor/nohighlight"));
 const Markdown = lazy(() =>
   import("@uiw/react-md-editor/nohighlight").then((mod) => ({
     default: mod.default.Markdown,
@@ -77,6 +72,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   const currentIdRef = useRef<number | undefined>(null);
 
   const [form] = Form.useForm();
+  Form.useWatch("content", form);
 
   useEffect(() => {}, []);
 
@@ -325,8 +321,12 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                         >
                           <Suspense fallback={<div>Loading...</div>}>
                             <MDEditor
+                              data-color-mode="light"
                               height={"calc(100vh - 4.5rem)"}
                               value={form.getFieldValue("content")}
+                              onChange={(value) => {
+                                form.setFieldValue("content", value);
+                              }}
                             />
                           </Suspense>
                         </Form.Item>

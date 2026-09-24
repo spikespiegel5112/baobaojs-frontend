@@ -140,7 +140,7 @@ export default function Interview() {
       title: "类别",
       dataIndex: "category",
       key: "category",
-      width: "2rem",
+      width: "3rem",
       treeFilter: "menu",
       align: "center",
       render: (_: unknown, record: RecordType) => (
@@ -213,15 +213,14 @@ export default function Interview() {
     console.log(event);
     setLoading(true);
     searchKeyword.current = values;
-    paginationRef.current = {
-      ...paginationRef.current,
-      page: 1,
-    };
+
+    paginationRef.current.page = 1;
+
     setPagination(paginationRef.current);
     getDataPromise();
   };
 
-  const handleChooseIsPublic = (value) => {
+  const handleChooseIsPublic = (value: string) => {
     if (value === "isPublic") {
       isPublicRef.current = true;
     } else if (value === "isPrivate") {
@@ -229,6 +228,9 @@ export default function Interview() {
     } else {
       isPublicRef.current = null;
     }
+
+    paginationRef.current.page = 1;
+    setPagination(paginationRef.current);
 
     getDataPromise();
   };
