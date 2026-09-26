@@ -192,6 +192,10 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
           align="center"
           wrap
           className="navigator"
+          style={{
+            maxWidth: reviewActive ? "20rem" : "none",
+            margin: "auto",
+          }}
         >
           <Button
             onClick={() => {
@@ -243,76 +247,70 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
           })()}
         </Flex>
 
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmitQA}
-          autoComplete="off"
-        >
-          <Form.Item
-            name="id"
-            style={{ display: "none" }}
-          >
-            <Input type="hidden" />
-          </Form.Item>
-          <div className="content">
-            {(() => {
-              if (editActive) {
-                return (
-                  <Col
-                    span="24"
-                    className="edit"
+        {(() => {
+          if (editActive) {
+            return (
+              <div className="content">
+                <Form
+                  form={form}
+                  layout="vertical"
+                  onFinish={handleSubmitQA}
+                  autoComplete="off"
+                >
+                  <Form.Item
+                    name="id"
+                    style={{ display: "none" }}
                   >
-                    <Row gutter={30}>
-                      <Col span="18">
+                    <Input type="hidden" />
+                  </Form.Item>
+                  <div className="edit">
+                    <Flex gap="middle">
+                      <Flex flex={1}>
                         <Form.Item
+                          style={{ width: "100%" }}
                           label={editActive ? "标题" : undefined}
                           name="title"
                           rules={rulesMap.title}
                         >
                           <Input></Input>
                         </Form.Item>
-                      </Col>
-                      <Col span="3">
-                        <Form.Item
-                          label="类型"
-                          name="category"
-                        >
-                          <Select
-                            style={{ width: "100%" }}
-                            onChange={handleChooseCategory}
-                            options={props.categoryList
-                              .filter((item) => item.id !== "all")
-                              .map((item) => {
-                                return {
-                                  label: item.category,
-                                  value: item.id,
-                                };
-                              })}
-                            allowClear
-                          ></Select>
-                        </Form.Item>
-                      </Col>
-                      <Col span="3">
-                        <Form.Item
-                          label={editActive ? "是否公开" : undefined}
-                          name="isPublic"
-                        >
-                          <Switch
-                            checkedChildren="公开"
-                            unCheckedChildren="私有"
-                            styles={(info): GetProp<SwitchProps, "styles", "Return"> => {
-                              const color = info.props.value ? "#52c41a" : "#f5222d";
+                      </Flex>
+                      <Form.Item
+                        label="类型"
+                        name="category"
+                      >
+                        <Select
+                          style={{ width: "3rem" }}
+                          onChange={handleChooseCategory}
+                          options={props.categoryList
+                            .filter((item) => item.id !== "all")
+                            .map((item) => {
                               return {
-                                root: {
-                                  backgroundColor: color,
-                                },
+                                label: item.category,
+                                value: item.id,
                               };
-                            }}
-                          />
-                        </Form.Item>
-                      </Col>
-                    </Row>
+                            })}
+                          allowClear
+                        ></Select>
+                      </Form.Item>
+                      <Form.Item
+                        label={editActive ? "是否公开" : undefined}
+                        name="isPublic"
+                      >
+                        <Switch
+                          checkedChildren="公开"
+                          unCheckedChildren="私有"
+                          styles={(info): GetProp<SwitchProps, "styles", "Return"> => {
+                            const color = info.props.value ? "#52c41a" : "#f5222d";
+                            return {
+                              root: {
+                                backgroundColor: color,
+                              },
+                            };
+                          }}
+                        />
+                      </Form.Item>
+                    </Flex>
                     <Row gutter={30}>
                       <Col span="24">
                         <Form.Item
@@ -332,66 +330,69 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                         </Form.Item>
                       </Col>
                     </Row>
+                  </div>
+                </Form>
+                <Row justify="end">
+                  <Col span="24">
+                    <Flex
+                      gap="middle"
+                      justify="end"
+                    >
+                      <Button
+                        disabled={submitting}
+                        onClick={() => {
+                          setEditActive(false);
+                          setReviewActive(true);
+                        }}
+                      >
+                        取消
+                      </Button>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={submitting}
+                      >
+                        提交
+                      </Button>
+                    </Flex>
                   </Col>
-                );
-              } else {
-                const createdAt = form.getFieldValue("createdAt");
+                </Row>
+              </div>
+            );
+          } else if (reviewActive) {
+            const createdAt = form.getFieldValue("createdAt");
+            return (
+              <div className="review">
+                <div className="title">
+                  <div className="main">{record?.title}</div>
+                  <span>{dayjs(createdAt).format("YYYY-MM-DD hh:mm:ss")}</span>
+                </div>
+                <div
+                  style={{
+                    padding: "0 0.4rem",
+                  }}
+                >
+                  <Divider
+                    style={{
+                      margin: "0",
+                    }}
+                  />
+                </div>
 
-                return (
-                  <div className="review">
-                    <div className="title">
-                      <div className="main">{record?.title}</div>
-                      <span>{dayjs(createdAt).format("YYYY-MM-DD hh:mm:ss")}</span>
-                    </div>
-                    <Divider
-                      style={{
-                        margin: 0,
+                <div className="content">
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Markdown
+                      source={record?.content}
+                      wrapperElement={{
+                        "data-color-mode": "light",
                       }}
                     />
-                    <div className="content">
-                      <Suspense fallback={<div>Loading...</div>}>
-                        <Markdown
-                          source={record?.content}
-                          wrapperElement={{
-                            "data-color-mode": "light",
-                          }}
-                        />
-                      </Suspense>
-                    </div>
-                  </div>
-                );
-              }
-            })()}
-
-            {editActive && (
-              <Row justify="end">
-                <Col span="24">
-                  <Flex
-                    gap="middle"
-                    justify="end"
-                  >
-                    <Button
-                      disabled={submitting}
-                      onClick={() => {
-                        setEditActive(false);
-                        setReviewActive(true);
-                      }}
-                    >
-                      取消
-                    </Button>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      loading={submitting}
-                    >
-                      提交
-                    </Button>
-                  </Flex>
-                </Col>
-              </Row>
-            )}
-          </div>
-        </Form>
+                  </Suspense>
+                </div>
+              </div>
+            );
+          }
+        })()}
       </Space>
     </div>
   );

@@ -525,10 +525,9 @@ export default function Interview() {
           setSearchParams(params);
           getDataPromise();
           setDialogActive(false);
-          setTimeout(() => {
-            setEditActive(false);
-            setReviewActive(false);
-          }, 500);
+          setEditActive(false);
+          setAddActive(false);
+          setReviewActive(false);
         }}
       />
       <EditCategoryDialog
