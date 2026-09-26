@@ -331,32 +331,32 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                       </Col>
                     </Row>
                   </div>
+                  <Row justify="end">
+                    <Col span="24">
+                      <Flex
+                        gap="middle"
+                        justify="end"
+                      >
+                        <Button
+                          disabled={submitting}
+                          onClick={() => {
+                            setEditActive(false);
+                            setReviewActive(true);
+                          }}
+                        >
+                          取消
+                        </Button>
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          loading={submitting}
+                        >
+                          提交
+                        </Button>
+                      </Flex>
+                    </Col>
+                  </Row>
                 </Form>
-                <Row justify="end">
-                  <Col span="24">
-                    <Flex
-                      gap="middle"
-                      justify="end"
-                    >
-                      <Button
-                        disabled={submitting}
-                        onClick={() => {
-                          setEditActive(false);
-                          setReviewActive(true);
-                        }}
-                      >
-                        取消
-                      </Button>
-                      <Button
-                        type="primary"
-                        htmlType="submit"
-                        loading={submitting}
-                      >
-                        提交
-                      </Button>
-                    </Flex>
-                  </Col>
-                </Row>
               </div>
             );
           } else if (reviewActive) {
