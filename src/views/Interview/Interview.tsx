@@ -308,8 +308,6 @@ export default function Interview() {
   const handleReview = (record: RecordType) => {
     setReviewActive(true);
     setDialogActive(true);
-    setRecord(record);
-    console.log(form.getFieldsValue());
 
     setSearchParams({
       id: String(record.id),

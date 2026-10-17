@@ -7,6 +7,8 @@ import React, {
   useImperativeHandle,
   useRef,
 } from "react";
+import { useLocation } from "react-router";
+
 import "./Interview.scss";
 import type { AxiosError } from "axios";
 import type { FormProps, GetProp, SwitchProps } from "antd";
@@ -61,6 +63,8 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   useImperativeHandle(ref, () => ({
     resetField,
   }));
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
 
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
 
@@ -73,8 +77,6 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
 
   const [form] = Form.useForm();
   Form.useWatch("content", form);
-
-  useEffect(() => {}, []);
 
   useEffect(() => {
     if (props.editActive) {
@@ -101,11 +103,17 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
 
   useEffect(() => {
     console.log("=====record=====");
-    setRecord(props.record);
-    // console.log(props.record);
-
-    // form.setFieldsValue(record);
-  }, [props.record]);
+    if (location.search) {
+      if (props.reviewActive || props.editActive) {
+        getDataById();
+      }
+    } else {
+      form.setFieldsValue({
+        content: "",
+        title: "",
+      });
+    }
+  }, [props.reviewActive, props.editActive, location.search]);
 
   const rulesMap = {
     title: [{ required: true, message: "请输入标题" }],
@@ -160,17 +168,17 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   };
 
   const getDataById = () => {
+    const id = query.get("id");
     getInterviewDetailRequest({
-      id: currentIdRef.current,
+      id,
     })
       .then((response) => {
         console.log(response);
-
         setRecord({
-          id: response.data.id,
-          content: response.data.content,
-          title: response.data.title,
-          createdAt: response.data.createdAt,
+          id: response.id,
+          content: response.content,
+          title: response.title,
+          createdAt: response.createdAt,
         });
       })
       .catch((error: AxiosError) => {
@@ -179,6 +187,19 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   };
 
   const handleChooseCategory = () => {};
+
+  const handleGoBack = () => {
+    props.onGoBack();
+    setEditActive(false);
+    setReviewActive(false);
+    setRecord({
+      id: null,
+      title: "",
+      content: "",
+      category: null,
+      isPublic: false,
+    });
+  };
 
   return (
     <div className={`edit_dialog ${props.dialogActive ? "active" : ""}`}>
@@ -193,11 +214,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
           wrap
           className="navigator"
         >
-          <Button
-            onClick={() => {
-              props.onGoBack();
-            }}
-          >
+          <Button onClick={() => handleGoBack()}>
             <LeftOutlined />
           </Button>
           {(() => {
