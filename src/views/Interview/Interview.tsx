@@ -523,7 +523,6 @@ export default function Interview() {
         editActive={editActive}
         addActive={addActive}
         reviewActive={reviewActive}
-        record={record}
         categoryList={categoryList}
         onGoBack={() => {
           const params = new URLSearchParams(searchParams);
