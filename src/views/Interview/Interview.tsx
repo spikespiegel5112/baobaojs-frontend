@@ -65,7 +65,6 @@ export default function Interview() {
   const [dialogActive, setDialogActive] = useState<boolean>(false);
   const [tableData, setTableData] = useState<RecordType[]>([]);
 
-  const [record, setRecord] = useState<RecordType>();
   const [pagination, setPagination] = useState<PaginationType>(defaultPagination);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
@@ -269,8 +268,12 @@ export default function Interview() {
           );
           resolve(tableData);
         })
-        .catch((error: AxiosError) => {
+        .catch((error: { statusCode: number }) => {
           console.log(error);
+          if (error.statusCode === 401) {
+            isPublicRef.current = true;
+            getDataPromise();
+          }
           reject(error);
         })
         .finally(() => {
@@ -302,10 +305,13 @@ export default function Interview() {
   const handleEdit = (record: RecordType) => {
     setEditActive(true);
     setDialogActive(true);
-    setRecord(record);
+    setSearchParams({
+      id: String(record.id),
+    });
   };
 
   const handleReview = (record: RecordType) => {
+    // utils.$checkIsLogin();
     setReviewActive(true);
     setDialogActive(true);
 
@@ -482,6 +488,8 @@ export default function Interview() {
               >
                 <Button
                   disabled={!isLoggedIn || selectedRowKeys.length === 0}
+                  danger
+                  type="primary"
                   onClick={() => handleMultipleDelete()}
                 >
                   <DeleteOutlined />

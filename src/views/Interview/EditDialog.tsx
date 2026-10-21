@@ -141,11 +141,13 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
             setReviewActive(true);
             currentIdRef.current = response.id;
             const currentUrl =
-              location.href.split("?")[0] +
+              window.location.href.split("?")[0] +
               utils.$objectToUrlString({
                 id: response.id,
               });
+            console.log(window.location);
             console.log(currentUrl);
+            window.location.href = currentUrl;
             getDataById();
             setRecord({
               id: response.id,
@@ -174,15 +176,14 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
     })
       .then((response) => {
         console.log(response);
-        setRecord({
-          id: response.id,
-          content: response.content,
-          title: response.title,
-          createdAt: response.createdAt,
-        });
+        setRecord(response);
+        form.setFieldsValue(response);
       })
-      .catch((error: AxiosError) => {
+      .catch((error: { statusCode: number }) => {
         console.log(error);
+        if (error.statusCode === 401) {
+          handleGoBack();
+        }
       });
   };
 

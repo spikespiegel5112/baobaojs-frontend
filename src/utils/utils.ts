@@ -186,6 +186,7 @@ const _utils = {
     looper(completeRouteDictionary);
     return result;
   },
+  $checkIsLogin: () => {},
 
   $message: message,
 };
