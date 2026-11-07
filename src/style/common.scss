@@ -116,6 +116,7 @@ input:focus {
 
       .main {
         width: 100% !important;
+
         z-index: 1;
       }
 
@@ -130,6 +131,7 @@ input:focus {
     }
     .ant-layout-content {
       width: 100% !important;
+      height: 100%;
     }
   }
   .interview_container {
