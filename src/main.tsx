@@ -1,18 +1,29 @@
-import { StrictMode, lazy, Suspense } from "react";
+import { StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { App as AntdApp } from "antd";
+import { routeDictionary } from "@/routes.ts";
 
 import Root from "@/root";
 import NotFound from "@/views/NotFound/NotFound";
 
-const BaobaoLayout = lazy(() => import("@/views/BaobaoLayout/BaobaoLayout"));
-const Homepage = lazy(() => import("@/views/Homepage/Homepage"));
-const Interview = lazy(() => import("@/views/Interview/Interview"));
-const ErnieBot = lazy(() => import("@/views/ErnieBot/ErnieBot"));
-const FileDownloader = lazy(() => import("@/views/FileDownloader/FileDownloader"));
-const Houchejishi = lazy(() => import("@/views/Houchejishi/Houchejishi"));
-const Login = lazy(() => import("@/views/Login/Login"));
+interface RouteItem {
+  path: string;
+  component: React.ComponentType;
+  children?: RouteItem[];
+}
+
+const renderRoutes = (routes: RouteItem[]) => {
+  return routes.map(({ path, component: Component, children }) => (
+    <Route
+      key={path}
+      path={path}
+      element={Component ? <Component /> : undefined}
+    >
+      {children && renderRoutes(children)}
+    </Route>
+  ));
+};
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -27,36 +38,7 @@ createRoot(document.getElementById("root")!).render(
         <BrowserRouter>
           <Suspense fallback={null}>
             <Routes>
-              <Route
-                path="/"
-                element={<BaobaoLayout />}
-              >
-                <Route
-                  path="Homepage"
-                  element={<Homepage />}
-                />
-                <Route
-                  path="Interview"
-                  element={<Interview />}
-                />
-                <Route
-                  path="ErnieBot"
-                  element={<ErnieBot />}
-                />
-                <Route
-                  path="FileDownloader"
-                  element={<FileDownloader />}
-                />
-                <Route
-                  path="Houchejishi"
-                  element={<Houchejishi />}
-                />
-                <Route
-                  path="Login"
-                  element={<Login />}
-                />
-              </Route>
-
+              {renderRoutes(routeDictionary)}
               <Route
                 path="*"
                 element={<NotFound />}

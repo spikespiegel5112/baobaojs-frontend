@@ -36,6 +36,7 @@ interface MenuItem {
   title: string;
   id: string;
   active: boolean;
+  abbreviation?: string;
 }
 
 const menuListData = [
@@ -57,6 +58,12 @@ const menuListData = [
   {
     title: "厚车吉市",
     id: "Houchejishi",
+    active: false,
+  },
+  {
+    title: "Leaders & Structures",
+    abbreviation: "LS",
+    id: "LeadersAndStructures",
     active: false,
   },
 ];
@@ -121,7 +128,7 @@ export default function BaobaoLayout() {
 
     if (!expandButtonFlag) {
       result.forEach((item: MenuItem) => {
-        item.title = item.title.slice(0, 2);
+        item.title = item.abbreviation ? item.abbreviation : item.title.slice(0, 2);
       });
     } else {
       result.forEach((item: MenuItem) => {
@@ -155,7 +162,7 @@ export default function BaobaoLayout() {
     if (utils.$checkIsMobile()) {
       result = expandButtonFlag ? "100%" : "0";
     } else {
-      result = expandButtonFlag ? "6rem" : "1.3rem";
+      result = expandButtonFlag ? "5rem" : "1.3rem";
     }
     return result;
   }, [expandButtonFlag]);
