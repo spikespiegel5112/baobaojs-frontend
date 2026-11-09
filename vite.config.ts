@@ -101,8 +101,8 @@ export default defineConfig(({ mode }) => {
             if (id.includes("node_modules/@ant-design")) {
               return "antd";
             }
-            if (id.includes("node_modules/@uiw/react-md-edito")) {
-              return "react-md-edito";
+            if (id.includes("node_modules/@uiw/react-md-editor")) {
+              return "react-md-editor";
             }
           },
         },
