@@ -5,6 +5,7 @@
   height: 100%;
   overflow: hidden;
   background: transparent;
+  position: relative;
 
   .preview_header {
     position: relative;
@@ -41,7 +42,6 @@
     overflow: auto;
     padding: 14px;
     background: transparent;
-    z-index: 1;
 
     // 隐藏外层滚动条
     scrollbar-width: none;

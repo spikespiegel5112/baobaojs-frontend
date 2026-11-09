@@ -1,0 +1,144 @@
+// ==================================
+// 手机端适配
+// ==================================
+
+@media screen and (max-width: 767px) {
+  .interview_container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0.3rem;
+
+    .interview_scroll {
+      min-height: 0;
+      min-width: 0;
+      flex: 1;
+      height: 100%;
+    }
+
+    .table {
+      padding: 8px 10px;
+
+      // Header 改为纵向布局
+      .header {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin-bottom: 12px;
+
+        > .ant-col {
+        }
+
+        .ant-flex {
+          display: flex;
+          flex-wrap: wrap;
+          width: 100%;
+          gap: 8px !important;
+        }
+
+        .ant-form-item {
+          width: 100%;
+
+          .ant-form-item-control,
+          .ant-form-item-control-input,
+          .ant-form-item-control-input-content {
+            width: 100%;
+          }
+
+          .ant-input-affix-wrapper {
+            width: 100%;
+          }
+        }
+
+        .ant-select {
+          width: 100% !important;
+        }
+
+        // 第一组操作：新建和搜索
+        > .ant-col:first-child {
+          .ant-flex {
+            > .ant-btn:first-child {
+              flex-shrink: 0;
+            }
+
+            #search {
+              flex: 1;
+              min-width: 0;
+            }
+          }
+        }
+
+        // 第二组操作：批量删除
+        > .ant-col:last-child {
+          .ant-flex {
+            justify-content: flex-end;
+          }
+        }
+      }
+
+      .table_content {
+        overflow: auto;
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+        .mobile_list {
+          .mobile_card {
+            .mobile_card_header {
+              .mobile_title {
+                font-size: 14px;
+              }
+            }
+          }
+        }
+      }
+
+      .mobile_pagination {
+        .ant-pagination-options {
+          display: none;
+        }
+      }
+    }
+
+    // 手机端编辑 / 详情页面
+    .edit_dialog {
+      padding: 8px 10px;
+
+      .navigator {
+        margin: 8px 4px;
+      }
+
+      .review {
+        width: 100%;
+        max-width: none;
+        height: calc(100dvh - 76px);
+        border-radius: 8px;
+
+        .title {
+          min-height: 46px;
+          padding: 8px 12px;
+
+          .main {
+            padding-right: 8px;
+            font-size: 14px;
+          }
+
+          span {
+            font-size: 11px;
+          }
+        }
+
+        .content {
+          padding: 14px;
+          font-size: 14px;
+          line-height: 1.7;
+          overflow-wrap: anywhere;
+        }
+      }
+    }
+  }
+}

@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams, useLocation } from "react-router";
-import { App } from "antd";
+import { App, Grid, Card, Checkbox, Pagination, Spin, Empty } from "antd";
 import "./Interview.scss";
+import "./Interview_mobile.scss";
 import EditDialog from "./EditDialog";
 import EditCategoryDialog from "./EditCategoryDialog";
 import type { EditDialogRef } from "./EditDialog";
@@ -17,6 +18,8 @@ import {
 } from "@/api/inteerview";
 import dayjs from "@/utils/dayjs";
 import utils from "@/utils/utils";
+
+import ScrollContainer from "@/components/ScrollContainer";
 
 import { useSelector } from "react-redux";
 
@@ -45,6 +48,9 @@ export default function Interview() {
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
   const location = useLocation();
   const query = new URLSearchParams(location.search);
+
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md;
 
   const defaultPagination: PaginationType = {
     page: 1,
@@ -399,8 +405,88 @@ export default function Interview() {
     setCategoryList(categoryList);
   };
 
-  return (
-    <div className="interview_container">
+  const renderMobileList = () => (
+    <ScrollContainer className="interview_scroll">
+      <div>
+        <Spin spinning={loading}>
+          <div className="mobile_list">
+            {tableData.length === 0 && !loading ? (
+              <Empty description="暂无数据" />
+            ) : (
+              tableData.map((record) => {
+                const category = categoryList.find((item) => item.id === record.category);
+
+                return (
+                  <Card
+                    key={record.id}
+                    className="mobile_card"
+                    size="small"
+                  >
+                    <div className="mobile_card_header">
+                      <Checkbox
+                        checked={selectedRowKeys.includes(record.id)}
+                        onChange={(e) => {
+                          setSelectedRowKeys((prev) =>
+                            e.target.checked
+                              ? [...prev, record.id]
+                              : prev.filter((id) => id !== record.id),
+                          );
+                        }}
+                      />
+
+                      <Button
+                        type="link"
+                        className="mobile_title"
+                        onClick={() => handleReview(record)}
+                      >
+                        {record.title}
+                      </Button>
+                    </div>
+
+                    <div className="mobile_card_info">
+                      <Space wrap>
+                        <Tag>{category?.category || "未分类"}</Tag>
+
+                        <Tag color={record.isPublic ? "green" : "red"}>
+                          {record.isPublic ? "公开" : "私有"}
+                        </Tag>
+                      </Space>
+
+                      <span className="mobile_date">{record.createdAt}</span>
+                    </div>
+
+                    <div className="mobile_card_actions">
+                      <Button
+                        type="text"
+                        disabled={!isLoggedIn}
+                        icon={<FormOutlined />}
+                        onClick={() => handleEdit(record)}
+                      >
+                        编辑
+                      </Button>
+
+                      <Button
+                        type="text"
+                        danger
+                        disabled={!isLoggedIn}
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDelete(record)}
+                      >
+                        删除
+                      </Button>
+                    </div>
+                  </Card>
+                );
+              })
+            )}
+          </div>
+        </Spin>
+      </div>
+    </ScrollContainer>
+  );
+
+  const renderPCHeader = () => {
+    return (
       <div className={`table ${!dialogActive ? "active" : ""}`}>
         <Form
           form={form}
@@ -498,25 +584,204 @@ export default function Interview() {
             </Col>
           </Row>
         </Form>
-        <Table
-          className={utils.$checkIsMobile() ? "mobile" : ""}
-          rowSelection={rowSelection}
-          dataSource={tableData}
-          columns={columns}
-          loading={loading}
-          scroll={{
-            y: "calc(100vh - 3rem)",
-          }}
-          pagination={{
-            defaultCurrent: 1,
-            current: pagination.page,
-            pageSize: pagination.pageSize,
-            total: pagination.total,
-            onChange: handleChangePagination,
-            hideOnSinglePage: false, // 👈 关键点
-          }}
-        />
+        <div className="table_content">
+          {isMobile ? (
+            renderMobileList()
+          ) : (
+            <Table
+              rowSelection={rowSelection}
+              dataSource={tableData}
+              columns={columns}
+              loading={loading}
+              scroll={{
+                y: "calc(100dvh - 220px)",
+              }}
+              pagination={{
+                current: pagination.page,
+                pageSize: pagination.pageSize,
+                total: pagination.total,
+                onChange: handleChangePagination,
+                hideOnSinglePage: false,
+              }}
+            />
+          )}
+        </div>
+
+        {isMobile && (
+          <div className="mobile_pagination">
+            <Pagination
+              current={pagination.page}
+              pageSize={pagination.pageSize}
+              total={pagination.total}
+              onChange={handleChangePagination}
+              showSizeChanger={false}
+              size="small"
+              showTotal={(total) => `共 ${total} 条`}
+            />
+          </div>
+        )}
       </div>
+    );
+  };
+
+  const renderMobileHeader = () => {
+    return (
+      <div className={`table ${!dialogActive ? "active" : ""}`}>
+        <Form
+          form={form}
+          component={false}
+          autoComplete="off"
+        >
+          <Row
+            className="header"
+            justify="start"
+          >
+            <Col span={22}>
+              <Flex
+                gap="middle"
+                justify="start"
+              >
+                <Tooltip
+                  placement="bottom"
+                  title="新建文档"
+                >
+                  <Button
+                    disabled={!isLoggedIn}
+                    onClick={handleAdd}
+                  >
+                    <PlusOutlined />
+                  </Button>
+                </Tooltip>
+                <Button
+                  disabled={!isLoggedIn}
+                  onClick={() => setEditCategoryDialogVisible(true)}
+                >
+                  类型管理
+                </Button>
+              </Flex>
+            </Col>
+            <Col span={2}>
+              <Flex
+                gap="middle"
+                justify="end"
+              >
+                <Button
+                  disabled={!isLoggedIn || selectedRowKeys.length === 0}
+                  danger
+                  type="primary"
+                  onClick={() => handleMultipleDelete()}
+                >
+                  <DeleteOutlined />
+                </Button>
+              </Flex>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Form.Item id="search">
+                <Input.Search
+                  placeholder="input search text"
+                  allowClear
+                  disabled={loading}
+                  onSearch={(value: string, event: React.ChangeEvent<HTMLInputElement, Element>) =>
+                    handleSearchArticle(value, event)
+                  }
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Item
+                label="类型"
+                name="category"
+              >
+                <Select
+                  style={{ width: 200 }}
+                  defaultValue={"all"}
+                  onChange={handleChooseCategory}
+                  options={categoryList.map((item) => {
+                    return {
+                      label: item.category,
+                      value: item.id,
+                    };
+                  })}
+                ></Select>
+              </Form.Item>
+            </Col>
+            <Col span={121}>
+              {isLoggedIn && (
+                <>
+                  <Form.Item
+                    label="公开"
+                    name="isPublic"
+                  >
+                    <Select
+                      style={{ width: 200 }}
+                      defaultValue="all"
+                      onChange={handleChooseIsPublic}
+                      options={[
+                        { value: "all", label: "全部" },
+                        { value: "isPublic", label: "公开" },
+                        { value: "isPrivate", label: "私有" },
+                      ]}
+                    ></Select>
+                  </Form.Item>
+                </>
+              )}
+            </Col>
+          </Row>
+        </Form>
+        <div className="table_content">
+          {isMobile ? (
+            renderMobileList()
+          ) : (
+            <Table
+              rowSelection={rowSelection}
+              dataSource={tableData}
+              columns={columns}
+              loading={loading}
+              scroll={{
+                y: "calc(100dvh - 220px)",
+              }}
+              pagination={{
+                current: pagination.page,
+                pageSize: pagination.pageSize,
+                total: pagination.total,
+                onChange: handleChangePagination,
+                hideOnSinglePage: false,
+              }}
+            />
+          )}
+        </div>
+
+        {isMobile && (
+          <div className="mobile_pagination">
+            <Pagination
+              current={pagination.page}
+              pageSize={pagination.pageSize}
+              total={pagination.total}
+              onChange={handleChangePagination}
+              showSizeChanger={false}
+              size="small"
+              showTotal={(total) => `共 ${total} 条`}
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className={`interview_container`}>
+      {(() => {
+        if (isMobile) {
+          return renderMobileHeader();
+        } else {
+          return renderPCHeader();
+        }
+      })()}
+
       <EditDialog
         ref={editDialogRef}
         dialogActive={dialogActive}

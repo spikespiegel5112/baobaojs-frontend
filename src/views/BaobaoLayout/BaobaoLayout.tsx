@@ -20,6 +20,8 @@ import { useTitle } from "@/hooks/useTitle";
 import { getUserInfoRequest, logoutRequest } from "@/api/auth";
 import { VerticalAlignTopOutlined } from "@ant-design/icons";
 
+import DraggableMenuButton from "./DraggableMenuButton.tsx";
+
 export interface PaginationType {
   page: number;
   pageSize: number;
@@ -106,11 +108,11 @@ export default function BaobaoLayout() {
     }, 300);
 
     if (location.pathname !== "/") {
+      setExpandButtonFlag(false);
       handleEnter();
-      setExpandButtonFlag(true);
 
       if (utils.$checkIsMobile()) {
-        setExpandButtonFlag(true);
+        setExpandButtonFlag(false);
       }
     }
 
@@ -144,7 +146,7 @@ export default function BaobaoLayout() {
     let menuStatus = localStorage.getItem("menuStatus");
     let result = true;
     if (utils.$checkIsMobile()) {
-      result = true;
+      result = false;
     } else {
       if (menuStatus === "expand") {
         result = true;
@@ -209,6 +211,13 @@ export default function BaobaoLayout() {
       .catch((error: AxiosError) => {
         console.log(error);
       });
+  };
+
+  const handleLogin = () => {
+    if (utils.$checkIsMobile()) {
+      setExpandButtonFlag(false);
+    }
+    navigate("Login");
   };
 
   const handleLogout = () => {
@@ -340,9 +349,15 @@ export default function BaobaoLayout() {
           <div className="title">BAOBAOJS</div>
           <button
             className={"startbutton" + (startButtonActive ? " active" : "")}
-            onClick={handleEnter}
+            onClick={() => {
+              handleEnter();
+              setExpandButtonFlag(true);
+            }}
           ></button>
         </div>
+        {utils.$checkIsMobile() && (
+          <DraggableMenuButton onClick={() => setExpandButtonFlag(true)} />
+        )}
 
         <Layout.Sider
           className={
@@ -398,8 +413,11 @@ export default function BaobaoLayout() {
           <div className="footer">
             <div className="login">
               {!isLoggedIn && (
-                <Button variant="outlined">
-                  <Link to="/Login">登录</Link>
+                <Button
+                  variant="outlined"
+                  onClick={handleLogin}
+                >
+                  登录
                 </Button>
               )}
               {isLoggedIn && (
