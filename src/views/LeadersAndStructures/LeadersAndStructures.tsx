@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Segmented } from "antd";
+import { Segmented, Spin, type SegmentedProps } from "antd";
 import { MobileOutlined, TabletOutlined, MonitorOutlined } from "@ant-design/icons";
 
 import "./LeadersAndStructures.scss";
 
 type DeviceType = "mobile" | "tablet" | "pc";
 
-const deviceOptions = [
+const deviceOptions: SegmentedProps<DeviceType>["options"] = [
   {
     label: "Mobile",
     value: "mobile",
@@ -31,7 +31,20 @@ const deviceWidth: Record<DeviceType, string> = {
 };
 
 export default function LeadersAndStructures() {
+  const url = "https://leadersandstructures.com";
   const [device, setDevice] = useState<DeviceType>("pc");
+  const [iframeUrl, setIframeUrl] = useState<string>(url);
+  const [loading, setLoading] = useState(false);
+
+  const handleChangeDevice = (value: DeviceType) => {
+    setLoading(true);
+    setDevice(value);
+    const timestamp = Date.now();
+    setIframeUrl(`${url}?timestamp=${timestamp}`);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+  };
 
   return (
     <div className="ifrome_container">
@@ -41,17 +54,22 @@ export default function LeadersAndStructures() {
         <Segmented
           value={device}
           options={deviceOptions}
-          onChange={(value) => setDevice(value as DeviceType)}
+          onChange={(value) => handleChangeDevice(value)}
           size="small"
         />
       </header>
 
       <div className="preview_content">
-        <iframe
-          title="LeadersAndStructures"
-          src="https://leadersandstructures.com"
+        <Spin
+          spinning={loading}
           style={{ width: deviceWidth[device] }}
-        />
+        >
+          <iframe
+            title="LeadersAndStructures"
+            src={iframeUrl}
+            style={{ width: deviceWidth[device] }}
+          />
+        </Spin>
       </div>
     </div>
   );
