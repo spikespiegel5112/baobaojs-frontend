@@ -215,7 +215,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
           wrap
           className="navigator"
           style={{
-            maxWidth: reviewActive ? "20rem" : "none",
+            maxWidth: reviewActive ? "26rem" : "none",
             margin: "auto",
           }}
         >
@@ -338,7 +338,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                           <Suspense fallback={<div>Loading...</div>}>
                             <MDEditor
                               data-color-mode="light"
-                              height={"calc(100vh - 4.5rem)"}
+                              height={"calc(100vh - 6.5rem)"}
                               value={form.getFieldValue("content")}
                               onChange={(value) => {
                                 form.setFieldValue("content", value);
