@@ -164,7 +164,7 @@ export default function BaobaoLayout() {
     if (utils.$checkIsMobile()) {
       result = expandButtonFlag ? "100%" : "0";
     } else {
-      result = expandButtonFlag ? "5rem" : "1.3rem";
+      result = expandButtonFlag ? "5rem" : "1.8rem";
     }
     return result;
   }, [expandButtonFlag]);
@@ -415,9 +415,10 @@ export default function BaobaoLayout() {
               {!isLoggedIn && (
                 <Button
                   variant="outlined"
+                  type="link"
                   onClick={handleLogin}
                 >
-                  登录
+                  Log in
                 </Button>
               )}
               {isLoggedIn && (

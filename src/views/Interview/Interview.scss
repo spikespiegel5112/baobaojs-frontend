@@ -28,39 +28,51 @@
         }
       }
       .ant-table {
-        height: calc(100vh - 2rem);
+        height: calc(100vh - 3rem);
         background-color: rgba($color: #fff, $alpha: 0.8);
-        font-size: 0.3rem;
+        font-size: 0.35rem;
         position: relative;
 
         .ant-table-container {
           height: 100%;
+          .ant-table-header {
+            .ant-table-thead {
+              tr {
+                th {
+                  padding: 0.3rem 0.2rem;
+                }
+              }
+            }
+          }
           .ant-table-content {
             height: 100%;
             position: relative;
           }
-          table {
+          .ant-table-body {
             height: 100%;
-            .ant-table-tbody {
-              height: calc(100% - 2rem);
-              overflow: auto;
-              position: relative;
-              .ant-table-row {
-                .ant-table-cell {
-                  .title {
-                    color: #333;
-                    padding: 0;
-                    white-space: normal;
-                    height: auto;
-                    text-align: left;
-                    font-family: "EuropeExt";
-                  }
-                  &:hover {
+            table {
+              width: calc(100% - 0.1rem);
+              .ant-table-tbody {
+                height: calc(100% - 2rem);
+                overflow: auto;
+                position: relative;
+                .ant-table-row {
+                  .ant-table-cell {
                     .title {
-                      color: #000;
+                      color: #333;
+                      padding: 0;
+                      white-space: normal;
+                      height: auto;
+                      text-align: left;
+                      font-family: "EuropeExt";
+                    }
+                    &:hover {
+                      .title {
+                        color: #000;
 
-                      &:hover {
-                        text-decoration: underline;
+                        &:hover {
+                          text-decoration: underline;
+                        }
                       }
                     }
                   }

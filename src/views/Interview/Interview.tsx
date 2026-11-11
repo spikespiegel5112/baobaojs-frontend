@@ -166,7 +166,7 @@ export default function Interview() {
       title: "公开状态",
       dataIndex: "isPublic",
       key: "isPublic",
-      width: "2rem",
+      width: "3rem",
       treeFilter: "menu",
       align: "center",
       render: (_: unknown, record: RecordType) => (
@@ -592,7 +592,7 @@ export default function Interview() {
               columns={columns}
               loading={loading}
               scroll={{
-                y: "calc(100dvh - 220px)",
+                y: "calc(100vh - 4.4rem)",
               }}
               pagination={{
                 current: pagination.page,
@@ -740,7 +740,7 @@ export default function Interview() {
               columns={columns}
               loading={loading}
               scroll={{
-                y: "calc(100dvh - 220px)",
+                y: "calc(100vh - 220px)",
               }}
               pagination={{
                 current: pagination.page,
