@@ -61,7 +61,7 @@ export default function Interview() {
   const paginationRef = useRef(defaultPagination);
   const searchKeyword = useRef<string>("");
   const editDialogRef = useRef<EditDialogRef>(null);
-  const isPublicRef = useRef<boolean>(null);
+  const isPublicRef = useRef<string | null>(null);
   const categoryRef = useRef<string>("");
 
   const [editActive, setEditActive] = useState<boolean>(false);
@@ -93,13 +93,19 @@ export default function Interview() {
   useEffect(() => {
     const page = Number(searchParams.get("page"));
     const pageSize = Number(searchParams.get("pageSize"));
-
+    const isPublic = searchParams.get("isPublic");
     if (Number.isInteger(page) && page > 0) {
       paginationRef.current.page = page;
     }
     if (Number.isInteger(pageSize) && pageSize > 0) {
       paginationRef.current.pageSize = pageSize;
     }
+    if (utils.$isNotEmpty(isPublic)) {
+      requestAnimationFrame(() => {
+        form.setFieldValue("isPublic", isPublic);
+      });
+    }
+    isPublicRef.current = isPublic;
 
     getDataPromise()
       .then((response: TableDataType) => {
@@ -134,6 +140,20 @@ export default function Interview() {
       form.resetFields();
     }
   }, [reviewActive]);
+
+  useEffect(() => {
+    if (pagination) {
+      paginationRef.current = {
+        ...paginationRef.current,
+        pageSize: pagination.pageSize,
+        page: pagination.page,
+      };
+      utils.$updateUrlQuery("update", {
+        pageSize: pagination.pageSize,
+        page: pagination.page,
+      });
+    }
+  }, [pagination]);
 
   const columns = [
     {
@@ -235,16 +255,20 @@ export default function Interview() {
   };
 
   const handleChooseIsPublic = (value: string) => {
-    if (value === "isPublic") {
-      isPublicRef.current = true;
-    } else if (value === "isPrivate") {
-      isPublicRef.current = false;
-    } else {
-      isPublicRef.current = null;
-    }
+    // if (value === "isPublic") {
+    //   isPublicRef.current = true;
+    // } else if (value === "isPrivate") {
+    //   isPublicRef.current = false;
+    // } else {
+    //   isPublicRef.current = null;
+    // }
+    isPublicRef.current = value;
 
     paginationRef.current.page = 1;
     setPagination(paginationRef.current);
+    utils.$updateUrlQuery("update", {
+      isPublic: String(isPublicRef.current),
+    });
 
     getDataPromise();
   };
@@ -301,16 +325,11 @@ export default function Interview() {
   };
 
   const handleChangePagination = (page: number, pageSize: number) => {
-    paginationRef.current = {
+    setPagination({
       ...paginationRef.current,
       pageSize,
       page,
-    };
-    utils.$updateUrlQuery("update", {
-      pageSize,
-      page,
     });
-    setPagination(paginationRef.current);
     getDataPromise();
   };
 
@@ -537,6 +556,11 @@ export default function Interview() {
                 </Form.Item>
                 {isLoggedIn && (
                   <>
+                    {(() => {
+                      const bb = form.getFieldValue("isPublic");
+                      console.log(bb);
+                      // 123
+                    })()}
                     <Form.Item
                       label="公开"
                       name="isPublic"
