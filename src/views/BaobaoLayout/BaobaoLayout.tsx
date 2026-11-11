@@ -100,7 +100,7 @@ export default function BaobaoLayout() {
     getUserInfo();
     utils.$remResizing({
       baseline: 320,
-      fontSize: 30,
+      fontSize: 20,
       threshold: 640,
     });
     setTimeout(() => {

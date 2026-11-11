@@ -14,7 +14,6 @@ export default function ErnieBot() {
 
     return urlMap[mode] || urlMap.development;
   };
-
   return (
     <div className="erniebot_container">
       <WujieReact
