@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
 import { Outlet, Link } from "react-router";
 import { useNavigate, useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
@@ -453,7 +453,9 @@ export default function BaobaoLayout() {
         </Layout.Sider>
 
         <Layout.Content className={"main" + (expandButtonFlag ? "expand" : " shrink")}>
-          <Outlet />
+          <Suspense fallback={<div className="pageloading">页面加载中...</div>}>
+            <Outlet />
+          </Suspense>
         </Layout.Content>
       </Layout>
     </ConfigProvider>

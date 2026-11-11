@@ -27,7 +27,9 @@
     "react-dom": "^19.1.0",
     "react-draggable": "^4.7.2",
     "react-redux": "^9.2.0",
-    "react-router": "^7.7.1"
+    "react-router": "^7.7.1",
+    "wujie": "^2.1.0",
+    "wujie-react": "^2.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

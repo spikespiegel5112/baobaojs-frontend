@@ -214,8 +214,7 @@ export default function Interview() {
   const handleSearchArticle: (
     value: string,
     event: React.ChangeEvent<HTMLInputElement, Element>,
-  ) => void = (values, event) => {
-    console.log(event);
+  ) => void = (values) => {
     setLoading(true);
     searchKeyword.current = values;
 
@@ -248,7 +247,6 @@ export default function Interview() {
   const getDataPromise = () => {
     return new Promise<TableDataType>((resolve, reject) => {
       setLoading(true);
-      console.log(form.getFieldValue("category"));
       const category = form.getFieldValue("category");
       getInterviewListRequest({
         title: searchKeyword.current,
