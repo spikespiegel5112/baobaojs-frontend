@@ -49,7 +49,7 @@ export default function LeadersAndStructures() {
   return (
     <div className="ifrome_container">
       <header className="preview_header">
-        <span className="header_title">设备预览</span>
+        <span className="header_title">Leaders & Structures</span>
 
         <Segmented
           value={device}

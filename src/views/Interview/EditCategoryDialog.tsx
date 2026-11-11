@@ -199,7 +199,7 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
               justify="space-between"
               align="center"
             >
-              <span>{item.category}</span>;
+              <span>{item.category}</span>
               <Flex
                 justify="space-between"
                 align="end"

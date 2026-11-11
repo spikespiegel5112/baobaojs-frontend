@@ -48,7 +48,7 @@ const menuListData = [
     active: false,
   },
   {
-    title: "八股阅读器",
+    title: "百科全书",
     id: "Interview",
     active: false,
   },
@@ -424,9 +424,10 @@ export default function BaobaoLayout() {
               {isLoggedIn && (
                 <Button
                   variant="text"
+                  type="link"
                   onClick={handleLogout}
                 >
-                  退出
+                  Log out
                 </Button>
               )}
             </div>

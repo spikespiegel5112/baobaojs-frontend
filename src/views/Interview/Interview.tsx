@@ -183,7 +183,7 @@ export default function Interview() {
       title: "创建日期",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: "3.6rem",
+      width: "4.4rem",
     },
     {
       title: "操作",
