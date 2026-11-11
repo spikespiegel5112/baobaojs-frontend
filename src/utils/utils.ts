@@ -188,6 +188,29 @@ const _utils = {
   },
   $checkIsLogin: () => {},
 
+  $updateUrlQuery: (
+    action: "add" | "update" | "remove",
+    value: Record<string, string | number | boolean> | string,
+  ): string => {
+    const urlObj = new URL(window.location.href);
+    const params = urlObj.searchParams;
+
+    if (action === "add") {
+      Object.entries(value as Record<string, string | number | boolean>).forEach(([key, val]) => {
+        params.append(key, String(val));
+      });
+    } else if (action === "update") {
+      Object.entries(value as Record<string, string | number | boolean>).forEach(([key, val]) => {
+        params.set(key, String(val));
+      });
+    } else if (action === "remove") {
+      params.delete(value as string);
+    }
+    window.history.replaceState({}, "", urlObj.toString());
+
+    return urlObj.toString();
+  },
+
   $message: message,
 };
 

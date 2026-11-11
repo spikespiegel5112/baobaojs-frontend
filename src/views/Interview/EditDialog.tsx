@@ -1,12 +1,4 @@
-import React, {
-  lazy,
-  Suspense,
-  useEffect,
-  useState,
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-} from "react";
+import React, { lazy, Suspense, useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import { useLocation } from "react-router";
 
 import "./Interview.scss";
@@ -64,7 +56,6 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
     resetField,
   }));
   const location = useLocation();
-  const query = new URLSearchParams(location.search);
 
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
 
@@ -72,8 +63,6 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   const [editActive, setEditActive] = useState<boolean>(false);
   const [reviewActive, setReviewActive] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
-
-  const currentIdRef = useRef<number | undefined>(null);
 
   const [form] = Form.useForm();
   Form.useWatch("content", form);
@@ -102,8 +91,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   }, [props.reviewActive]);
 
   useEffect(() => {
-    console.log("=====record=====");
-    if (location.search) {
+    if (window.location.search) {
       if (props.reviewActive || props.editActive) {
         getDataById();
       }
@@ -139,23 +127,8 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
             utils.$message.success("保存成功！");
             setEditActive(false);
             setReviewActive(true);
-            currentIdRef.current = response.id;
-            const currentUrl =
-              window.location.href.split("?")[0] +
-              utils.$objectToUrlString({
-                id: response.id,
-              });
-            console.log(window.location);
-            console.log(currentUrl);
-            window.location.href = currentUrl;
-            getDataById();
-            setRecord({
-              id: response.id,
-              content: response.content,
-              title: response.title,
-              category: response.category,
-              isPublic: response.isPublic,
-            });
+            utils.$updateUrlQuery("remove", "id");
+            props.onGoBack();
           })
           .catch((error: AxiosError) => {
             console.log(error);
@@ -170,7 +143,10 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   };
 
   const getDataById = () => {
-    const id = query.get("id");
+    const urlObj = new URL(window.location.href);
+    const params = urlObj.searchParams;
+    const id = params.get("id");
+
     getInterviewDetailRequest({
       id,
     })

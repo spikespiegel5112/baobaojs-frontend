@@ -81,7 +81,7 @@ export default function Interview() {
 
   const [form] = Form.useForm();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const rowSelection: TableRowSelection<RecordType> = {
     selectedRowKeys,
@@ -91,6 +91,16 @@ export default function Interview() {
   };
 
   useEffect(() => {
+    const page = Number(searchParams.get("page"));
+    const pageSize = Number(searchParams.get("pageSize"));
+
+    if (Number.isInteger(page) && page > 0) {
+      paginationRef.current.page = page;
+    }
+    if (Number.isInteger(pageSize) && pageSize > 0) {
+      paginationRef.current.pageSize = pageSize;
+    }
+
     getDataPromise()
       .then((response: TableDataType) => {
         const id = query.get("id");
@@ -296,6 +306,10 @@ export default function Interview() {
       pageSize,
       page,
     };
+    utils.$updateUrlQuery("update", {
+      pageSize,
+      page,
+    });
     setPagination(paginationRef.current);
     getDataPromise();
   };
@@ -309,7 +323,7 @@ export default function Interview() {
   const handleEdit = (record: RecordType) => {
     setEditActive(true);
     setDialogActive(true);
-    setSearchParams({
+    utils.$updateUrlQuery("add", {
       id: String(record.id),
     });
   };
@@ -318,8 +332,7 @@ export default function Interview() {
     // utils.$checkIsLogin();
     setReviewActive(true);
     setDialogActive(true);
-
-    setSearchParams({
+    utils.$updateUrlQuery("update", {
       id: String(record.id),
     });
   };
@@ -788,9 +801,6 @@ export default function Interview() {
         reviewActive={reviewActive}
         categoryList={categoryList}
         onGoBack={() => {
-          const params = new URLSearchParams(searchParams);
-          params.delete("id");
-          setSearchParams(params);
           getDataPromise();
           setDialogActive(false);
           setEditActive(false);
