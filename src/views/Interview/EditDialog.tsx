@@ -169,6 +169,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
     props.onGoBack();
     setEditActive(false);
     setReviewActive(false);
+    utils.$updateUrlQuery("remove", "id");
     setRecord({
       id: null,
       title: "",
