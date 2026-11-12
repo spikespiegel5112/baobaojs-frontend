@@ -143,11 +143,6 @@ export default function Interview() {
 
   useEffect(() => {
     if (pagination) {
-      paginationRef.current = {
-        ...paginationRef.current,
-        pageSize: pagination.pageSize,
-        page: pagination.page,
-      };
       utils.$updateUrlQuery("update", {
         pageSize: pagination.pageSize,
         page: pagination.page,
@@ -255,13 +250,6 @@ export default function Interview() {
   };
 
   const handleChooseIsPublic = (value: string) => {
-    // if (value === "isPublic") {
-    //   isPublicRef.current = true;
-    // } else if (value === "isPrivate") {
-    //   isPublicRef.current = false;
-    // } else {
-    //   isPublicRef.current = null;
-    // }
     isPublicRef.current = value;
 
     paginationRef.current.page = 1;
@@ -325,11 +313,13 @@ export default function Interview() {
   };
 
   const handleChangePagination = (page: number, pageSize: number) => {
-    setPagination({
+    paginationRef.current = {
       ...paginationRef.current,
       pageSize,
       page,
-    });
+    };
+
+    setPagination(paginationRef.current);
     getDataPromise();
   };
 
@@ -556,11 +546,6 @@ export default function Interview() {
                 </Form.Item>
                 {isLoggedIn && (
                   <>
-                    {(() => {
-                      const bb = form.getFieldValue("isPublic");
-                      console.log(bb);
-                      // 123
-                    })()}
                     <Form.Item
                       label="公开"
                       name="isPublic"
