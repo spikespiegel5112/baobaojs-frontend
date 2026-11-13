@@ -243,6 +243,36 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                 {record?.isPublic ? "公开" : "私有"}
               </Tag>
             );
+
+            const styleeditor = (
+              <Form className="styleeditor">
+                <Row>
+                  <Col span={24}>
+                    <Form.Item label="">
+                      <Space>
+                        <Button
+                          type="link"
+                          onClick={handleReduceFontSize}
+                        >
+                          A-
+                        </Button>
+                        <span>{`${reviewFontSize}px`}</span>
+                        <Button
+                          type="link"
+                          onClick={handleAddFontSize}
+                        >
+                          A+
+                        </Button>
+                        <Button
+                          icon={<MoonFilled />}
+                          onClick={handleToggleNightMode}
+                        ></Button>
+                      </Space>
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Form>
+            );
             if (isLoggedIn) {
               if (reviewActive) {
                 return (
@@ -251,6 +281,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                       {props.categoryList.find((item) => item.id === record?.category)?.category ||
                         ""}
                     </span>
+                    {styleeditor}
                     {IsPublicTag}
 
                     <Tooltip
@@ -273,33 +304,7 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
             } else {
               return (
                 <Space>
-                  <Form className="styleeditor">
-                    <Row>
-                      <Col span={24}>
-                        <Form.Item label="">
-                          <Space>
-                            <Button
-                              type="link"
-                              onClick={handleReduceFontSize}
-                            >
-                              A-
-                            </Button>
-                            <span>{`${reviewFontSize}px`}</span>
-                            <Button
-                              type="link"
-                              onClick={handleAddFontSize}
-                            >
-                              A+
-                            </Button>
-                            <Button
-                              icon={<MoonFilled />}
-                              onClick={handleToggleNightMode}
-                            ></Button>
-                          </Space>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </Form>
+                  {styleeditor}
                   {IsPublicTag}
                 </Space>
               );
