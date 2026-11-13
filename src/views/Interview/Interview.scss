@@ -104,11 +104,16 @@
     .content {
       scrollbar-color: rgba(128, 128, 128, 0.5) transparent;
     }
+    .styleeditor {
+      display: inline-block;
+      .ant-form-item {
+        margin: 0;
+      }
+    }
     .review {
       display: flex;
       flex-direction: column;
       margin: 0 auto;
-      max-width: 26rem;
       width: 100%;
       height: calc(100vh - 1.7rem);
       background-color: #fff;
@@ -119,6 +124,7 @@
       &:hover {
         // border: 1px solid #4096ff;
       }
+
       .title {
         display: flex;
         justify-content: space-between;
@@ -142,7 +148,6 @@
       }
       .content {
         margin: 0;
-        padding: 0.3rem 0.45rem;
         flex: 1;
         overflow: auto;
         font-size: 0.32rem;

@@ -7,7 +7,8 @@ import type { FormProps, GetProp, SwitchProps } from "antd";
 import type { RootState } from "@/store";
 import type { CategoryItem } from "@/views/Interview/EditCategoryDialog.tsx";
 
-import { FormOutlined, LeftOutlined } from "@ant-design/icons";
+import { FormOutlined, LeftOutlined, MoonFilled } from "@ant-design/icons";
+
 import { createOrUpdateQARequest, getInterviewDetailRequest } from "@/api/inteerview";
 
 import { useSelector } from "react-redux";
@@ -63,6 +64,15 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
   const [editActive, setEditActive] = useState<boolean>(false);
   const [reviewActive, setReviewActive] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
+
+  const [reviewFontSize, setReviewFontSize] = useState<number>(() => {
+    const savedSize = localStorage.getItem("reviewFontSize");
+    return savedSize ? Number(savedSize) : 16;
+  });
+  const [editotTheme, setEditotTheme] = useState<"dark" | "light" | undefined>(() => {
+    const editorTheme = localStorage.getItem("editorTheme");
+    return editorTheme;
+  });
 
   const [form] = Form.useForm();
   Form.useWatch("content", form);
@@ -179,6 +189,31 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
     });
   };
 
+  const handleAddFontSize = () => {
+    setReviewFontSize((value) => {
+      const newValue = Math.min(value + 1, 28);
+      localStorage.setItem("reviewFontSize", String(newValue));
+      return newValue;
+    });
+    console.log(reviewFontSize);
+  };
+  const handleReduceFontSize = () => {
+    setReviewFontSize((value) => {
+      const newValue = Math.min(value - 1, 28);
+      localStorage.setItem("reviewFontSize", String(newValue));
+      return newValue;
+    });
+  };
+
+  const handleToggleNightMode = () => {
+    setEditotTheme((value) => {
+      const result = value === "dark" || !value ? "light" : "dark";
+      localStorage.setItem("editorTheme", result);
+      return result;
+    });
+    // 夜间模式
+  };
+
   return (
     <div className={`edit_dialog ${props.dialogActive ? "active" : ""}`}>
       <Space
@@ -192,7 +227,6 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
           wrap
           className="navigator"
           style={{
-            maxWidth: reviewActive ? "26rem" : "none",
             margin: "auto",
           }}
         >
@@ -237,7 +271,38 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                 );
               }
             } else {
-              return IsPublicTag;
+              return (
+                <Space>
+                  <Form className="styleeditor">
+                    <Row>
+                      <Col span={24}>
+                        <Form.Item label="">
+                          <Space>
+                            <Button
+                              type="link"
+                              onClick={handleReduceFontSize}
+                            >
+                              A-
+                            </Button>
+                            <span>{`${reviewFontSize}px`}</span>
+                            <Button
+                              type="link"
+                              onClick={handleAddFontSize}
+                            >
+                              A+
+                            </Button>
+                            <Button
+                              icon={<MoonFilled />}
+                              onClick={handleToggleNightMode}
+                            ></Button>
+                          </Space>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Form>
+                  {IsPublicTag}
+                </Space>
+              );
             }
           })()}
         </Flex>
@@ -376,12 +441,19 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
 
                 <div className="content">
                   <Suspense fallback={<div>Loading...</div>}>
-                    <Markdown
-                      source={record?.content}
-                      wrapperElement={{
-                        "data-color-mode": "light",
-                      }}
-                    />
+                    <div>
+                      <Markdown
+                        data-color-mode={editotTheme}
+                        source={record?.content}
+                        style={{
+                          padding: `0.3rem ${6}rem`,
+                          fontSize: `${reviewFontSize}px`,
+                        }}
+                        wrapperElement={{
+                          "data-color-mode": `${editotTheme}`,
+                        }}
+                      />
+                    </div>
                   </Suspense>
                 </div>
               </div>
