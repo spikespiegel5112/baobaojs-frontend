@@ -145,7 +145,7 @@ const EditCategoryDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
     <Form
       form={form}
       labelAlign="left"
-      initialValues={{}}
+      defaultValue={{}}
       onFinish={handleSubmitCategory}
     >
       <Row gutter={10}>

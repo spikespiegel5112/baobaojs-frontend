@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./FileDownloader.scss";
-import { App, Select, Popover } from "antd";
+import { Select, Popover } from "antd";
 import { getSingleFileRequest, createOrUpdateRequest } from "@/api/fileDownloader";
 import utils from "@/utils/utils";
 
@@ -241,7 +241,7 @@ export default function FileDownloaderDialog(props: Props) {
         form={form}
         labelAlign="left"
         labelCol={{ flex: "100px" }}
-        initialValues={{}}
+        defaultValue={{}}
       >
         <Row gutter={30}>
           <Col span="12">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams, useLocation } from "react-router";
+import { useDispatch } from "react-redux";
 import { App, Grid, Card, Checkbox, Pagination, Spin, Empty } from "antd";
 import "./Interview.scss";
 import "./Interview_mobile.scss";
@@ -7,7 +8,8 @@ import EditDialog from "./EditDialog";
 import EditCategoryDialog from "./EditCategoryDialog";
 import type { EditDialogRef } from "./EditDialog";
 import type { TableProps } from "antd";
-import type { RootState } from "@/store";
+import type { RootState, AppDispatch } from "@/store";
+import { setIsLoggedIn } from "@/store/index";
 import type { AxiosError, AxiosResponse } from "axios";
 
 import { FormOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
@@ -40,6 +42,7 @@ interface RecordType {
 interface TableDataType {
   key?: React.Key;
   total: number;
+  isLoggedIn: boolean;
   data: RecordType[];
 }
 
@@ -47,6 +50,8 @@ export default function Interview() {
   const { modal } = App.useApp();
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
   const location = useLocation();
+  const dispatch = useDispatch<AppDispatch>();
+
   const query = new URLSearchParams(location.search);
 
   const screens = Grid.useBreakpoint();
@@ -292,6 +297,9 @@ export default function Interview() {
               };
             }),
           );
+          if (!tableData.isLoggedIn) {
+            dispatch(setIsLoggedIn(false));
+          }
           resolve(tableData);
         })
         .catch((error: { statusCode: number }) => {
@@ -552,7 +560,6 @@ export default function Interview() {
                     >
                       <Select
                         style={{ width: 200 }}
-                        defaultValue="all"
                         onChange={handleChooseIsPublic}
                         options={[
                           { value: "all", label: "全部" },
@@ -567,7 +574,6 @@ export default function Interview() {
                     >
                       <Select
                         style={{ width: 200 }}
-                        defaultValue={"all"}
                         onChange={handleChooseCategory}
                         options={categoryList.map((item) => {
                           return {
@@ -718,7 +724,6 @@ export default function Interview() {
               >
                 <Select
                   style={{ width: 200 }}
-                  defaultValue={"all"}
                   onChange={handleChooseCategory}
                   options={categoryList.map((item) => {
                     return {
@@ -738,7 +743,6 @@ export default function Interview() {
                   >
                     <Select
                       style={{ width: 200 }}
-                      defaultValue="all"
                       onChange={handleChooseIsPublic}
                       options={[
                         { value: "all", label: "全部" },

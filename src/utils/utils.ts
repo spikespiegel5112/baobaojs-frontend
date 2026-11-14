@@ -13,7 +13,7 @@ const _utils = {
   },
   $isEmpty: (value: string | undefined | null | number | boolean): boolean =>
     value === "" || (!value && value !== 0) || value === null,
-  $isNotEmpty: (value: boolean): boolean => !_utils.$isEmpty(value),
+  $isNotEmpty: (value: string | undefined | null | number | boolean): boolean => !_utils.$isEmpty(value),
   $remResizing: (params: {
     fontSize?: number;
     baseline?: number;
