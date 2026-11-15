@@ -734,7 +734,7 @@ export default function Interview() {
                 ></Select>
               </Form.Item>
             </Col>
-            <Col span={121}>
+            <Col span={12}>
               {isLoggedIn && (
                 <>
                   <Form.Item

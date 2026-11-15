@@ -281,8 +281,8 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
                       {props.categoryList.find((item) => item.id === record?.category)?.category ||
                         ""}
                     </span>
-                    {styleeditor}
                     {IsPublicTag}
+                    {styleeditor}
 
                     <Tooltip
                       placement="bottom"
@@ -304,8 +304,8 @@ const EditDialog = forwardRef<EditDialogRef, Props>((props, ref) => {
             } else {
               return (
                 <Space>
-                  {styleeditor}
                   {IsPublicTag}
+                  {styleeditor}
                 </Space>
               );
             }
