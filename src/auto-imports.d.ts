@@ -7,6 +7,7 @@
 export {}
 declare global {
   const Button: typeof import('antd').Button
+  const Card: typeof import('antd').Card
   const Col: typeof import('antd').Col
   const ConfigProvider: typeof import('antd').ConfigProvider
   const DatePicker: typeof import('antd').DatePicker
@@ -16,6 +17,7 @@ declare global {
   const Form: typeof import('antd').Form
   const Input: typeof import('antd').Input
   const Layout: typeof import('antd').Layout
+  const List: typeof import('antd').List
   const Listy: typeof import('antd').Listy
   const Modal: typeof import('antd').Modal
   const Pagination: typeof import('antd').Pagination

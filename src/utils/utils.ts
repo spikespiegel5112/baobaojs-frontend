@@ -1,5 +1,5 @@
-import { routeDictionary } from "@/routes.ts";
-import type { RouteType } from "@/routes";
+import { routeDictionary } from "@/routes/routes";
+import type { RouteType } from "@/routes/routes";
 import { message } from "@/utils/message";
 
 const _utils = {

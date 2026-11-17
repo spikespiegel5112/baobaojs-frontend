@@ -2,7 +2,7 @@ import { StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { App as AntdApp } from "antd";
-import { routeDictionary } from "@/routes.ts";
+import { routeDictionary } from "@/routes/routes";
 
 import Root from "@/root";
 import NotFound from "@/views/NotFound/NotFound";

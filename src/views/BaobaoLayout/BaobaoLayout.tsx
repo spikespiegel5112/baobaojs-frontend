@@ -9,7 +9,7 @@ import { setUserInfo, setIsLoggedIn } from "@/store/index";
 import type { RootState, AppDispatch } from "@/store";
 import utils from "@/utils/utils";
 import type { AxiosError } from "axios";
-import { routeDictionary, type RouteType } from "@/routes";
+import { routeDictionary, type RouteType } from "@/routes/routes.ts";
 
 import "./BaobaoLayout.scss";
 
@@ -41,34 +41,34 @@ interface MenuItem {
   abbreviation?: string;
 }
 
-const menuListData = [
-  {
-    title: "文心一言",
-    id: "ErnieBot",
-    active: false,
-  },
-  {
-    title: "百科全书",
-    id: "Interview",
-    active: false,
-  },
-  {
-    title: "文件下载器",
-    id: "FileDownloader",
-    active: false,
-  },
-  {
-    title: "厚车吉市",
-    id: "Houchejishi",
-    active: false,
-  },
-  {
-    title: "Leaders & Structures",
-    abbreviation: "LS",
-    id: "LeadersAndStructures",
-    active: false,
-  },
-];
+// const menuListData = [
+//   {
+//     title: "文心一言",
+//     id: "ErnieBot",
+//     active: false,
+//   },
+//   {
+//     title: "百科全书",
+//     id: "Interview",
+//     active: false,
+//   },
+//   {
+//     title: "文件下载器",
+//     id: "FileDownloader",
+//     active: false,
+//   },
+//   {
+//     title: "厚车吉市",
+//     id: "Houchejishi",
+//     active: false,
+//   },
+//   {
+//     title: "Leaders & Structures",
+//     abbreviation: "LS",
+//     id: "LeadersAndStructures",
+//     active: false,
+//   },
+// ];
 
 export default function BaobaoLayout() {
   const { message, modal } = App.useApp();
@@ -80,7 +80,7 @@ export default function BaobaoLayout() {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const [menuList, setMenuList] = useState<MenuItem[]>(menuListData);
+  const [menuList, setMenuList] = useState<MenuItem[]>([]);
   const [startButtonActive, setStartButtonActive] = useState(false);
   const [entranceActive, setEntranceActive] = useState(true);
   const [enterActive, setEnterActive] = useState(false);
@@ -126,23 +126,34 @@ export default function BaobaoLayout() {
   }, [location]);
 
   useEffect(() => {
-    const result = JSON.parse(JSON.stringify(menuList));
+    if (Array.isArray(menuList) && menuList.length > 0) {
+      const result = JSON.parse(JSON.stringify(menuList));
 
-    if (!expandButtonFlag) {
-      result.forEach((item: MenuItem) => {
-        item.title = item.abbreviation ? item.abbreviation : item.title.slice(0, 2);
-      });
-    } else {
-      result.forEach((item: MenuItem) => {
-        const itemData = menuListData.find((item2) => item2.id === item.id);
-        item.title = itemData ? itemData.title : item.title;
-      });
+      if (!expandButtonFlag) {
+        result.forEach((item: MenuItem) => {
+          item.title = item.abbreviation ? item.abbreviation : item.title.slice(0, 2);
+        });
+      } else {
+        result.forEach((item: MenuItem) => {
+          const itemData = routeDictionary[0]?.children?.find((item2) => item2.id === item.id);
+          item.title = itemData?.title ?? item.title;
+        });
+      }
+      setMenuList(result);
+      highLightMenu();
     }
-    setMenuList(result);
-    highLightMenu();
   }, [expandButtonFlag]);
 
   const initMenu = () => {
+    const menuListData: MenuItem[] = (routeDictionary[0]?.children ?? [])
+      .filter((item) => !item.hidden)
+      .map((item) => ({
+        title: item.title ?? item.id,
+        id: item.id,
+        active: item.active ?? false,
+        abbreviation: item.abbreviation,
+      }));
+
     let menuStatus = localStorage.getItem("menuStatus");
     let result = true;
     if (utils.$checkIsMobile()) {
@@ -156,6 +167,7 @@ export default function BaobaoLayout() {
     }
     setExpandButtonFlag(result);
     menuStatus = result ? "expand" : "shrink";
+    setMenuList(menuListData);
     localStorage.setItem("menuStatus", menuStatus);
   };
 
@@ -249,7 +261,7 @@ export default function BaobaoLayout() {
     setMenuList((prev: MenuList[]) => {
       return prev.map((item2) => ({
         ...item2,
-        active: currentRoute.id === item2.id,
+        active: currentRoute?.id === item2.id,
       }));
     });
   };
@@ -327,14 +339,6 @@ export default function BaobaoLayout() {
           boxShadowSecondary: "0 4px 10px 0 rgba(0, 0, 0, 0.1)",
         },
 
-        button: {
-          root: "border-0 transition-all duration-200",
-          content: "font-medium",
-        },
-        card: {
-          root: "border-0 shadow-sm",
-          header: "border-b border-gray-100",
-        },
         components: {
           Table: {
             selectionColumnWidth: "0.8rem",
@@ -386,6 +390,9 @@ export default function BaobaoLayout() {
               <ul>
                 {(() => {
                   const flattenRouteDictionary = utils.$flattenList(routeDictionary);
+                  {
+                    JSON.stringify(menuList);
+                  }
                   return menuList.map((item) => {
                     return (
                       <li
@@ -395,7 +402,7 @@ export default function BaobaoLayout() {
                         <Link
                           to={
                             flattenRouteDictionary.find((item2: RouteType) => item.id === item2.id)
-                              ?.path
+                              ?.path ?? "/"
                           }
                           state={{ myInfo: "hello world", userId: 123 }}
                           key={item.title}
