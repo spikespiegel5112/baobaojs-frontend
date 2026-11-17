@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Avatar,
   Button,
@@ -51,36 +51,28 @@ const MessageBoard: React.FC = () => {
   const [form] = Form.useForm();
   const [comments, setComments] = useState<Comment[]>([]);
   const [sortType, setSortType] = useState("newest");
-  const [current, setCurrent] = useState(1);
   const [submitting, setSubmitting] = useState(false);
-
-  const pageSize = 5;
+  const [pagination, setPagination] = useState(defaultPagination);
 
   const paginationRef = useRef(defaultPagination);
 
   // 当前登录用户，实际项目从用户信息中获取
   const currentUser = "Alex";
 
-  // 排序
-  const sortedComments = useMemo(() => {
-    return [...comments].sort((a, b) => {
-      const diff = new Date(b.createTime).getTime() - new Date(a.createTime).getTime();
-
-      return sortType === "newest" ? diff : -diff;
-    });
-  }, [comments, sortType]);
-
   useEffect(() => {
     getData();
   }, []);
-
-  // 当前页数据
-  const pageComments = sortedComments.slice((current - 1) * pageSize, current * pageSize);
 
   const getData = () => {
     getMessageListRequest(paginationRef.current).then((response) => {
       const listData = response?.data?.list || [];
       setComments(listData);
+      paginationRef.current.total = response?.data?.total;
+      setPagination({
+        ...pagination,
+        page: response?.data?.page,
+        total: response?.data?.total,
+      });
     });
   };
 
@@ -101,12 +93,15 @@ const MessageBoard: React.FC = () => {
         setSubmitting(false);
       });
 
-    setCurrent(1);
     form.resetFields();
   };
 
-  const handleChoosePage = (page: number) => {
-    paginationRef.current = page;
+  const handleChangePagination = (page: number) => {
+    paginationRef.current.page = page;
+    setPagination({
+      ...pagination,
+      page,
+    });
     getData();
   };
 
@@ -204,13 +199,13 @@ const MessageBoard: React.FC = () => {
           />
         </div>
 
-        {pageComments.length > 0 ? (
+        {comments.length > 0 ? (
           <Card
             className="comment-card"
             styles={{ body: { padding: 0 } }}
           >
             <Listy<Comment>
-              items={pageComments.map((item) => {
+              items={comments.map((item) => {
                 return {
                   ...item,
                   content: item.message,
@@ -276,18 +271,15 @@ const MessageBoard: React.FC = () => {
             <Empty description="暂无留言，快来发表第一条留言吧" />
           </Card>
         )}
-
-        {comments.length > pageSize && (
-          <div className="pagination_wrapper">
-            <Pagination
-              current={current}
-              pageSize={pageSize}
-              total={comments.length}
-              onChange={handleChoosePage}
-              showSizeChanger={false}
-            />
-          </div>
-        )}
+        <div className="pagination_wrapper">
+          <Pagination
+            current={pagination.page}
+            pageSize={pagination.pageSize}
+            total={pagination.total}
+            onChange={handleChangePagination}
+            showSizeChanger={false}
+          />
+        </div>
       </div>
     </div>
   );
