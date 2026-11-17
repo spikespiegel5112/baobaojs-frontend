@@ -15,6 +15,8 @@ import {
   Typography,
 } from "antd";
 
+import { useSelector } from "react-redux";
+
 import { DeleteOutlined, SendOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
@@ -26,6 +28,7 @@ import {
 } from "@/api/messageBoard";
 
 import type { PaginationType } from "@/views/BaobaoLayout/BaobaoLayout";
+import type { RootState } from "@/store";
 
 const { Text, Title, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -43,6 +46,7 @@ const MessageBoard: React.FC = () => {
     pageSize: 20,
     total: undefined,
   };
+  const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
 
   const [form] = Form.useForm();
   const [comments, setComments] = useState<Comment[]>([]);
@@ -127,7 +131,9 @@ const MessageBoard: React.FC = () => {
       id: item.id,
     }).then(() => {
       message.success("删除成功");
-      setComments((prev) => prev.filter((item) => item.id !== item.id));
+      setComments((prev) => {
+        return prev.filter((item2) => item2.id !== item.id);
+      });
     });
   };
 
@@ -214,50 +220,52 @@ const MessageBoard: React.FC = () => {
               itemRender={(item) => {
                 return (
                   <div className="comment-item">
-                    <div className="comment-user">
-                      <Avatar
-                        size={42}
-                        style={{
-                          backgroundColor: "#e6f4ff",
-                          color: "#1677ff",
-                        }}
-                      >
-                        {item.avatar}
-                      </Avatar>
-
-                      <div className="user-info">
-                        <Text strong>{item.nickName}</Text>
-                        <Text
-                          type="secondary"
-                          className="comment-time"
+                    <Flex
+                      className="comment-user"
+                      justify="space-between"
+                    >
+                      <Flex>
+                        <Avatar
+                          size={42}
+                          style={{
+                            backgroundColor: "#e6f4ff",
+                            color: "#1677ff",
+                          }}
                         >
-                          {dayjs(item.createTime).fromNow?.() ||
-                            dayjs(item.createTime).format("YYYY-MM-DD HH:mm")}
-                        </Text>
+                          {item.avatar}
+                        </Avatar>
+                        <div className="user-info">
+                          <Text strong>{item.nickName}</Text>
+                          <Text
+                            type="secondary"
+                            className="comment-time"
+                          >
+                            {dayjs(item.createTime).fromNow?.() ||
+                              dayjs(item.createTime).format("YYYY-MM-DD HH:mm")}
+                          </Text>
+                          {/* {item.nickName === currentUser && <Tag color="blue">我</Tag>} */}
+                        </div>
+                      </Flex>
+                      <div className="comment-actions">
+                        {isLoggedIn && (
+                          <Popconfirm
+                            title="确定删除这条留言吗？"
+                            onConfirm={() => handleDelete(item)}
+                          >
+                            <Button
+                              type="text"
+                              danger
+                              size="small"
+                              icon={<DeleteOutlined />}
+                            >
+                              删除
+                            </Button>
+                          </Popconfirm>
+                        )}
                       </div>
-
-                      {item.nickName === currentUser && <Tag color="blue">我</Tag>}
-                    </div>
+                    </Flex>
 
                     <Paragraph className="comment-content">{item.message}</Paragraph>
-
-                    <div className="comment-actions">
-                      {item.nickName === currentUser && (
-                        <Popconfirm
-                          title="确定删除这条留言吗？"
-                          onConfirm={() => handleDelete(item)}
-                        >
-                          <Button
-                            type="text"
-                            danger
-                            size="small"
-                            icon={<DeleteOutlined />}
-                          >
-                            删除
-                          </Button>
-                        </Popconfirm>
-                      )}
-                    </div>
                   </div>
                 );
               }}
