@@ -43,7 +43,7 @@ interface Comment {
 const MessageBoard: React.FC = () => {
   const defaultPagination: PaginationType = {
     page: 1,
-    pageSize: 20,
+    pageSize: 10,
     total: undefined,
   };
   const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn);
@@ -88,6 +88,8 @@ const MessageBoard: React.FC = () => {
       .then(() => {
         getData();
         message.success("留言发布成功！");
+        paginationRef.current.page = 1;
+        setPagination(paginationRef.current);
       })
       .finally(() => {
         setSubmitting(false);
@@ -185,7 +187,7 @@ const MessageBoard: React.FC = () => {
         <div className="comment-toolbar">
           <div>
             <Title level={4}>全部留言</Title>
-            <Text type="secondary">共 {comments.length} 条留言</Text>
+            <Text type="secondary">共 {pagination.total} 条留言</Text>
           </div>
 
           <Select
