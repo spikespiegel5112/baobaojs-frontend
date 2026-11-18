@@ -34,14 +34,6 @@ const _routeDictionary: RouteDictionaryType[] = [
         hidden: true,
       },
       {
-        id: "Interview",
-        path: "Interview",
-        filePath: "./views/Interview/Interview.tsx",
-        component: lazy(() => import("@/views/Interview/Interview.tsx")),
-        title: "百科全书",
-        active: false,
-      },
-      {
         id: "ErnieBot",
         path: "ErnieBot",
         filePath: "./views/ErnieBot/ErnieBot.tsx",
@@ -49,6 +41,15 @@ const _routeDictionary: RouteDictionaryType[] = [
         title: "文心一言",
         active: false,
       },
+      {
+        id: "Interview",
+        path: "Interview",
+        filePath: "./views/Interview/Interview.tsx",
+        component: lazy(() => import("@/views/Interview/Interview.tsx")),
+        title: "百科全书",
+        active: false,
+      },
+
       {
         id: "MessageBoard",
         path: "MessageBoard",
