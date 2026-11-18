@@ -308,7 +308,7 @@ export default function Interview() {
           columns={columns}
           loading={loading}
           scroll={{
-            y: "calc(100vh - 3rem)",
+            y: "calc(100vh - 4.4rem)",
           }}
           pagination={{
             defaultCurrent: 1,
