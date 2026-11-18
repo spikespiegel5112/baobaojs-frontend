@@ -83,6 +83,15 @@ const _routeDictionary: RouteDictionaryType[] = [
         abbreviation: "LS",
         active: false,
       },
+      {
+        id: "ThreeJSBarChart",
+        path: "ThreeJSBarChart",
+        filePath: "./views/ThreeJSBarChart/ThreeJSBarChart.tsx",
+        component: lazy(() => import("@/views/ThreeJSBarChart/ThreeJSBarChart")),
+        title: "Three.js饼状图",
+        abbreviation: "饼状图",
+        active: false,
+      },
 
       {
         id: "Login",
