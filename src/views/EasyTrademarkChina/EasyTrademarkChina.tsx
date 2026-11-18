@@ -30,8 +30,8 @@ const deviceWidth: Record<DeviceType, string> = {
   pc: "100%",
 };
 
-export default function EasyTrademarkChina() {
-  const url = "https://baobaojs.com/EasyTrademarkChina";
+export default function LeadersAndStructures() {
+  const url = "https://leadersandstructures.com";
   const [device, setDevice] = useState<DeviceType>("pc");
   const [iframeUrl, setIframeUrl] = useState<string>(url);
   const [loading, setLoading] = useState(false);
@@ -49,7 +49,7 @@ export default function EasyTrademarkChina() {
   return (
     <div className="ifrome_container">
       <header className="preview_header">
-        <span className="header_title">Easy Trademark China</span>
+        <span className="header_title">Leaders & Structures</span>
 
         <Segmented
           value={device}
@@ -65,7 +65,7 @@ export default function EasyTrademarkChina() {
           style={{ width: deviceWidth[device] }}
         >
           <iframe
-            title="EasyTrademarkChina"
+            title="LeadersAndStructures"
             src={iframeUrl}
             style={{ width: deviceWidth[device] }}
           />
