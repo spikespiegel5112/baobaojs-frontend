@@ -351,7 +351,7 @@ const ThreeJSBarChartContent: React.FC<Props> = () => {
       chartGroupRef.current = null;
       labelGroupRef.current = null;
     };
-  }, [getAssetUrl]);
+  }, []);
 
   // ==========================================
   // 6. 创建三维文字标签
@@ -654,7 +654,7 @@ const ThreeJSBarChartContent: React.FC<Props> = () => {
     return () => {
       cancelled = true;
     };
-  }, [refreshKey, transformData]);
+  }, [transformData]);
 
   // ==========================================
   // 12. JSX
@@ -670,7 +670,7 @@ const ThreeJSBarChartContent: React.FC<Props> = () => {
 
       <div
         ref={containerRef}
-        className={`ThreeJSBarChartContent ${className}`}
+        className={`ThreeJSBarChartContent`}
       >
         <div ref={mountRef} />
       </div>
