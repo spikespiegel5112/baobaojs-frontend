@@ -53,6 +53,7 @@ const MessageBoard: React.FC = () => {
   const [sortType, setSortType] = useState("newest");
   const [submitting, setSubmitting] = useState(false);
   const [pagination, setPagination] = useState(defaultPagination);
+  const [loading, setLoading] = useState(false);
 
   const paginationRef = useRef(defaultPagination);
 
@@ -64,16 +65,21 @@ const MessageBoard: React.FC = () => {
   }, []);
 
   const getData = () => {
-    getMessageListRequest(paginationRef.current).then((response) => {
-      const listData = response?.data?.list || [];
-      setComments(listData);
-      paginationRef.current.total = response?.data?.total;
-      setPagination({
-        ...pagination,
-        page: response?.data?.page,
-        total: response?.data?.total,
+    setLoading(true);
+    getMessageListRequest(paginationRef.current)
+      .then((response) => {
+        const listData = response?.data?.list || [];
+        setComments(listData);
+        paginationRef.current.total = response?.data?.total;
+        setPagination({
+          ...pagination,
+          page: response?.data?.page,
+          total: response?.data?.total,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    });
   };
 
   // 发布留言
@@ -201,78 +207,83 @@ const MessageBoard: React.FC = () => {
           />
         </div>
 
-        {comments.length > 0 ? (
-          <Card
-            className="comment-card"
-            styles={{ body: { padding: 0 } }}
-          >
-            <Listy<Comment>
-              items={comments.map((item) => {
-                return {
-                  ...item,
-                  content: item.message,
-                };
-              })}
-              rowKey="id"
-              itemRender={(item) => {
-                return (
-                  <div className="comment-item">
-                    <Flex
-                      className="comment-user"
-                      justify="space-between"
-                    >
-                      <Flex>
-                        <Avatar
-                          size={42}
-                          style={{
-                            backgroundColor: "#e6f4ff",
-                            color: "#1677ff",
-                          }}
-                        >
-                          {item.avatar}
-                        </Avatar>
-                        <div className="user-info">
-                          <Text strong>{item.nickName}</Text>
-                          <Text
-                            type="secondary"
-                            className="comment-time"
+        <Spin spinning={loading}>
+          {pagination.total && pagination.total > 0 ? (
+            <Card
+              className="comment-card"
+              styles={{ body: { padding: 0 } }}
+            >
+              <Listy<Comment>
+                items={comments.map((item) => {
+                  return {
+                    ...item,
+                    content: item.message,
+                  };
+                })}
+                rowKey="id"
+                itemRender={(item) => {
+                  return (
+                    <div className="comment-item">
+                      <Flex
+                        className="comment-user"
+                        justify="space-between"
+                      >
+                        <Flex>
+                          <Avatar
+                            size={42}
+                            style={{
+                              backgroundColor: "#e6f4ff",
+                              color: "#1677ff",
+                            }}
                           >
-                            {dayjs(item.createTime).fromNow?.() ||
-                              dayjs(item.createTime).format("YYYY-MM-DD HH:mm")}
-                          </Text>
-                          {/* {item.nickName === currentUser && <Tag color="blue">我</Tag>} */}
+                            {item.avatar}
+                          </Avatar>
+                          <div className="user-info">
+                            <Text strong>{item.nickName}</Text>
+                            <Text
+                              type="secondary"
+                              className="comment-time"
+                            >
+                              {dayjs(item.createTime).fromNow?.() ||
+                                dayjs(item.createTime).format("YYYY-MM-DD HH:mm")}
+                            </Text>
+                            {/* {item.nickName === currentUser && <Tag color="blue">我</Tag>} */}
+                          </div>
+                        </Flex>
+                        <div className="comment-actions">
+                          {isLoggedIn && (
+                            <Popconfirm
+                              title="确定删除这条留言吗？"
+                              onConfirm={() => handleDelete(item)}
+                            >
+                              <Button
+                                type="text"
+                                danger
+                                size="small"
+                                icon={<DeleteOutlined />}
+                              >
+                                删除
+                              </Button>
+                            </Popconfirm>
+                          )}
                         </div>
                       </Flex>
-                      <div className="comment-actions">
-                        {isLoggedIn && (
-                          <Popconfirm
-                            title="确定删除这条留言吗？"
-                            onConfirm={() => handleDelete(item)}
-                          >
-                            <Button
-                              type="text"
-                              danger
-                              size="small"
-                              icon={<DeleteOutlined />}
-                            >
-                              删除
-                            </Button>
-                          </Popconfirm>
-                        )}
-                      </div>
-                    </Flex>
 
-                    <Paragraph className="comment-content">{item.message}</Paragraph>
-                  </div>
-                );
-              }}
-            />
-          </Card>
-        ) : (
-          <Card>
-            <Empty description="暂无留言，快来发表第一条留言吧" />
-          </Card>
-        )}
+                      <Paragraph className="comment-content">{item.message}</Paragraph>
+                    </div>
+                  );
+                }}
+              />
+            </Card>
+          ) : (
+            <Card styles={{ body: { padding: 0 } }}>
+              <div className="comment-card">
+                <Empty description="暂无留言，快来发表第一条留言吧" />
+              </div>
+            </Card>
+          )}
+        </Spin>
+
         <div className="pagination_wrapper">
           <Pagination
             current={pagination.page}
