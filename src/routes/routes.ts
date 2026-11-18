@@ -103,6 +103,14 @@ const _routeDictionary: RouteDictionaryType[] = [
         title: "文件下载器",
       },
       {
+        id: "H5Showcase",
+        path: "H5Showcase",
+        filePath: "./views/H5Showcase/H5Showcase.tsx",
+        component: lazy(() => import("@/views/H5Showcase/H5Showcase.tsx")),
+        active: false,
+        title: "H5作品集",
+      },
+      {
         id: "Login",
         path: "Login",
         filePath: "./views/Login/Login.tsx",
