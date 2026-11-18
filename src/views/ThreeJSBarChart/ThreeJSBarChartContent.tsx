@@ -26,14 +26,6 @@ interface ChartData {
 
 interface Props {
   text?: string;
-
-  // 五分钟时间标识发生变化时，触发数据刷新
-  refreshKey?: string | number;
-
-  // 获取项目静态资源地址
-  getAssetUrl: (path: string) => string;
-
-  className?: string;
 }
 
 const chartConfig = [
@@ -100,7 +92,7 @@ const disposeGroupChildren = (group: THREE.Group) => {
   }
 };
 
-const ThreeJSBarChartContent: React.FC<Props> = ({ refreshKey, getAssetUrl, className = "" }) => {
+const ThreeJSBarChartContent: React.FC<Props> = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Segmented, Spin, type SegmentedProps } from "antd";
 import { MobileOutlined, TabletOutlined, MonitorOutlined } from "@ant-design/icons";
 
-import "./LeadersAndStructures.scss";
+import "./EasyTrademarkChina.scss";
 
 type DeviceType = "mobile" | "tablet" | "pc";
 
@@ -30,8 +30,8 @@ const deviceWidth: Record<DeviceType, string> = {
   pc: "100%",
 };
 
-export default function TrademarkChina() {
-  const url = "https://leadersandstructures.com";
+export default function EasyTrademarkChina() {
+  const url = "https://baobaojs.com/EasyTrademarkChina";
   const [device, setDevice] = useState<DeviceType>("pc");
   const [iframeUrl, setIframeUrl] = useState<string>(url);
   const [loading, setLoading] = useState(false);
@@ -49,7 +49,7 @@ export default function TrademarkChina() {
   return (
     <div className="ifrome_container">
       <header className="preview_header">
-        <span className="header_title">Leaders & Structures</span>
+        <span className="header_title">Easy Trademark China</span>
 
         <Segmented
           value={device}
@@ -65,7 +65,7 @@ export default function TrademarkChina() {
           style={{ width: deviceWidth[device] }}
         >
           <iframe
-            title="LeadersAndStructures"
+            title="EasyTrademarkChina"
             src={iframeUrl}
             style={{ width: deviceWidth[device] }}
           />

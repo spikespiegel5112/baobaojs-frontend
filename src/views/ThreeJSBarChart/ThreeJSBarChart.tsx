@@ -2,17 +2,7 @@ import React from "react";
 
 import ThreeJSBarChartContent from "./ThreeJSBarChartContent";
 
-interface ThreeDContainerProps {
-  children: React.ReactNode;
-  width?: number | string;
-  height?: number | string;
-  rotateX?: number;
-  rotateY?: number;
-  perspective?: number;
-  className?: string;
-}
-
-const ThreeJSBarChart: React.FC<ThreeDContainerProps> = () => {
+export default function ThreeJSBarChart() {
   return (
     <div
       style={{
@@ -24,6 +14,4 @@ const ThreeJSBarChart: React.FC<ThreeDContainerProps> = () => {
       <ThreeJSBarChartContent text="客流空域分布" />
     </div>
   );
-};
-
-export default ThreeJSBarChart;
+}
