@@ -7,6 +7,7 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 import "./ThreeJSBarChart.scss";
+import hdrUrl from "@/assets/spruit_sunrise_1k.hdr?url";
 
 interface ChartDataItem {
   value: number;
@@ -206,7 +207,7 @@ const ThreeJSBarChartContent: React.FC<Props> = ({ refreshKey, getAssetUrl, clas
     const hdrLoader = new RGBELoader();
 
     hdrLoader.load(
-      "/src/assets/spruit_sunrise_1k.hdr",
+      hdrUrl,
       (hdrTexture) => {
         if (!sceneRef.current) {
           hdrTexture.dispose();
