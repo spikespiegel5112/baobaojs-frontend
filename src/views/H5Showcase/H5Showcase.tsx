@@ -14,6 +14,11 @@ type H5ProjectOption = {
 
 const h5ProjectList: H5ProjectOption[] = [
   {
+    label: "文心一言",
+    value: "chat",
+    path: "chat",
+  },
+  {
     label: "春天再出发",
     value: "ppctzcf",
     path: "ppctzcf",
