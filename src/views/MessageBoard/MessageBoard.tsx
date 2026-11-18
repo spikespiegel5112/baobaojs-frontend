@@ -38,6 +38,7 @@ interface Comment {
   nickName: string;
   avatar: string;
   message: string;
+  createdAt: string;
 }
 
 const MessageBoard: React.FC = () => {
@@ -244,8 +245,8 @@ const MessageBoard: React.FC = () => {
                               type="secondary"
                               className="comment-time"
                             >
-                              {dayjs(item.createTime).fromNow?.() ||
-                                dayjs(item.createTime).format("YYYY-MM-DD HH:mm")}
+                              {dayjs(item.createdAt).fromNow?.() ||
+                                dayjs(item.createdAt).format("YYYY-MM-DD HH:mm")}
                             </Text>
                             {/* {item.nickName === currentUser && <Tag color="blue">我</Tag>} */}
                           </div>
